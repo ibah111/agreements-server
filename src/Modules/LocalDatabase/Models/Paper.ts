@@ -1,7 +1,6 @@
 import { CreationOptional } from '@sql-tools/sequelize';
 import { InferAttributes, InferCreationAttributes } from '@sql-tools/sequelize';
 import {
-  AllowNull,
   AutoIncrement,
   Column,
   DataType,
@@ -10,10 +9,10 @@ import {
   Table,
   Unique,
 } from '@sql-tools/sequelize-typescript';
-@Table({ tableName: 'person' })
-export class Person extends Model<
-  InferAttributes<Person>,
-  InferCreationAttributes<Person>
+@Table({ tableName: 'Paper' })
+export class Paper extends Model<
+  InferAttributes<Paper>,
+  InferCreationAttributes<Paper>
 > {
   @PrimaryKey
   @AutoIncrement
@@ -24,16 +23,5 @@ export class Person extends Model<
   name: string;
 
   @Column(DataType.INTEGER)
-  age: number;
-
-  @Unique
-  @Column(DataType.STRING)
-  login: string;
-
-  @Column(DataType.STRING)
-  password: string;
-
-  @Unique
-  @Column(DataType.STRING)
-  phoneNumber: string | number;
+  datePost: number;
 }

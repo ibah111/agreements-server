@@ -1,4 +1,9 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -12,4 +17,36 @@ export class IsNumberOrString implements ValidatorConstraintInterface {
   defaultMessage(args: ValidationArguments) {
     return '($value) must be number or string';
   }
+}
+export class AddPost {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  name: string;
+
+  @ApiProperty()
+  @IsString()
+  text: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsDate()
+  login: Date;
+}
+export class EditPost {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  text: string;
+}
+export class DeletePost {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsNumber()
+  id: number;
 }

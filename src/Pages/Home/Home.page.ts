@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
-import { Person } from 'src/Modules/LocalDatabase/Models/person';
+import { Paper } from 'src/Modules/LocalDatabase/Models/Paper';
 
 import { HomeController } from './Home.controller';
 import { HomeService } from './Home.service';
@@ -8,6 +8,6 @@ import { HomeService } from './Home.service';
 @Module({
   controllers: [HomeController],
   providers: [HomeService],
-  imports: [SequelizeModule.forFeature([Person])],
+  imports: [SequelizeModule.forFeature([Paper])],
 })
 export class HomePage {}

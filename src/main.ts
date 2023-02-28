@@ -6,8 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const config = new DocumentBuilder()
-    .setTitle('Api')
-    .setDescription('The API description')
+    .setTitle('NBK wiki')
+    .setDescription('The NBK wiki')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

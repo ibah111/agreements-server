@@ -35,4 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # New ignre
+
 yarn.lock
+.yarnrc.yml
+.yarn
