@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { HomePage } from './Home/Home.page';
+import { PostPage } from './Post/Post.page';
 
 @Module({
-  imports: [HomePage],
+  imports: [PostPage],
 })
 export class PagesModule {}

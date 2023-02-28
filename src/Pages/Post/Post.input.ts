@@ -18,7 +18,7 @@ export class IsNumberOrString implements ValidatorConstraintInterface {
     return '($value) must be number or string';
   }
 }
-export class AddPost {
+export class AddPostInput {
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
@@ -33,7 +33,12 @@ export class AddPost {
   @IsDate()
   login: Date;
 }
-export class EditPost {
+export class EditPostInput {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsNumber()
+  id: number;
+
   @IsNotEmpty()
   @ApiProperty()
   @IsString()

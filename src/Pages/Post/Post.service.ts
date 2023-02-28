@@ -1,22 +1,22 @@
 import { NotFoundException, Post } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Paper } from '../../Modules/LocalDatabase/Models/Paper';
-import { AddPost, EditPost } from './Home.input';
-export class HomeService {
+import { AddPostInput, EditPostInput } from './Post.input';
+export class PostService {
   constructor(@InjectModel(Paper) private readonly modelPaper: typeof Paper) {}
 
-  async addPost({ data }: { data: AddPost }) {
+  async addPost({ data }: { data: AddPostInput }) {
     const newPost = await this.modelPaper.create({ ...data });
     console.log('Пост написан и создан');
     return newPost;
   }
-  async editPost(data: EditPost) {
+  async editPost(data: EditPostInput) {
     const name = await this.modelPaper.update(
       {
         [data.name]: data.text,
       },
       { where: { id: data.text } },
-    ); // &&&&&&&&&&
+    );
     console.log('Пост отредкатирован');
     return true;
   }

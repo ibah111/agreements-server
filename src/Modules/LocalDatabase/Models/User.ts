@@ -8,10 +8,10 @@ import {
   PrimaryKey,
   Table,
 } from '@sql-tools/sequelize-typescript';
-@Table({ tableName: 'Paper' })
-export class Paper extends Model<
-  InferAttributes<Paper>,
-  InferCreationAttributes<Paper>
+@Table({ tableName: 'Roles' })
+export class Role extends Model<
+  InferAttributes<Role>,
+  InferCreationAttributes<Role>
 > {
   @PrimaryKey
   @AutoIncrement
@@ -22,5 +22,8 @@ export class Paper extends Model<
   name: string;
 
   @Column(DataType.STRING)
-  text: string;
+  lastName: string;
+
+  @Column(DataType.INTEGER)
+  role: number;
 }
