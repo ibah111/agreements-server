@@ -39,3 +39,4 @@ lerna-debug.log*
 yarn.lock
 .yarnrc.yml
 .yarn
+database.sqlite

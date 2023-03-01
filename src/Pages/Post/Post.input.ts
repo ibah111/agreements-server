@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsDate,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -26,19 +25,16 @@ export class AddPostInput {
 
   @ApiProperty()
   @IsString()
-  text: string;
-
   @IsNotEmpty()
-  @ApiProperty()
-  @IsDate()
-  login: Date;
+  text: string;
 }
-export class EditPostInput {
+export class GetPost {
   @IsNotEmpty()
   @ApiProperty()
   @IsNumber()
   id: number;
-
+}
+export class EditPostInput {
   @IsNotEmpty()
   @ApiProperty()
   @IsString()

@@ -3,6 +3,9 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Paper } from '../../Modules/LocalDatabase/Models/Paper';
 import { AddPostInput, EditPostInput } from './Post.input';
 export class PostService {
+  GetPost(index: number) {
+    throw new Error('Method not implemented.');
+  }
   constructor(@InjectModel(Paper) private readonly modelPaper: typeof Paper) {}
 
   async addPost({ data }: { data: AddPostInput }) {
@@ -27,6 +30,15 @@ export class PostService {
       return Post.destroy();
     } else {
       throw new NotFoundException('Пост не существует. Удалять нечего');
+    }
+  }
+  async getPost(id: number) {
+    const user = await this.modelPaper.findByPk(id);
+    if (user) {
+      console.log('Пост найден');
+      return user;
+    } else {
+      throw new NotFoundException('Пост не найден🙃');
     }
   }
 }
