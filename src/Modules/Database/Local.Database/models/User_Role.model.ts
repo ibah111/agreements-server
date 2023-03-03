@@ -1,4 +1,8 @@
 import {
+  BelongsToAttribute,
+  CreateLiteralAssociation,
+} from '@sql-tools/association-literal';
+import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
@@ -21,7 +25,8 @@ import { User } from './User.model';
 @Table({ tableName: 'Users_Roles' })
 export class User_Role extends Model<
   InferAttributes<User_Role>,
-  InferCreationAttributes<User_Role>
+  InferCreationAttributes<User_Role>,
+  CreateLiteralAssociation<User_Role>
 > {
   @AutoIncrement
   @PrimaryKey
@@ -32,11 +37,11 @@ export class User_Role extends Model<
   @Column(DataType.INTEGER)
   user_id: FK<number>;
   @BelongsTo(() => User)
-  User?: NonAttribute<User>;
+  User?: BelongsToAttribute<NonAttribute<User>>;
   @ForeignKey(() => Role)
   @AllowNull(false)
   @Column(DataType.INTEGER)
   role_id: FK<number>;
   @BelongsTo(() => Role)
-  Role?: NonAttribute<Role>;
+  Role?: BelongsToAttribute<NonAttribute<Role>>;
 }

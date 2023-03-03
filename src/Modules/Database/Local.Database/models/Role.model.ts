@@ -1,3 +1,4 @@
+import { BelongsToManyAttribute } from '@sql-tools/association-literal';
 import {
   CreationOptional,
   InferAttributes,
@@ -34,5 +35,7 @@ export class Role extends Model<
   @Column(DataType.STRING)
   title: string;
   @BelongsToMany(() => User, () => User_Role)
-  Users: NonAttribute<Array<User & { User_Role: User_Role }>>;
+  Users?: BelongsToManyAttribute<
+    NonAttribute<Array<User & { User_Role: User_Role }>>
+  >;
 }

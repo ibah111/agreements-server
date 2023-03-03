@@ -13,7 +13,7 @@ export const up: MigrationFn<QueryInterface> = ({ context }) =>
             primaryKey: true,
             autoIncrement: true,
           },
-          login: { type: DataTypes.STRING, unique: true, allowNull: true },
+          login: { type: DataTypes.STRING, unique: true, allowNull: false },
           createdAt: { type: DataTypes.DATE, allowNull: false },
           updatedAt: { type: DataTypes.DATE, allowNull: false },
         },
