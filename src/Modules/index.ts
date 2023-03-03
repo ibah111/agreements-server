@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common/decorators';
-import { LocalDatabaseModule } from './LocalDatabase/LocalDatabase.module';
+import { Module } from '@nestjs/common';
+import DatabaseModule from './Database/Database.module';
 
-@Module({ imports: [LocalDatabaseModule] })
+@Module({ imports: [DatabaseModule] })
 export class ModuleOfModules {}
