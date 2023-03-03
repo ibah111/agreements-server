@@ -16,11 +16,7 @@ export class IsNumberOrStringClass implements ValidatorConstraintInterface {
     return '($value) must be number or string';
   }
 }
-/**
- *
- * @param validationOptions
- * @returns
- */
+
 export function IsNumberOrString(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
     registerDecorator({

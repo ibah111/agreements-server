@@ -1,7 +1,7 @@
 import Models from '@contact/models';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
-
+/**модели берутеся из контакта */
 @Module({
   imports: [
     SequelizeModule.forRoot({
@@ -12,7 +12,7 @@ import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
       database: 'i_collect3',
       name: 'contact',
       logging: console.log,
-      models: Models, // все модели уже прописаны в пакете
+      models: Models,
     }),
   ],
 })
