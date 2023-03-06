@@ -20,7 +20,5 @@ export class LocalDatabaseSeed {
       throw e;
     }
   }
-  async seed() {
-    console.log(await this.modelUser.findAll());
-  }
+  async seed() {}
 }

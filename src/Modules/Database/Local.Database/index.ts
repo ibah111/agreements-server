@@ -10,6 +10,7 @@ import { LocalDatabaseSeed } from './seed';
       name: 'local',
       dialect: 'sqlite',
       storage: 'database.sqlite',
+      logging: false,
       models,
     }),
     SequelizeModule.forFeature([User], 'local'),
