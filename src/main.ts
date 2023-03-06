@@ -2,24 +2,27 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { LocalDatabaseSeed } from './Modules/Database/Local.Database/seed';
+import client from './utils/client';
+import { getSwaggerOptions, getSwaggerOptionsCustom } from './utils/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { snapshot: true });
 
   const config = new DocumentBuilder()
-    .setTitle('Agrements')
+    .setTitle('Agreements')
     .setDescription('AgrementsApp NBK')
-    .setVersion('1.3.3.7')
+    .setVersion('1.0')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
   await app.get(LocalDatabaseSeed).sync();
-  const webDoc = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, webDoc);
-
+  const document = SwaggerModule.createDocument(
+    app,
+    config,
+    getSwaggerOptions(),
+  );
+  SwaggerModule.setup('docs', app, document, getSwaggerOptionsCustom());
   await app.get(LocalDatabaseSeed).sync();
-  await app.listen(3000, '0.0.0.0');
+  await app.listen(client('port'), '0.0.0.0');
   console.log(`Server is running on ${await app.getUrl()}/docs`);
 }
 bootstrap();
