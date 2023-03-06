@@ -1,23 +1,53 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { EditUser, UserAdd } from './User.input';
+import { InjectModel } from '@sql-tools/nestjs-sequelize';
+import { CheckCan } from 'src/Modules/Casl/Can.decorators';
+import { CanGuard } from 'src/Modules/Casl/Can.guard';
+import {
+  Action,
+  CaslAbilityFactory,
+} from 'src/Modules/Casl/casl-ability.factory';
+import { User } from 'src/Modules/Database/local.database/models/User.model';
+import { Auth, AuthGuard, AuthResult } from 'src/Modules/Guards/auth.guard';
+import { RoleInput, AddUserInput, RemoveUserInput } from './User.input';
 import { UserService } from './User.service';
 
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
 @ApiTags('User')
 @Controller('User')
-export class DebtController {
+export class UserController {
   constructor(private readonly service: UserService) {}
 
-  @Post('AddUser')
-  async addUser(@Body() body: UserAdd) {
-    return await this.service.addUser(body);
+  @CheckCan((ability) => ability.can(Action.Create, User))
+  @Post()
+  createUser(@Body() body: AddUserInput) {
+    return this.service.createUser(body);
   }
-  @Delete('DELETE/:id')
-  async deleteUser(@Param('id') id: number) {
-    return this.service.deleteUser(id);
+
+  @CheckCan((ability) => ability.can(Action.Delete, User))
+  @Delete()
+  destroyUser(@Body() body: RemoveUserInput) {
+    return this.service.destroyUser(body);
   }
-  @Post('EditUser')
-  editUser(@Body() index: EditUser) {
-    return this.service.editUser(index);
+  @CheckCan((ability) => ability.can(Action.Permit, User))
+  @Post('role')
+  addRole(@Body() body: RoleInput) {
+    return this.service.addRole(body);
+  }
+  @CheckCan((ability) => ability.can(Action.Permit, User))
+  @Delete('role')
+  removeRole(@Body() body: RoleInput) {
+    return this.service.removeRole(body);
   }
 }

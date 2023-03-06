@@ -1,27 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { IsNumberOrString } from 'src/Modules/Validator/IsNumberOrString.validator';
 
-export class UserAdd {
+export class AddUserInput {
   @ApiProperty()
+  @IsEmail()
   login: string;
 }
-export class DeleteUser {
-  @ApiProperty()
-  @IsNumber()
-  index: number;
-}
-export class EditUser {
-  @IsNotEmpty()
+export class RemoveUserInput {
   @ApiProperty()
   @IsNumber()
   id: number;
-
-  @IsNotEmpty()
+}
+export class RoleInput {
   @ApiProperty()
-  @IsString()
-  field: string;
-
-  @IsNumberOrString()
-  value: string | number;
+  @IsNumber()
+  user_id: number;
+  @ApiProperty()
+  @IsNumber()
+  role_id: number;
 }
