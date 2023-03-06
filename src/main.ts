@@ -6,7 +6,7 @@ import client from './utils/client';
 import { getSwaggerOptions, getSwaggerOptionsCustom } from './utils/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { snapshot: true });
+  const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
     .setTitle('Agreements')
