@@ -36,7 +36,6 @@ lerna-debug.log*
 
 # New ignre
 
-yarn.lock
 .yarnrc.yml
 .yarn
 database.sqlite
