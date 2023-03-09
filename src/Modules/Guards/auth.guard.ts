@@ -62,10 +62,13 @@ export class AuthGuard implements CanActivate {
         if (result?.login_result) {
           const user: AuthResult = {
             user: result,
-            userLocal: (await this.modelUser.findOne({
+            userLocal: await this.modelUser.findOne({
               where: { login: result.login },
+              rejectOnEmpty: new UnauthorizedException(
+                'Пользователь не найден',
+              ),
               include: ['Roles'],
-            }))!,
+            }),
           };
           data.user = user;
           return true;
