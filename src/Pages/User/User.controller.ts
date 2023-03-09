@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
@@ -26,6 +26,7 @@ import { UserService } from './User.service';
 @UseGuards(AuthGuard)
 @ApiTags('User')
 @Controller('User')
+@ApiBasicAuth()
 export class UserController {
   constructor(private readonly service: UserService) {}
 
