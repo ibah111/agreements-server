@@ -18,6 +18,7 @@ export class UserService {
   }
   async destroyUser(body: RemoveUserInput) {
     await this.modelUser.destroy({ where: { id: body.id } });
+    return { result: 'success' };
   }
   async addRole(body: RoleInput) {
     const user = await this.modelUser.findOne({
@@ -25,6 +26,7 @@ export class UserService {
       rejectOnEmpty: new NotFoundException('Пользователь не найден'),
     });
     await user.addRole(body.role_id);
+    return { result: 'success' };
   }
   async removeRole(body: RoleInput) {
     const user = await this.modelUser.findOne({
@@ -32,5 +34,6 @@ export class UserService {
       rejectOnEmpty: new NotFoundException('Пользователь не найден'),
     });
     await user.removeRole(body.role_id);
+    return { result: 'success' };
   }
 }

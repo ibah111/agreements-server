@@ -17,7 +17,11 @@ export class LocalDatabaseSeed {
   async sync() {
     this.modelLawAct.hasMany(Agreement, { foreignKey: 'r_law_act_id' });
     this.modelAgreement.belongsTo(Agreement, { foreignKey: 'r_law_act_id' });
-    const umzug = createUmzug(this.sequelize, join(__dirname, 'migrations'));
+    const umzug = createUmzug(
+      this.sequelize,
+      join(__dirname, 'migrations'),
+      'MigrationMeta',
+    );
     try {
       await umzug.up();
       await this.seed();
@@ -26,5 +30,12 @@ export class LocalDatabaseSeed {
       throw e;
     }
   }
-  async seed() {}
+  async seed() {
+    const umzug = createUmzug(
+      this.sequelize,
+      join(__dirname, 'seeds'),
+      'SeedMeta',
+    );
+    await umzug.up();
+  }
 }

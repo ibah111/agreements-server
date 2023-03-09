@@ -10,15 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
-import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
-import {
-  Action,
-  CaslAbilityFactory,
-} from 'src/Modules/Casl/casl-ability.factory';
+import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { User } from 'src/Modules/Database/local.database/models/User.model';
-import { Auth, AuthGuard, AuthResult } from 'src/Modules/Guards/auth.guard';
+import { AuthGuard } from 'src/Modules/Guards/auth.guard';
 import { RoleInput, AddUserInput, RemoveUserInput } from './User.input';
 import { UserService } from './User.service';
 

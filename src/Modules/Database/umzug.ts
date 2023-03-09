@@ -1,15 +1,35 @@
+import { DataTypes } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
 import glob from 'glob';
 import path from 'path';
 import { SequelizeStorage, Umzug } from 'umzug';
-export default function createUmzug(seq: Sequelize, mig: string) {
+export default function createUmzug(
+  seq: Sequelize,
+  mig: string,
+  name?: string,
+) {
   const dir = path.relative('', mig).replaceAll('\\', '/') + '/*.js';
   return new Umzug({
     context: seq.getQueryInterface(),
     migrations: {
       glob: dir,
     },
-    storage: new SequelizeStorage({ sequelize: seq }),
+    storage: new SequelizeStorage({
+      sequelize: seq,
+      tableName: name,
+      model: seq.define(
+        name || 'SeqelizeMeta',
+        {
+          name: {
+            type: DataTypes.STRING,
+            unique: true,
+            primaryKey: true,
+            allowNull: false,
+          },
+        },
+        { timestamps: false },
+      ),
+    }),
     logger: console,
   });
 }
