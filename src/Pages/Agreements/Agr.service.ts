@@ -16,22 +16,20 @@ export class AgreementsService {
     return Agreement;
   }
   async getAgreement(index: number) {
-    const Agreement = await this.modelAgreement.findByPk(index);
-    if (Agreement) {
-      return Agreement;
-    } else {
-      throw new NotFoundException(
+    const Agreement = await this.modelAgreement.findByPk(index, {
+      rejectOnEmpty: new NotFoundException(
         'Соглашения не найдено. Возможно оно не существует',
-      );
-    }
+      ),
+    });
+    return Agreement;
   }
   async deleteAgreement(index: number) {
-    const Agreement = await this.modelAgreement.findByPk(index);
-    if (Agreement) {
-      console.log('Соглашение было удалено');
-      return Agreement.destroy();
-    } else {
-      throw new NotFoundException('Соглашение не найдено и не удалено');
-    }
+    const Agreement = await this.modelAgreement.findByPk(index, {
+      rejectOnEmpty: new NotFoundException(
+        'Соглашение не найдено и не удалено',
+      ),
+    });
+    await Agreement.destroy();
+    return { result: 'success' };
   }
 }

@@ -97,7 +97,7 @@ export class Agreement extends Model<
    */
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  month_pay: number;
+  month_pay_day: number;
   /**
    * Наличие ИД в регистраторе
    */

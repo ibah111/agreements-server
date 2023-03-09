@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -20,12 +21,14 @@ export class CreateAgreementInput {
   @IsDate()
   @IsNotEmpty()
   @ApiProperty()
+  @Type(() => Date)
   last_check_date: Date;
 
   @Expose()
   @IsDate()
   @IsNotEmpty()
   @ApiProperty()
+  @Type(() => Date)
   conclusion_date: Date;
 
   @Expose()
@@ -62,7 +65,7 @@ export class CreateAgreementInput {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  month_pay: number;
+  month_pay_day: number;
 
   @Expose()
   @IsBoolean()
@@ -85,7 +88,7 @@ export class CreateAgreementInput {
   @Expose()
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   comment?: string | null;
 
   @Expose()
