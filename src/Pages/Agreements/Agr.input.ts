@@ -119,10 +119,7 @@ export class EditAgreementInput {
   @ApiPropertyOptional()
   id: number;
 }
-export class GetAllAgremeents {
-  @Expose()
-  @IsNumber()
-  id: number;
+export class GetAgreementWith {
   @Expose()
   @IsNotEmpty()
   @IsNumber()

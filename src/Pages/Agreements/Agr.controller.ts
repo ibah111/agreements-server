@@ -3,7 +3,7 @@ import { Body, Delete, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
-import { CreateAgreementInput } from './Agr.input';
+import { CreateAgreementInput, GetAgreementWith } from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { User } from 'src/Modules/Database/local.database/models/User.model';
 @ApiTags('Agreements')
@@ -16,10 +16,6 @@ export class AgreementsController {
   createAgreement(@Body() body: CreateAgreementInput) {
     return this.service.CreateAgreement(body);
   }
-  @Get()
-  getUsers() {
-    return this.service.getUsers();
-  }
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Get(':id')
@@ -31,5 +27,10 @@ export class AgreementsController {
   @Delete(':id')
   deleteAgreement(@Param('id') index: number) {
     return this.service.deleteAgreement(index);
+  }
+
+  @Get()
+  GetAgreementWith() {
+    return this.service.getAgreementWith();
   }
 }
