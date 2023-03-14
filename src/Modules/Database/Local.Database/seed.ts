@@ -10,6 +10,7 @@ import { User } from './models/User.model';
 export class LocalDatabaseSeed {
   constructor(
     @InjectConnection('local') private readonly sequelize: Sequelize,
+    @InjectConnection('contact') private readonly sequelizeContact: Sequelize,
     @InjectModel(LawAct, 'contact') private readonly modelLawAct: typeof LawAct,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
@@ -23,6 +24,7 @@ export class LocalDatabaseSeed {
       'MigrationMeta',
     );
     try {
+      await this.sequelizeContact.authenticate();
       await umzug.up();
       await this.seed();
     } catch (e) {
