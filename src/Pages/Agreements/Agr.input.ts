@@ -3,13 +3,11 @@ import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
-  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
-
 export class CreateAgreementInput {
   @Expose()
   @IsNotEmpty()
@@ -120,4 +118,14 @@ export class EditAgreementInput {
   @IsNumber()
   @ApiPropertyOptional()
   id: number;
+}
+export class GetAllAgremeents {
+  @Expose()
+  @IsNumber()
+  id: number;
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  r_law_act_id: number;
 }

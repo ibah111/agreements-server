@@ -16,6 +16,10 @@ export class AgreementsController {
   createAgreement(@Body() body: CreateAgreementInput) {
     return this.service.CreateAgreement(body);
   }
+  @Get()
+  getUsers() {
+    return this.service.getUsers();
+  }
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Get(':id')

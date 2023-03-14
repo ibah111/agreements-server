@@ -47,6 +47,7 @@ export class Agreement extends Model<
   @Column(DataType.INTEGER)
   r_law_act_id: FK<number>;
   LawAct?: BelongsToAttribute<NonAttribute<LawAct>>;
+
   /**
    * Дата последней проверки
    */

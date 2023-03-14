@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
-    "@contact/models": "^0.3.35",
+    "@contact/models": "^0.3.36",
     "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.3.9",
     "@nestjs/core": "^9.3.9",
