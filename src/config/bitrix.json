@@ -1,4 +1,6 @@
 {
   "server": "https://chat.nbkfinance.ru",
-  "oauth": "https://apps.usb.ru:3008"
+  "oauth": "https://apps.usb.ru:3008",
+  "demo": true,
+  "port": 3001
 }
