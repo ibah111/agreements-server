@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { IsNumberOrString } from 'src/Modules/Validator/IsNumberOrString.validator';
-
+import { IsEmail, IsNumber } from 'class-validator';
 export class AddUserInput {
   @Expose()
   @ApiProperty()

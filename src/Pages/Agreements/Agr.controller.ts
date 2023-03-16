@@ -3,7 +3,7 @@ import { Body, Delete, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
-import { CreateAgreementInput, GetAgreementWith } from './Agr.input';
+import { CreateAgreementInput } from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { User } from 'src/Modules/Database/local.database/models/User.model';
 @ApiTags('Agreements')
@@ -30,7 +30,7 @@ export class AgreementsController {
   }
 
   @Get()
-  GetAgreementWith() {
-    return this.service.getAgreementWith();
+  getAll() {
+    return this.service.getAll();
   }
 }

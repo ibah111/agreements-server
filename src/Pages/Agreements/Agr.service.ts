@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { LawAct, Person } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
@@ -17,7 +17,7 @@ export class AgreementsService {
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
   ) {}
-  async getAgreementWith() {
+  async getAll() {
     const Agreements = await this.modelAgreement.findAll({
       limit: 25,
     });

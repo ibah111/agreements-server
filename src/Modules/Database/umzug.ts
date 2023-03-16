@@ -1,6 +1,5 @@
 import { DataTypes } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
-import glob from 'glob';
 import path from 'path';
 import { SequelizeStorage, Umzug } from 'umzug';
 export default function createUmzug(

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AgreementsModule } from './Agreements/Agr.module';
+import PurposePage from './Purpose/Purpose.page';
 import { UserModule } from './User/User.module';
 
-@Module({ imports: [UserModule, AgreementsModule] })
+@Module({ imports: [UserModule, AgreementsModule, PurposePage] })
 export class PagesModule {}
