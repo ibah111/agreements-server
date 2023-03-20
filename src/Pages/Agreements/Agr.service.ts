@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { LawAct, Person } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
-import { CreateAgreementInput } from './Agr.input';
+import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 
 export class AgreementsService {
   /**
@@ -59,5 +59,15 @@ export class AgreementsService {
     });
     await Agreement.destroy();
     return { result: 'success' };
+  }
+  async editAgreement(data: EditAgreementInput) {
+    const name = await this.modelAgreement.update(
+      {
+        [data.field]: data.value,
+      },
+      { where: { id: data.id } },
+    );
+    console.log('отредактировано');
+    return true;
   }
 }
