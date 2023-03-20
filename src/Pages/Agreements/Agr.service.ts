@@ -27,7 +27,9 @@ export class AgreementsService {
         rejectOnEmpty: true,
         include: [
           'Debt',
-          { model: this.modelPerson, attributes: ['f', 'i', 'o'] },
+          {
+            model: this.modelPerson,
+          },
         ],
       });
     }
