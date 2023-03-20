@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import PurposeService from './purpose.service';
 
@@ -6,7 +6,7 @@ import PurposeService from './purpose.service';
 @Controller('Purpose')
 export default class PurposeController {
   constructor(private readonly service: PurposeService) {}
-  @Post('GetAll')
+  @Get()
   async getAll() {
     return await this.service.getAll();
   }
