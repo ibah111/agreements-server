@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { LawAct, Person } from '@contact/models';
+import { Debt, LawAct, Person, PersonProperty } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 
@@ -14,6 +14,10 @@ export class AgreementsService {
     private readonly modelLawAct: typeof LawAct,
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
+    @InjectModel(Debt, 'contact')
+    private readonly modelDebt: typeof Debt,
+    @InjectModel(PersonProperty, 'contact')
+    private readonly modelPersonProperty: typeof PersonProperty,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
   ) {}
@@ -26,9 +30,18 @@ export class AgreementsService {
       data.LawAct = <LawAct>await this.modelLawAct.findByPk(data.r_law_act_id, {
         rejectOnEmpty: true,
         include: [
-          'Debt',
+          {
+            model: this.modelDebt,
+            include: [
+              {
+                model: this.modelPersonProperty,
+                include: ['PersonPropertyParams'],
+              },
+            ],
+          },
           {
             model: this.modelPerson,
+            include: ['Debts'],
           },
         ],
       });
@@ -43,16 +56,16 @@ export class AgreementsService {
     const Agreement = await this.modelAgreement.create(data);
     return Agreement;
   }
-  async getAgreement(index: number) {
-    const Agreement = await this.modelAgreement.findByPk(index, {
+  async getAgreement(id: number) {
+    const Agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException(
         'Соглашения не найдено. Возможно оно не существует',
       ),
     });
     return Agreement;
   }
-  async deleteAgreement(index: number) {
-    const Agreement = await this.modelAgreement.findByPk(index, {
+  async deleteAgreement(id: number) {
+    const Agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException(
         'Соглашение не найдено и не удалено',
       ),
@@ -60,14 +73,13 @@ export class AgreementsService {
     await Agreement.destroy();
     return { result: 'success' };
   }
-  async editAgreement(data: EditAgreementInput) {
+  async editAgreement(id: number, data: EditAgreementInput) {
     const name = await this.modelAgreement.update(
       {
         [data.field]: data.value,
       },
-      { where: { id: data.id } },
+      { where: { id } },
     );
-    console.log('отредактировано');
     return true;
   }
 }
