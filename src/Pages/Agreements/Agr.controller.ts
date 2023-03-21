@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Patch } from '@nestjs/common';
 import { Body, Delete, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
@@ -19,14 +19,14 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Get(':id')
-  getAgreement(@Param('id', ParseIntPipe) index: number) {
-    return this.service.getAgreement(index);
+  getAgreement(@Param('id', ParseIntPipe) id: number) {
+    return this.service.getAgreement(id);
   }
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Delete(':id')
-  deleteAgreement(@Param('id', ParseIntPipe) index: number) {
-    return this.service.deleteAgreement(index);
+  deleteAgreement(@Param('id', ParseIntPipe) id: number) {
+    return this.service.deleteAgreement(id);
   }
 
   @Get()
@@ -35,8 +35,8 @@ export class AgreementsController {
   }
 
   @CheckCan((ability) => ability.can(Action.Create, User))
-  @Post('EDIT/:id')
-  editAgreement(@Body() index: EditAgreementInput) {
-    return this.service.editAgreement(index);
+  @Patch(':id')
+  editAgreement(@Param('id') id: number, @Body() data: EditAgreementInput) {
+    return this.service.editAgreement(id, data);
   }
 }
