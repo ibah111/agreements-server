@@ -8,21 +8,8 @@ import {
   IsOptional,
   IsString,
   Validate,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
 } from 'class-validator';
-@ValidatorConstraint({ name: 'string-or-number', async: false })
-export class IsNumberOrString implements ValidatorConstraintInterface {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  validate(text: any, args: ValidationArguments) {
-    return typeof text === 'number' || typeof text === 'string';
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  defaultMessage(args: ValidationArguments) {
-    return '($value) must be number or string or boolean';
-  }
-}
+import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
 export class CreateAgreementInput {
   @Expose()
   @IsNotEmpty()
@@ -126,19 +113,18 @@ export class GetAgreementInput {
   id: number;
 }
 /*
- * Редактирование соглашения (id, name, etc)
+ * Редактирование соглашения (field, value)
  */
 export class EditAgreementInput {
   @Expose()
-  @IsNumber()
-  @ApiPropertyOptional()
-  id: number;
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
   field: string;
-  @Validate(IsNumberOrString)
-  value: any;
+  @Expose()
+  @ApiProperty()
+  @IsNumberOrStringOrBoolean()
+  value: number | string | boolean;
 }
 export class GetAgreementWith {
   @Expose()
