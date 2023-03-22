@@ -74,8 +74,7 @@ export class AgreementsService {
     return { result: 'success' };
   }
   async editAgreement(id: number, data: EditAgreementInput) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const name = await this.modelAgreement.update(
+    await this.modelAgreement.update(
       {
         [data.field]: data.value,
       },
