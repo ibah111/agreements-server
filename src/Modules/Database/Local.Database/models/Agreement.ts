@@ -6,6 +6,7 @@ import { LawAct } from '@contact/models';
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
+  HasManyAttribute,
 } from '@sql-tools/association-literal';
 import {
   CreationOptional,
@@ -22,10 +23,12 @@ import {
   DataType,
   Default,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
 } from '@sql-tools/sequelize-typescript';
+import { ActionLog } from './ActionLog';
 import { PurposeType } from './PurposeType';
 @Table({ tableName: 'Agreements' })
 export class Agreement extends Model<
@@ -128,4 +131,6 @@ export class Agreement extends Model<
   @AllowNull(false)
   @Column(DataType.STRING)
   task_link: string;
+  @HasMany(() => ActionLog)
+  Logs?: HasManyAttribute<NonAttribute<ActionLog[]>, 'row_id'>;
 }

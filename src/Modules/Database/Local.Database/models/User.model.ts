@@ -15,11 +15,13 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   Unique,
 } from '@sql-tools/sequelize-typescript';
+import { ActionLog } from './ActionLog';
 import { Role } from './Role.model';
 import { User_Role } from './User_Role.model';
 @Table({ tableName: 'Users' })
@@ -41,4 +43,6 @@ export class User extends Model<
     NonAttribute<Array<Role & { User_Role?: User_Role }>>,
     'id'
   >;
+  @HasMany(() => ActionLog)
+  Logs?: HasManyAttribute<NonAttribute<ActionLog[]>, 'user'>;
 }
