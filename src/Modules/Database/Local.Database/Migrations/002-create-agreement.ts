@@ -89,5 +89,8 @@ export const up: MigrationFn<QueryInterface> = ({ context }) =>
   );
 export const down: MigrationFn<QueryInterface> = ({ context }) =>
   context.sequelize.transaction((t) =>
-    Promise.all([context.dropTable('Agreement', { transaction: t })]),
+    Promise.all([
+      context.dropTable('Agreements', { transaction: t }),
+      context.dropTable('purpose_types', { transaction: t }),
+    ]),
   );
