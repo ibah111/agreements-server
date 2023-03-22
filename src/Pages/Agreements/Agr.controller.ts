@@ -6,6 +6,7 @@ import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { User } from 'src/Modules/Database/local.database/models/User.model';
+import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 @ApiTags('Agreements')
 @Controller('Agreements')
 export class AgreementsController {
@@ -13,8 +14,11 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Post()
-  createAgreement(@Body() body: CreateAgreementInput) {
-    return this.service.CreateAgreement(body);
+  createAgreement(
+    @Auth() auth: AuthResult,
+    @Body() body: CreateAgreementInput,
+  ) {
+    return this.service.CreateAgreement(auth, body);
   }
 
   @CheckCan((ability) => ability.can(Action.Create, User))
@@ -25,8 +29,11 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Delete(':id')
-  deleteAgreement(@Param('id', ParseIntPipe) id: number) {
-    return this.service.deleteAgreement(id);
+  deleteAgreement(
+    @Auth() auth: AuthResult,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.service.deleteAgreement(auth, id);
   }
 
   @Get()
@@ -36,7 +43,11 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Create, User))
   @Patch(':id')
-  editAgreement(@Param('id') id: number, @Body() data: EditAgreementInput) {
-    return this.service.editAgreement(id, data);
+  editAgreement(
+    @Auth() auth: AuthResult,
+    @Param('id') id: number,
+    @Body() data: EditAgreementInput,
+  ) {
+    return this.service.editAgreement(auth, id, data);
   }
 }
