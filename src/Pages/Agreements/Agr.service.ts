@@ -1,9 +1,14 @@
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Debt, LawAct, Person, PersonProperty } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
-
+import {
+  ActionLog,
+  Actions,
+} from 'src/Modules/Database/local.database/models/ActionLog';
+import { AuthResult } from 'src/Modules/Guards/auth.guard';
+@Injectable()
 export class AgreementsService {
   /**
    * нужны ли здесь caslAbility
@@ -20,6 +25,8 @@ export class AgreementsService {
     private readonly modelPersonProperty: typeof PersonProperty,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
+    @InjectModel(ActionLog, 'local')
+    private readonly modelActionLog: typeof ActionLog,
   ) {}
   async getAll() {
     const Agreements = await this.modelAgreement.findAll({
@@ -48,12 +55,17 @@ export class AgreementsService {
     }
     return Agreements;
   }
-  async CreateAgreement(data: CreateAgreementInput) {
+  async CreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     await this.modelLawAct.findByPk(data.r_law_act_id, {
       rejectOnEmpty: new NotFoundException('Дело не найдено'),
     });
 
     const Agreement = await this.modelAgreement.create(data);
+    await this.modelActionLog.create({
+      actionType: Actions.CREATE,
+      row_id: Agreement.id,
+      user: auth.userLocal.id,
+    });
     return Agreement;
   }
   async getAgreement(id: number) {
@@ -64,22 +76,35 @@ export class AgreementsService {
     });
     return Agreement;
   }
-  async deleteAgreement(id: number) {
+  async deleteAgreement(auth: AuthResult, id: number) {
     const Agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException(
         'Соглашение не найдено и не удалено',
       ),
     });
+    await this.modelActionLog.create({
+      actionType: Actions.DELETE,
+      row_id: Agreement.id,
+      user: auth.userLocal.id,
+    });
     await Agreement.destroy();
     return { result: 'success' };
   }
-  async editAgreement(id: number, data: EditAgreementInput) {
-    await this.modelAgreement.update(
-      {
-        [data.field]: data.value,
-      },
-      { where: { id } },
-    );
+  async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
+    const Agreement = await this.modelAgreement.findByPk(id, {
+      rejectOnEmpty: new NotFoundException('Запись не найдена'),
+    });
+    const old = Agreement[data.field];
+    Agreement[data.field] = data.value;
+    await Agreement.save();
+    await this.modelActionLog.create({
+      actionType: Actions.UPDATE,
+      row_id: id,
+      field: data.field,
+      old_value: old,
+      new_value: String(data.value),
+      user: auth.userLocal.id,
+    });
     return true;
   }
 }

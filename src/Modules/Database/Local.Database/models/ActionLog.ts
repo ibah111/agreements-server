@@ -57,9 +57,8 @@ export class ActionLog extends Model<
   /**
    * Поле которое изменили
    */
-  @AllowNull(false)
   @Column(DataType.STRING)
-  field: string;
+  field: string | null;
   /**
    * Старое значение
    */
