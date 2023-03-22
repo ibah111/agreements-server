@@ -30,7 +30,7 @@ import {
 } from '@sql-tools/sequelize-typescript';
 import { ActionLog } from './ActionLog';
 import { PurposeType } from './PurposeType';
-@Table({ tableName: 'Agreements' })
+@Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
   InferCreationAttributes<Agreement>,
