@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ClassConstructor } from 'class-transformer';
-import { User } from '../Database/local.database/models/User.model';
+import { User } from '../Database/Local.Database/models/User.model';
 import { checkLogin } from './check_login';
 export class AuthUser<T extends boolean> {
   output: T extends true ? 'Вы вошли' : 'Вы не вошли';

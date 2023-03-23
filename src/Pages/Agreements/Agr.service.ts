@@ -6,7 +6,7 @@ import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import {
   ActionLog,
   Actions,
-} from 'src/Modules/Database/local.database/models/ActionLog';
+} from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
 @Injectable()
 export class AgreementsService {

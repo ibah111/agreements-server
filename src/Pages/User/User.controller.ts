@@ -3,7 +3,7 @@ import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
-import { User } from 'src/Modules/Database/local.database/models/User.model';
+import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { AuthGuard } from 'src/Modules/Guards/auth.guard';
 import { RoleInput, AddUserInput, RemoveUserInput } from './User.input';
 import { UserService } from './User.service';

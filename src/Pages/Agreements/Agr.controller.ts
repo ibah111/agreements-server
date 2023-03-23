@@ -5,7 +5,7 @@ import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import { AgreementsService } from './Agr.service';
-import { User } from 'src/Modules/Database/local.database/models/User.model';
+import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 @ApiTags('Agreements')
 @Controller('Agreements')

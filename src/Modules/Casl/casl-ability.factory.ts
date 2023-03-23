@@ -6,7 +6,7 @@ import {
   ExtractSubjectType,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
-import { User } from '../Database/local.database/models/User.model';
+import { User } from '../Database/Local.Database/models/User.model';
 export enum Action {
   Manage = 'manage',
   Create = 'create',
