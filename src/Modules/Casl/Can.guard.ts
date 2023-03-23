@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
 import { AuthResult } from '../Guards/auth.guard';
 import { CHECK_POLICIES_KEY } from './Can.decorators';
 import { AppAbility, CaslAbilityFactory } from './casl-ability.factory';

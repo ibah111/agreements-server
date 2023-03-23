@@ -15,9 +15,7 @@ import { AgreementsService } from './Agr.service';
 import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
-import { CanGuard } from 'src/Modules/Casl/Can.guard';
 @ApiTags('Agreements')
-@UseGuards(CanGuard)
 @UseGuards(AuthGuard)
 @Controller('Agreements')
 export class AgreementsController {
