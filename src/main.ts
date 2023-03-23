@@ -6,6 +6,8 @@ import { LocalDatabaseSeed } from './Modules/Database/Local.Database/seed';
 import client from './utils/client';
 import { getSwaggerOptions, getSwaggerOptionsCustom } from './utils/swagger';
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
