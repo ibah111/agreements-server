@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseIntPipe, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { Body, Delete, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
@@ -7,7 +14,11 @@ import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
+import { AuthGuard } from '../../Modules/Guards/auth.guard';
+import { CanGuard } from 'src/Modules/Casl/Can.guard';
 @ApiTags('Agreements')
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
 @Controller('Agreements')
 export class AgreementsController {
   constructor(private readonly service: AgreementsService) {}
