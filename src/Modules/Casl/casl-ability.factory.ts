@@ -20,9 +20,7 @@ export type AppAbility = PureAbility<[Action, Subjects]>;
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createMongoAbility,
-    );
+    const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
     const roles = user.Roles?.map((item) => item.name) || [];
     if (roles.includes('admin')) {
       can(Action.Manage, 'all');
