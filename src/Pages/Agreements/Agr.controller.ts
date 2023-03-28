@@ -12,16 +12,18 @@ import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import { AgreementsService } from './Agr.service';
-import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
+import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
+import { CanGuard } from 'src/Modules/Casl/Can.guard';
 @ApiTags('Agreements')
+@UseGuards(CanGuard)
 @UseGuards(AuthGuard)
 @Controller('Agreements')
 export class AgreementsController {
   constructor(private readonly service: AgreementsService) {}
 
-  @CheckCan((ability) => ability.can(Action.Create, User))
+  @CheckCan((ability) => ability.can(Action.Create, Agreement))
   @Post()
   createAgreement(
     @Auth() auth: AuthResult,
@@ -30,13 +32,13 @@ export class AgreementsController {
     return this.service.CreateAgreement(auth, body);
   }
 
-  @CheckCan((ability) => ability.can(Action.Create, User))
+  @CheckCan((ability) => ability.can(Action.Read, Agreement))
   @Get(':id')
   getAgreement(@Param('id', ParseIntPipe) id: number) {
     return this.service.getAgreement(id);
   }
 
-  @CheckCan((ability) => ability.can(Action.Create, User))
+  @CheckCan((ability) => ability.can(Action.Delete, Agreement))
   @Delete(':id')
   deleteAgreement(
     @Auth() auth: AuthResult,
@@ -45,12 +47,13 @@ export class AgreementsController {
     return this.service.deleteAgreement(auth, id);
   }
 
+  @CheckCan((ability) => ability.can(Action.Read, Agreement))
   @Get()
   getAll() {
     return this.service.getAll();
   }
 
-  @CheckCan((ability) => ability.can(Action.Create, User))
+  @CheckCan((ability) => ability.can(Action.Update, Agreement))
   @Patch(':id')
   editAgreement(
     @Auth() auth: AuthResult,

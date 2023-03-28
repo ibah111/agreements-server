@@ -22,6 +22,7 @@ export class LocalDatabaseSeed {
       join(__dirname, 'migrations'),
       'MigrationMeta',
     );
+
     try {
       await this.sequelizeContact.authenticate();
       await umzug.up();

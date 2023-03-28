@@ -6,6 +6,7 @@ import {
   ExtractSubjectType,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
+import { Agreement } from '../Database/Local.Database/models/Agreement';
 import { User } from '../Database/Local.Database/models/User.model';
 export enum Action {
   Manage = 'manage',
@@ -15,7 +16,7 @@ export enum Action {
   Permit = 'permit',
   Delete = 'delete',
 }
-type Subjects = InferSubjects<typeof User> | 'all';
+type Subjects = InferSubjects<typeof User | typeof Agreement> | 'all';
 export type AppAbility = PureAbility<[Action, Subjects]>;
 @Injectable()
 export class CaslAbilityFactory {
