@@ -44,6 +44,7 @@ export class AgreementsService {
                 model: this.modelPersonProperty,
                 include: ['PersonPropertyParams'],
               },
+              'DebtCalcs',
             ],
           },
           {
@@ -55,7 +56,7 @@ export class AgreementsService {
     }
     return Agreements;
   }
-  async CreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
+  async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     await this.modelLawAct.findByPk(data.r_law_act_id, {
       rejectOnEmpty: new NotFoundException('Дело не найдено'),
     });
