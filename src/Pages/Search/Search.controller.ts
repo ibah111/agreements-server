@@ -10,6 +10,6 @@ export class SearchController {
   @Post()
   @HttpCode(200)
   async search(@Body() body: SearchInput) {
-    return await this.searchService.search(body);
+    return await this.searchService.search(body.fio, body.contract);
   }
 }
