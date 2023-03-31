@@ -29,7 +29,7 @@ export class AgreementsController {
     @Auth() auth: AuthResult,
     @Body() body: CreateAgreementInput,
   ) {
-    return this.service.CreateAgreement(auth, body);
+    return this.service.сreateAgreement(auth, body);
   }
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))

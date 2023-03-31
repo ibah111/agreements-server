@@ -19,7 +19,7 @@ import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
         },
       },
       name: 'contact',
-      logging: false,
+      logging: console.log,
       models: Models,
     }),
   ],
