@@ -1,14 +1,7 @@
 import { Debt, Person } from '@contact/models';
 import { Injectable } from '@nestjs/common/decorators';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import {
-  Attributes,
-  FindOptions,
-  InferAttributes,
-  Op,
-  Sequelize,
-  WhereOptions,
-} from '@sql-tools/sequelize';
+import { Attributes, FindOptions, Op, Sequelize } from '@sql-tools/sequelize';
 @Injectable()
 export class SearchService {
   constructor(
@@ -44,25 +37,6 @@ export class SearchService {
       },
     ];
     optionsDebt.limit = 25;
-
-    // if (name) {
-    //   requestInput.name = Sequelize.where(
-    //     Sequelize.fn(
-    //       'concat',
-    //       Sequelize.col('f'),
-    //       ' ',
-    //       Sequelize.col('i'),
-    //       ' ',
-    //       Sequelize.col('o'),
-    //     ),
-    //     { [Op.like]: `%${name}%` },
-    //   );
-    // }
-    // if (contract) {
-    //   requestInput.contract = Sequelize.where(Sequelize.col('contract'), {
-    //     [Op.like]: `${contract}%`,
-    //   });
-    // }
     const debt = await this.modelDebt.findAll(optionsDebt);
     return debt;
   }
