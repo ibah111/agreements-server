@@ -2,7 +2,7 @@
  * Contact exception data
  * Таблица Данных не подцепляемых из контакта
  */
-import { LawAct } from '@contact/models';
+import { Debt, LawAct } from '@contact/models';
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
@@ -49,14 +49,14 @@ export class Agreement extends Model<
   @AllowNull(false)
   @Column(DataType.INTEGER)
   r_law_act_id: FK<number>;
-  LawAct?: BelongsToAttribute<NonAttribute<LawAct>>;
+  LawAct?: BelongsToAttribute<NonAttribute<Debt>>;
   /**
    * Дата последней проверки
    */
-  @AllowNull(false)
-  @Default(DataType.NOW)
-  @Column(DataType.DATE)
-  last_check_date: Date;
+  // @AllowNull(false)
+  // @Default(DataType.NOW)
+  // @Column(DataType.DATE)
+  // last_check_date: Date;
   /**
    *
    * Дата заключения

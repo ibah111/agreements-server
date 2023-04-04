@@ -34,7 +34,7 @@ export class AgreementsService {
     });
     for (const item of Agreements) {
       const data = <Agreement>item.dataValues;
-      data.LawAct = <LawAct>await this.modelLawAct.findByPk(data.r_law_act_id, {
+      data.LawAct = <Debt>await this.modelDebt.findByPk(data.r_law_act_id, {
         rejectOnEmpty: true,
         include: [
           {

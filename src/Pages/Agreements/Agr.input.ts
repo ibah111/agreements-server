@@ -16,12 +16,12 @@ export class CreateAgreementInput {
   @ApiProperty()
   r_law_act_id: number;
 
-  @Expose()
-  @IsDate()
-  @IsNotEmpty()
-  @ApiProperty()
-  @Type(() => Date)
-  last_check_date: Date;
+  // @Expose()
+  // @IsDate()
+  // @IsNotEmpty()
+  // @ApiProperty()
+  // @Type(() => Date)
+  // last_check_date: Date;
 
   @Expose()
   @IsDate()
@@ -73,18 +73,6 @@ export class CreateAgreementInput {
   reg_doc?: boolean;
 
   @Expose()
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty()
-  finish_doc?: boolean;
-
-  @Expose()
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({ type: String })
-  actions_for_get?: string | null;
-
-  @Expose()
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({ type: String })
@@ -92,7 +80,6 @@ export class CreateAgreementInput {
 
   @Expose()
   @IsString()
-  @IsNotEmpty()
   @ApiProperty()
   task_link: string;
 }

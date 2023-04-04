@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Body, Delete, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
@@ -20,6 +20,7 @@ import { CanGuard } from 'src/Modules/Casl/Can.guard';
 @UseGuards(CanGuard)
 @UseGuards(AuthGuard)
 @Controller('Agreements')
+@ApiBasicAuth()
 export class AgreementsController {
   constructor(private readonly service: AgreementsService) {}
 
