@@ -91,18 +91,6 @@ export class Agreement extends Model<
   @Column(DataType.BOOLEAN)
   reg_doc: CreationOptional<boolean>;
   /**
-   * Наличие ИД в архиве
-   */
-  @AllowNull(false)
-  @Default(false)
-  @Column(DataType.BOOLEAN)
-  finish_doc: CreationOptional<boolean>;
-  /**
-   * Действия для получения или предъявления листа
-   */
-  @Column(DataType.STRING)
-  actions_for_get: string | null;
-  /**
    * Комментарии
    */
   @Column(DataType.STRING)
