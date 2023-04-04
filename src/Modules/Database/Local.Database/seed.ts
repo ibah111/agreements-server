@@ -15,8 +15,8 @@ export class LocalDatabaseSeed {
     private readonly modelAgreement: typeof Agreement,
   ) {}
   async sync() {
-    this.modelLawAct.hasMany(Agreement, { foreignKey: 'r_law_act_id' });
-    this.modelAgreement.belongsTo(LawAct, { foreignKey: 'r_law_act_id' });
+    this.modelLawAct.hasMany(Agreement, { foreignKey: 'r_debt_id' });
+    this.modelAgreement.belongsTo(LawAct, { foreignKey: 'r_debt_id' });
     const umzug = createUmzug(
       this.sequelize,
       join(__dirname, 'migrations'),

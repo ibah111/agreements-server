@@ -11,17 +11,9 @@ import {
 import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
 export class CreateAgreementInput {
   @Expose()
-  @IsNotEmpty()
-  @IsNumber()
   @ApiProperty()
-  r_debt_id: number;
-
-  // @Expose()
-  // @IsDate()
-  // @IsNotEmpty()
-  // @ApiProperty()
-  // @Type(() => Date)
-  // last_check_date: Date;
+  @IsString()
+  FIO: string;
 
   @Expose()
   @IsDate()

@@ -28,52 +28,12 @@ export class AgreementsService {
     @InjectModel(ActionLog, 'local')
     private readonly modelActionLog: typeof ActionLog,
   ) {}
-  async getAll() {
-    const Agreements = await this.modelAgreement.findAll({
-      limit: 25,
-    });
-    for (const item of Agreements) {
-      const data = <Agreement>item.dataValues;
-      data.Debt = <Debt>await this.modelDebt.findByPk(data.r_debt_id, {
-        rejectOnEmpty: true,
-        include: [
-          {
-            model: this.modelDebt,
-            include: [
-              {
-                model: this.modelPersonProperty,
-                include: ['PersonPropertyParams'],
-              },
-              'DebtCalcs',
-            ],
-          },
-          {
-            model: this.modelPerson,
-            include: ['Debts'],
-          },
-        ],
-      });
-    }
-    return Agreements;
-  }
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
-    await this.modelLawAct.findByPk(data.r_debt_id, {
-      rejectOnEmpty: new NotFoundException('Дело не найдено'),
-    });
-
     const Agreement = await this.modelAgreement.create(data);
     await this.modelActionLog.create({
       actionType: Actions.CREATE,
       row_id: Agreement.id,
       user: auth.userLocal.id,
-    });
-    return Agreement;
-  }
-  async getAgreement(id: number) {
-    const Agreement = await this.modelAgreement.findByPk(id, {
-      rejectOnEmpty: new NotFoundException(
-        'Соглашения не найдено. Возможно оно не существует',
-      ),
     });
     return Agreement;
   }

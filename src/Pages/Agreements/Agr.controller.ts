@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -33,12 +32,6 @@ export class AgreementsController {
     return this.service.сreateAgreement(auth, body);
   }
 
-  @CheckCan((ability) => ability.can(Action.Read, Agreement))
-  @Get(':id')
-  getAgreement(@Param('id', ParseIntPipe) id: number) {
-    return this.service.getAgreement(id);
-  }
-
   @CheckCan((ability) => ability.can(Action.Delete, Agreement))
   @Delete(':id')
   deleteAgreement(
@@ -46,12 +39,6 @@ export class AgreementsController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.service.deleteAgreement(auth, id);
-  }
-
-  @CheckCan((ability) => ability.can(Action.Read, Agreement))
-  @Get()
-  getAll() {
-    return this.service.getAll();
   }
 
   @CheckCan((ability) => ability.can(Action.Update, Agreement))

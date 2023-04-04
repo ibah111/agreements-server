@@ -2,11 +2,10 @@
  * Contact exception data
  * Таблица Данных не подцепляемых из контакта
  */
-import { Debt } from '@contact/models';
+// Это пиздец.... 🤔
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
-  HasManyAttribute,
 } from '@sql-tools/association-literal';
 import {
   CreationOptional,
@@ -23,12 +22,10 @@ import {
   DataType,
   Default,
   ForeignKey,
-  HasMany,
   Model,
   PrimaryKey,
   Table,
 } from '@sql-tools/sequelize-typescript';
-import { ActionLog } from './ActionLog';
 import { PurposeType } from './PurposeType';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
@@ -44,21 +41,6 @@ export class Agreement extends Model<
   @Column(DataType.NUMBER)
   id: CreationOptional<number>;
   /**
-   * ID записи в Контакта
-   */
-  @AllowNull(false)
-  @Column(DataType.INTEGER)
-  r_debt_id: FK<number>;
-  Debt?: BelongsToAttribute<NonAttribute<Debt>>;
-  /**
-   * Дата последней проверки
-   */
-  // @AllowNull(false)
-  // @Default(DataType.NOW)
-  // @Column(DataType.DATE)
-  // last_check_date: Date;
-  /**
-   *
    * Дата заключения
    */
   @AllowNull(false)
@@ -131,6 +113,4 @@ export class Agreement extends Model<
   @AllowNull(false)
   @Column(DataType.STRING)
   task_link: string;
-  @HasMany(() => ActionLog)
-  Logs?: HasManyAttribute<NonAttribute<ActionLog[]>, 'row_id'>;
 }
