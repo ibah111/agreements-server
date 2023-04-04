@@ -1,8 +1,8 @@
 import { DataTypes, QueryInterface } from '@sql-tools/sequelize';
 import { MigrationFn } from 'umzug';
 
-export const up: MigrationFn<QueryInterface> = ({ context }) =>
-  context.createTable('ActionLogs', {
+export const up: MigrationFn<QueryInterface> = async ({ context }) => {
+  await context.createTable('ActionLogs', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -34,5 +34,8 @@ export const up: MigrationFn<QueryInterface> = ({ context }) =>
       defaultValue: DataTypes.NOW,
     },
   });
-export const down: MigrationFn<QueryInterface> = ({ context }) =>
-  context.dropTable('ActionLogs');
+};
+
+export const down: MigrationFn<QueryInterface> = async ({ context }) => {
+  await context.dropTable('ActionLogs');
+};
