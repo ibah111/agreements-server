@@ -14,7 +14,7 @@ export class CreateAgreementInput {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  r_law_act_id: number;
+  r_debt_id: number;
 
   // @Expose()
   // @IsDate()

@@ -34,7 +34,7 @@ export class AgreementsService {
     });
     for (const item of Agreements) {
       const data = <Agreement>item.dataValues;
-      data.LawAct = <Debt>await this.modelDebt.findByPk(data.r_law_act_id, {
+      data.Debt = <Debt>await this.modelDebt.findByPk(data.r_debt_id, {
         rejectOnEmpty: true,
         include: [
           {
@@ -57,7 +57,7 @@ export class AgreementsService {
     return Agreements;
   }
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
-    await this.modelLawAct.findByPk(data.r_law_act_id, {
+    await this.modelLawAct.findByPk(data.r_debt_id, {
       rejectOnEmpty: new NotFoundException('Дело не найдено'),
     });
 
