@@ -42,12 +42,9 @@ export class ActionLog extends Model<
   /**
    * ID строки
    */
-  @ForeignKey(() => Agreement)
   @AllowNull(false)
   @Column(DataType.INTEGER)
   row_id: FK<number>;
-  @BelongsTo(() => Agreement)
-  Agreement?: BelongsToAttribute<NonAttribute<Agreement>>;
   /**
    * Тип действия
    */
