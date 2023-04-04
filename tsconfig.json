@@ -20,5 +20,6 @@
     "noFallthroughCasesInSwitch": false,
     "strict": true,
     "resolveJsonModule": true
-  }
+  },
+  "exclude": ["database.sqlite", "database.sqlite-journal"]
 }
