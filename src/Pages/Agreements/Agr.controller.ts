@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -30,6 +31,18 @@ export class AgreementsController {
     @Body() body: CreateAgreementInput,
   ) {
     return this.service.сreateAgreement(auth, body);
+  }
+
+  @CheckCan((ability) => ability.can(Action.Read, Agreement))
+  @Get(':id')
+  getAgreement(@Param('id', ParseIntPipe) id: number) {
+    return this.service.getAgreement(id);
+  }
+
+  @CheckCan((ability) => ability.can(Action.Read, Agreement))
+  @Get()
+  getAll() {
+    return this.service.getAll();
   }
 
   @CheckCan((ability) => ability.can(Action.Delete, Agreement))

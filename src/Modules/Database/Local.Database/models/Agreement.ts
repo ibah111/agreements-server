@@ -41,7 +41,11 @@ export class Agreement extends Model<
   @Column(DataType.NUMBER)
   id: CreationOptional<number>;
   /**
-   * Дата заключения
+   * Имя
+   */
+  @Column(DataType.STRING)
+  FIO: string;
+  /** Дата заключения
    */
   @AllowNull(false)
   @Column(DataType.DATE)

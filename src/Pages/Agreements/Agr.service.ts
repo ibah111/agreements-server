@@ -28,6 +28,23 @@ export class AgreementsService {
     @InjectModel(ActionLog, 'local')
     private readonly modelActionLog: typeof ActionLog,
   ) {}
+
+  async getAll() {
+    const Agreements = await this.modelAgreement.findAll({
+      limit: 25,
+    });
+    return Agreements;
+  }
+
+  async getAgreement(id: number) {
+    const Agreement = await this.modelAgreement.findByPk(id, {
+      rejectOnEmpty: new NotFoundException(
+        'Соглашения не найдено. Возможно оно не существует',
+      ),
+    });
+    return Agreement;
+  }
+
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     const Agreement = await this.modelAgreement.create(data);
     await this.modelActionLog.create({
@@ -37,6 +54,7 @@ export class AgreementsService {
     });
     return Agreement;
   }
+
   async deleteAgreement(auth: AuthResult, id: number) {
     const Agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException(
@@ -51,6 +69,7 @@ export class AgreementsService {
     await Agreement.destroy();
     return { result: 'success' };
   }
+
   async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
     const Agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException('Запись не найдена'),

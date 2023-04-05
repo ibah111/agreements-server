@@ -75,6 +75,7 @@ export class CreateAgreementInput {
   @ApiProperty()
   task_link: string;
 }
+
 export class DeleteAgreementInput {
   @Expose()
   @IsNumber()
