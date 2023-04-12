@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { CreationAttributes } from '@sql-tools/sequelize';
 import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -8,12 +9,13 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
-export class CreateAgreementInput {
-  @Expose()
+export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
-  @IsString()
-  FIO: string;
+  @Expose()
+  @IsNumber()
+  personId: number;
 
   @Expose()
   @IsDate()

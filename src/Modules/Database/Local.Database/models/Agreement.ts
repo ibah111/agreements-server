@@ -40,16 +40,14 @@ export class Agreement extends Model<
   @PrimaryKey
   @Column(DataType.NUMBER)
   id: CreationOptional<number>;
+
   /**
-   * Имя
-   */
-  @Column(DataType.STRING)
-  FIO: string;
-  /** Дата заключения
+   * Дата заключения
    */
   @AllowNull(false)
   @Column(DataType.DATE)
   conclusion_date: Date;
+
   /**
    * Назначение
    */
@@ -59,18 +57,21 @@ export class Agreement extends Model<
   purpose: FK<number>;
   @BelongsTo(() => PurposeType)
   PurposeType?: BelongsToAttribute<NonAttribute<PurposeType>>;
+
   /**
    * Cумма задолженности по суд.акту
    */
   @AllowNull(false)
   @Column(DataType.MONEY)
   court_sum: number;
+
   /**
    * Сумма задолженности ОД взысканная в пользу НБК / Вымпел
    */
   @AllowNull(false)
   @Column(DataType.MONEY)
   debt_sum: number;
+
   /**
    * Сумма задолженности по пересчету
    */
@@ -88,7 +89,7 @@ export class Agreement extends Model<
   @Column(DataType.INTEGER)
   month_pay_day: number;
   /**
-   * Наличие ИД в регистраторе
+   * Наличие ИД
    */
   @AllowNull(false)
   @Default(false)
@@ -105,4 +106,8 @@ export class Agreement extends Model<
   @AllowNull(false)
   @Column(DataType.STRING)
   task_link: string;
+
+  @AllowNull(false)
+  @Column(DataType.INTEGER)
+  personId: number;
 }

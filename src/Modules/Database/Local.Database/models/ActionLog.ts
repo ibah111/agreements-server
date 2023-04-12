@@ -11,7 +11,6 @@ import {
 } from '@sql-tools/sequelize';
 import {
   AllowNull,
-  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -19,7 +18,6 @@ import {
   PrimaryKey,
   Table,
 } from '@sql-tools/sequelize-typescript';
-import { Agreement } from './Agreement';
 import { User } from './User.model';
 
 export enum Actions {

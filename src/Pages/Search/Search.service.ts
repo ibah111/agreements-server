@@ -33,7 +33,7 @@ export class SearchService {
               { [Op.like]: `%${fio}%` },
             )
           : undefined,
-        attributes: ['f', 'i', 'o', 'id', 'fio'],
+        attributes: ['f', 'i', 'o', 'id', 'fio', 'birth_date'],
       },
     ];
     optionsDebt.limit = 25;
