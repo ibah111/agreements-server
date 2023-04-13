@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { Debt } from '@contact/models';
+import { Debt, DebtCalc } from '@contact/models';
 @Injectable()
 export class DebtService {
   constructor(
     @InjectModel(Debt, 'contact')
     private readonly modelDebt: typeof Debt,
+    @InjectModel(DebtCalc, 'contact')
+    private readonly modelDebtCalc: typeof DebtCalc,
   ) {}
 
   async getPersonDebts(id: number) {
@@ -21,5 +23,13 @@ export class DebtService {
       },
     });
     return AllDebts;
+  }
+  async getAllDebtPayments(parent_id: number) {
+    const AllPayments = await this.modelDebtCalc.findAll({
+      where: {
+        parent_id: parent_id,
+      },
+    });
+    return AllPayments;
   }
 }

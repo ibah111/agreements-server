@@ -14,3 +14,10 @@ export class GetAllDebtsPersonInput {
   @ApiPropertyOptional()
   parent_id: number; // as example answer must give me 2 {json}
 }
+
+export class GetAllPayments {
+  @Expose()
+  @IsNumber()
+  @ApiPropertyOptional()
+  parent_id: number;
+}
