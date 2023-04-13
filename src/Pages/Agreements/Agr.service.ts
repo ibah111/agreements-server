@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { Debt, LawAct, Person, PersonProperty } from '@contact/models';
+import { LawAct, Person, PersonProperty } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import {
@@ -19,8 +19,6 @@ export class AgreementsService {
     private readonly modelLawAct: typeof LawAct,
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
-    @InjectModel(Debt, 'contact')
-    private readonly modelDebt: typeof Debt,
     @InjectModel(PersonProperty, 'contact')
     private readonly modelPersonProperty: typeof PersonProperty,
     @InjectModel(Agreement, 'local')

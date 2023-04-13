@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AgreementsModule } from './Agreements/Agr.module';
+import { DebtModule } from './AgreenentDebt/AgreementDebt.module';
 import { LoginModule } from './Login/Login.module';
 import PurposePage from './Purpose/Purpose.page';
 import { SearchModule } from './Search/Search.module';
@@ -12,6 +13,7 @@ import { UserModule } from './User/User.module';
     AgreementsModule,
     PurposePage,
     SearchModule,
+    DebtModule,
   ],
 })
 export class PagesModule {}
