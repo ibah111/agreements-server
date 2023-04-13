@@ -22,7 +22,13 @@ export class DebtController {
   constructor(private readonly service: DebtService) {}
   @CheckCan((ability) => ability.can(Action.Read, User))
   @Get(':id')
-  getPersonDebts(@Param('id', ParseIntPipe) id: number) {
+  getDebtPerson(@Param('id', ParseIntPipe) id: number) {
     return this.service.getPersonDebts(id);
+  }
+
+  @CheckCan((ability) => ability.can(Action.Read, User))
+  @Get('Person/:parent_id')
+  getPersonDebts(@Param('parent_id', ParseIntPipe) parent_id: number) {
+    return this.service.getAllPersonDebts(parent_id);
   }
 }

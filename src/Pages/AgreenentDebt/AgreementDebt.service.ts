@@ -14,12 +14,12 @@ export class DebtService {
     });
     return Debt;
   }
-  // async getAllPersonDebts(parent_id: number) {
-  //   const AllDebts = await this.modelDebt.findAll({
-  //     where: {
-  //       parent_id: parent_id,
-  //     },
-  //   });
-  //   return AllDebts;
-  // }
+  async getAllPersonDebts(parent_id: number) {
+    const AllDebts = await this.modelDebt.findAll({
+      where: {
+        parent_id: parent_id,
+      },
+    });
+    return AllDebts;
+  }
 }
