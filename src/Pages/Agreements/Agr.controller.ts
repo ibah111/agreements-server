@@ -41,8 +41,8 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))
   @Get()
-  getAll() {
-    return this.service.getAll();
+  async getAll() {
+    return await this.service.getAll();
   }
 
   @CheckCan((ability) => ability.can(Action.Delete, Agreement))

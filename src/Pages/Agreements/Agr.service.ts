@@ -8,6 +8,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
+import { Op } from '@sql-tools/sequelize';
 @Injectable()
 export class AgreementsService {
   /**
@@ -28,10 +29,20 @@ export class AgreementsService {
   ) {}
 
   async getAll() {
-    const Agreements = await this.modelAgreement.findAll({
+    const agreements = await this.modelAgreement.findAll({
       limit: 25,
     });
-    return Agreements;
+    const personIdArray = agreements.map((agreement) => agreement.personId);
+    const persons = await this.modelPerson.findAll({
+      where: { id: { [Op.in]: personIdArray } },
+      attributes: ['fio', 'id', 'f', 'i', 'o'],
+    });
+    for (const agreement of agreements) {
+      const person = persons.find((person) => person.id === agreement.personId);
+      if (!person) continue;
+      (agreement.dataValues as Agreement).Person = person as Person;
+    }
+    return agreements;
   }
 
   async getAgreement(id: number) {

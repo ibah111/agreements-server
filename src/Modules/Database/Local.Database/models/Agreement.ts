@@ -3,6 +3,7 @@
  * Таблица Данных не подцепляемых из контакта
  */
 // Это пиздец.... 🤔
+import { Person } from '@contact/models';
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
@@ -110,4 +111,6 @@ export class Agreement extends Model<
   @AllowNull(false)
   @Column(DataType.INTEGER)
   personId: number;
+
+  Person?: NonAttribute<Person>;
 }
