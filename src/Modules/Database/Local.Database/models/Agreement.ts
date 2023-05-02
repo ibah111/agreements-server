@@ -50,6 +50,13 @@ export class Agreement extends Model<
   conclusion_date: Date;
 
   /**
+   * Конец соглашения
+   */
+  @AllowNull(true)
+  @Column(DataType.DATE)
+  finish_date: Date | null;
+
+  /**
    * Назначение
    */
   @AllowNull(false)
@@ -113,4 +120,11 @@ export class Agreement extends Model<
   personId: number;
 
   Person?: NonAttribute<Person>;
+
+  @Column(DataType.STRING)
+  actions_for_get: string;
+
+  @AllowNull(true)
+  @Column(DataType.DATE)
+  receipt_dt: Date;
 }
