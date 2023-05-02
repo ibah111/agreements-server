@@ -55,7 +55,6 @@ export class Agreement extends Model<
   @AllowNull(true)
   @Column(DataType.DATE)
   finish_date: Date | null;
-
   /**
    * Назначение
    */

@@ -4,7 +4,7 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
   const transaction = await context.sequelize.transaction();
 
   await context.addColumn('Agreements', 'finish_date', {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DATE,
     allowNull: true,
   });
 
