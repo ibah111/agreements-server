@@ -25,6 +25,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   conclusion_date: Date;
 
   @Expose()
+  @IsDate()
+  @ApiProperty()
+  @Type(() => Date)
+  finish_date: Date;
+
+  @Expose()
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
@@ -76,6 +82,18 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsString()
   @ApiProperty()
   task_link: string;
+
+  @Expose()
+  @IsString()
+  @ApiProperty()
+  actions_for_get: string;
+
+  @Expose()
+  @IsDate()
+  @IsNotEmpty()
+  @ApiProperty()
+  @Type(() => Date)
+  receipt_dt: Date;
 }
 
 export class DeleteAgreementInput {
