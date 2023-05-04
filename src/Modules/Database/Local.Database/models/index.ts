@@ -1,5 +1,6 @@
 import { ActionLog } from './ActionLog';
 import { Agreement } from './Agreement';
+import AgreementDebtsLink from './AgreementDebtLink';
 import { PurposeType } from './PurposeType';
 import { Role } from './Role.model';
 import { User } from './User.model';
@@ -12,4 +13,5 @@ export const models = [
   Agreement,
   PurposeType,
   ActionLog,
+  AgreementDebtsLink,
 ];

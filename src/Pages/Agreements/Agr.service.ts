@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DebtCalc, LawAct, Person, PersonProperty } from '@contact/models';
+import { LawAct, Person, PersonProperty } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import {
@@ -8,7 +8,6 @@ import {
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
 import { Op } from '@sql-tools/sequelize';
-import moment from 'moment';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 @Injectable()
 export class AgreementsService {

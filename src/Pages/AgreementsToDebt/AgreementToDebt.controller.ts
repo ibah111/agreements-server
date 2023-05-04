@@ -1,10 +1,33 @@
-import { Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import {
+  AgreementToDebtInput,
+  DeleteAgrementToDebtInput,
+} from './AgreementToDebt.input';
 import { AgreementToDebtSerivce } from './AgreementToDebt.service';
 
+@ApiTags('AgreementToDebt')
+@Controller('AgreementToDebtConnection')
 export class AgreementToDebtController {
   constructor(private readonly service: AgreementToDebtSerivce) {}
   @Post()
-  agreementToDebtConnection() {
-    return;
+  agreementToDebtConnection(@Body() body: AgreementToDebtInput) {
+    return this.service.createAgreementToDebt(body);
+  }
+  @Delete()
+  deleteAgreementToDebt(@Body() body: DeleteAgrementToDebtInput) {
+    return this.service.deleteAgreementToDebt(body);
+  }
+  @Get(':id')
+  getAgreementToDebt(@Param('id', ParseIntPipe) id: number) {
+    return this.service.getAgreementDebts(id);
   }
 }
