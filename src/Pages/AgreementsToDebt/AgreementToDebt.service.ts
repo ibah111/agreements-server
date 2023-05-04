@@ -26,18 +26,27 @@ export class AgreementToDebtSerivce {
     private readonly modelPerson: typeof Person,
   ) {}
   async createAgreementToDebt(data: AgreementToDebtInput) {
-    await this.modelDebt.findByPk(data.id_debt, {
-      attributes: ['id'],
-      rejectOnEmpty: new UnprocessableEntityException(
-        `Долг ${data.id_debt} не найден`,
-      ),
-    });
-    await this.modelAgreement.findByPk(data.id_agreement, {
-      attributes: ['id'],
+    const agreement = await this.modelAgreement.findByPk(data.id_agreement, {
+      attributes: ['id', 'personId'],
       rejectOnEmpty: new UnprocessableEntityException(
         `Соглашение ${data.id_agreement} не найденно`,
       ),
     });
+
+    await this.modelDebt.findByPk(data.id_debt, {
+      attributes: ['id'],
+      include: [
+        {
+          model: this.modelPerson,
+          where: { id: agreement.personId } as WhereOptions<Person>,
+          required: true,
+        },
+      ],
+      rejectOnEmpty: new UnprocessableEntityException(
+        `Долг ${data.id_debt} не найден`,
+      ),
+    });
+
     const [agreementToDebt, created] =
       await this.modelAgreementDebtsLink.findOrCreate({
         where: { id_agreement: data.id_agreement, id_debt: data.id_debt },
