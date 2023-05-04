@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { DebtCalc, LawAct, Person, PersonProperty } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
@@ -10,6 +9,7 @@ import {
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
 import { Op } from '@sql-tools/sequelize';
 import moment from 'moment';
+import { InjectModel } from '@sql-tools/nestjs-sequelize';
 @Injectable()
 export class AgreementsService {
   /**
@@ -39,23 +39,23 @@ export class AgreementsService {
       attributes: ['fio', 'id', 'f', 'i', 'o'],
     });
 
-    const dc: DebtCalc[] = [];
-    const sum = dc
-      .filter(
-        (item) =>
-          moment(agreements[0].conclusion_date).isAfter(item.dt) &&
-          moment(agreements[0].finish_date && undefined).isBefore(item.dt),
-      )
-      .map((item) => item.sum)
-      .reduce((prev, curr) => {
-        return prev + curr;
-      }, 0);
+    // const dc: DebtCalc[] = [];
+    // const sum = dc
+    //   .filter(
+    //     (item) =>
+    //       moment(agreements[0].conclusion_date).isAfter(item.dt) &&
+    //       moment(agreements[0].finish_date && undefined).isBefore(item.dt),
+    //   )
+    //   .map((item) => item.sum)
+    //   .reduce((prev, curr) => {
+    //     return prev + curr;
+    //   }, 0);
     for (const agreement of agreements) {
       const person = persons.find((person) => person.id === agreement.personId);
       if (!person) continue;
       (agreement.dataValues as Agreement).Person = person as Person;
     }
-    return [agreements, sum];
+    return agreements;
   }
 
   async getAgreement(id: number) {

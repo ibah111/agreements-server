@@ -3,24 +3,8 @@ import { AuthUser, AuthUserError, AuthUserSuccess } from './auth.guard';
 import { UnauthorizedException } from '@nestjs/common';
 import client from 'src/utils/client';
 import bitrix from 'src/utils/bitrix';
-import serverConfig from '../../config/bitrix.json';
 
 export const checkLogin = async (token: string) => {
-  if (!serverConfig.checkToken)
-    return {
-      output: 'Вы вошли',
-      id: '4018',
-      login_result: true,
-      login: 'baledin@zakon43.ru',
-      birthdate: '18.10.2001',
-      department: 'Группа разработки',
-      position: 'Младший разработчик',
-      firstname: 'Иван',
-      secondname: 'Балезин',
-      thirdname: '',
-      avatar:
-        '/upload/main/9d0/tjpf6q3grm1vizfpfg68lfbf1ercp5x5/photo1656529238.png',
-    };
   if (!token) {
     return false;
   }

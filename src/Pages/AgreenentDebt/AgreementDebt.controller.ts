@@ -6,8 +6,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
-import { CheckCan } from 'dist/Modules/Casl/Can.decorators';
-import { CanGuard } from 'dist/Modules/Casl/Can.guard';
+import { CheckCan } from 'src/Modules/Casl/Can.decorators';
+import { CanGuard } from 'src/Modules/Casl/Can.guard';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { AuthGuard } from 'src/Modules/Guards/auth.guard';
