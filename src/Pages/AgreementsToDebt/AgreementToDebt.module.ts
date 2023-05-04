@@ -1,4 +1,4 @@
-import { Debt } from '@contact/models';
+import { Debt, Person } from '@contact/models';
 import { Module } from '@nestjs/common/decorators/modules/module.decorator';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
@@ -8,7 +8,7 @@ import { AgreementToDebtSerivce } from './AgreementToDebt.service';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Debt], 'contact'),
+    SequelizeModule.forFeature([Debt, Person], 'contact'),
     SequelizeModule.forFeature([Agreement, AgreementDebtsLink], 'local'),
   ],
   controllers: [AgreementToDebtController],

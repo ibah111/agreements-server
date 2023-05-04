@@ -1,5 +1,9 @@
 import { CreateLiteralAssociation } from '@sql-tools/association-literal';
-import { InferAttributes, InferCreationAttributes } from '@sql-tools/sequelize';
+import {
+  InferAttributes,
+  InferCreationAttributes,
+  NonAttribute,
+} from '@sql-tools/sequelize';
 import {
   PrimaryKey,
   Model,
@@ -8,6 +12,7 @@ import {
   DataType,
   ForeignKey,
   Table,
+  BelongsTo,
 } from '@sql-tools/sequelize-typescript';
 import { Agreement } from './Agreement';
 
@@ -31,4 +36,7 @@ export default class AgreementDebtsLink extends Model<
   @Column(DataType.INTEGER)
   @ForeignKey(() => Agreement)
   id_agreement: number;
+
+  @BelongsTo(() => Agreement)
+  Agreement?: NonAttribute<Agreement>;
 }

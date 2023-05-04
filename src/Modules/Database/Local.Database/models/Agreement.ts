@@ -23,10 +23,12 @@ import {
   DataType,
   Default,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
 } from '@sql-tools/sequelize-typescript';
+import AgreementDebtsLink from './AgreementDebtLink';
 import { PurposeType } from './PurposeType';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
@@ -126,4 +128,7 @@ export class Agreement extends Model<
   @AllowNull(true)
   @Column(DataType.DATE)
   receipt_dt: Date;
+
+  @HasMany(() => AgreementDebtsLink)
+  DebtLinks?: NonAttribute<AgreementDebtsLink[]>;
 }
