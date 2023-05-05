@@ -11,12 +11,19 @@ import {
 } from 'class-validator';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
+import { CallbackValidate } from 'src/utils/validators/IsAfterValidate';
+import moment from 'moment';
+
 export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
   @Expose()
   @IsNumber()
   personId: number;
 
+  @CallbackValidate<CreateAgreementInput, Date>(
+    (obj) => obj.finish_date,
+    (value1, value2) => (value1 ? moment(value1).isAfter(value2) : true),
+  )
   @Expose()
   @IsDate()
   @IsNotEmpty()
@@ -24,10 +31,15 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @Type(() => Date)
   conclusion_date: Date;
 
+  @CallbackValidate<CreateAgreementInput, Date>(
+    (obj) => obj.conclusion_date,
+    (value1, value2) => moment(value1).isBefore(value2),
+  )
   @Expose()
   @IsDate()
   @ApiProperty()
   @Type(() => Date)
+  @IsOptional()
   finish_date: Date;
 
   @Expose()
