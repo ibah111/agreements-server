@@ -1,5 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { LawAct, Person, PersonProperty } from '@contact/models';
+import {
+  Debt,
+  DebtCalc,
+  LawAct,
+  Person,
+  PersonProperty,
+} from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import {
@@ -9,6 +15,9 @@ import {
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
 import { Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
+import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
+import { AgrGetAllDto } from './Agr.dto';
+import moment from 'moment';
 @Injectable()
 export class AgreementsService {
   /**
@@ -26,33 +35,74 @@ export class AgreementsService {
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(ActionLog, 'local')
     private readonly modelActionLog: typeof ActionLog,
+    @InjectModel(AgreementDebtsLink, 'local')
+    private readonly modelAgreementDebtsLink: typeof AgreementDebtsLink,
+    @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
   ) {}
 
-  async getAll() {
-    const agreements = await this.modelAgreement.findAll({
+  async getAll(): Promise<AgrGetAllDto[]> {
+    const agreements = (await this.modelAgreement.findAll({
       limit: 25,
-    });
-    const personIdArray = agreements.map((agreement) => agreement.personId);
+      include: [this.modelAgreementDebtsLink],
+    })) as unknown as AgrGetAllDto[];
+
+    const personIdArray: number[] = [];
+    const debtIdArray: number[] = [];
+    for (const agreement of agreements) {
+      personIdArray.push(agreement.personId);
+      for (const debtLink of agreement.DebtLinks || []) {
+        debtIdArray.push(debtLink.id_debt);
+      }
+    }
+
+    const debts = (await this.modelDebt.findAll({
+      where: { id: { [Op.in]: debtIdArray } },
+      include: ['DebtCalcs'],
+    })) as Debt[];
+
     const persons = await this.modelPerson.findAll({
       where: { id: { [Op.in]: personIdArray } },
       attributes: ['fio', 'id', 'f', 'i', 'o'],
     });
-
-    // const dc: DebtCalc[] = [];
-    // const sum = dc
-    //   .filter(
-    //     (item) =>
-    //       moment(agreements[0].conclusion_date).isAfter(item.dt) &&
-    //       moment(agreements[0].finish_date && undefined).isBefore(item.dt),
-    //   )
-    //   .map((item) => item.sum)
-    //   .reduce((prev, curr) => {
-    //     return prev + curr;
-    //   }, 0);
+    //Перебираем соглашения и добавляем данные
     for (const agreement of agreements) {
+      //Присоединяем Person
+      const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
       const person = persons.find((person) => person.id === agreement.personId);
-      if (!person) continue;
-      (agreement.dataValues as Agreement).Person = person as Person;
+      if (person) {
+        dataValuesAgreement.Person = person as Person;
+      }
+      //Присоединяем Debt
+      for (const debtLink of agreement.DebtLinks || []) {
+        const dataValuesLink = debtLink.dataValues as AgreementDebtsLink;
+        dataValuesLink.Debt = debts.find(
+          (debt) => debt.id === debtLink.id_debt,
+        );
+        debtLink.Debt = dataValuesLink.Debt;
+      }
+
+      //Достаём все истории всех платежей
+      const dcd = (agreement.DebtLinks?.map(
+        (item) => item.Debt?.DebtCalcs || [],
+      ) || []) as DebtCalc[][];
+      const dc = ([] as DebtCalc[]).concat(...dcd);
+
+      const calcs = dc.filter(
+        (item) =>
+          moment(agreement.conclusion_date).isBefore(moment(item.dt)) &&
+          moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
+      );
+
+      const sum = calcs
+        .map((item) => item.sum)
+        .reduce((prev, curr) => {
+          return prev + curr;
+        }, 0);
+      dataValuesAgreement.sumAfterAgr = sum;
+      const lp = null;
+      dataValuesAgreement.lastPayment = lp;
+      const fp = null;
+      dataValuesAgreement.firstPayment = fp;
     }
     return agreements;
   }
@@ -92,20 +142,21 @@ export class AgreementsService {
   }
 
   async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
-    const Agreement = await this.modelAgreement.findByPk(id, {
+    const agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException('Запись не найдена'),
     });
-    const old = Agreement[data.field];
-    Agreement[data.field] = data.value;
-    await Agreement.save();
+    const old = agreement[data.field];
+    agreement[data.field] = data.value;
+    const changed = agreement.changed();
+    await agreement.save();
     await this.modelActionLog.create({
       actionType: Actions.UPDATE,
       row_id: id,
       field: data.field,
-      old_value: old,
+      old_value: String(old),
       new_value: String(data.value),
       user: auth.userLocal.id,
     });
-    return true;
+    return Boolean(changed);
   }
 }

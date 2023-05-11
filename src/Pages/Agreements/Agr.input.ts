@@ -23,6 +23,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @CallbackValidate<CreateAgreementInput, Date>(
     (obj) => obj.finish_date,
     (value1, value2) => (value1 ? moment(value1).isAfter(value2) : true),
+    { message: 'Дата введена неверно $property' },
   )
   @Expose()
   @IsDate()
@@ -34,6 +35,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @CallbackValidate<CreateAgreementInput, Date>(
     (obj) => obj.conclusion_date,
     (value1, value2) => moment(value1).isBefore(value2),
+    { message: 'Дата введена неверно $property' },
   )
   @Expose()
   @IsDate()
@@ -93,16 +95,18 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @Expose()
   @IsString()
   @ApiProperty()
+  @IsOptional()
   task_link: string;
 
   @Expose()
   @IsString()
   @ApiProperty()
+  @IsOptional()
   actions_for_get: string;
 
   @Expose()
   @IsDate()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   @Type(() => Date)
   receipt_dt: Date;
@@ -135,7 +139,7 @@ export class EditAgreementInput {
   @Expose()
   @ApiProperty()
   @IsNumberOrStringOrBoolean()
-  value: number | string | boolean;
+  value: number | string | boolean | null;
 }
 export class GetAgreementWith {
   @Expose()

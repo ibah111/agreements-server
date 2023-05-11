@@ -1,3 +1,4 @@
+import { Debt } from '@contact/models';
 import { CreateLiteralAssociation } from '@sql-tools/association-literal';
 import {
   InferAttributes,
@@ -39,4 +40,6 @@ export default class AgreementDebtsLink extends Model<
 
   @BelongsTo(() => Agreement)
   Agreement?: NonAttribute<Agreement>;
+
+  Debt?: NonAttribute<Debt>;
 }

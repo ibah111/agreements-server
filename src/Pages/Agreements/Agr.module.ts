@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
 import { ActionLog } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
+import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgreementsController } from './Agr.controller';
 import { AgreementsService } from './Agr.service';
 
@@ -12,7 +13,10 @@ import { AgreementsService } from './Agr.service';
       [LawAct, Person, Debt, PersonProperty],
       'contact',
     ),
-    SequelizeModule.forFeature([Agreement, ActionLog], 'local'),
+    SequelizeModule.forFeature(
+      [Agreement, ActionLog, AgreementDebtsLink],
+      'local',
+    ),
   ],
   controllers: [AgreementsController],
   providers: [AgreementsService],
