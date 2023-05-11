@@ -13,7 +13,8 @@ export class IsNumberOrStringOrBooleanClass
     return (
       typeof text === 'number' ||
       typeof text === 'string' ||
-      typeof text === 'boolean'
+      typeof text === 'boolean' ||
+      text === null
     );
   }
   defaultMessage() {

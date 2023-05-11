@@ -16,7 +16,7 @@ export class IsAfterValidateClass implements ValidatorConstraintInterface {
     return func2?.(func1?.(object), value);
   }
   defaultMessage(): string {
-    return 'Ошибка';
+    return 'Значения не соответсвует условию';
   }
 }
 export function CallbackValidate<K, T>(
