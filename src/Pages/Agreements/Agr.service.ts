@@ -96,10 +96,6 @@ export class AgreementsService {
         )
         .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
 
-      calcs.map((item) => {
-        console.log(item.dt);
-      });
-
       const sum = calcs
         .map((item) => item.sum)
         .reduce((prev, curr) => {
@@ -107,11 +103,6 @@ export class AgreementsService {
         }, 0);
       dataValuesAgreement.sumAfterAgr = sum;
 
-      /**
-      const arr = [ 5, 3, 2, 7, 8 ];
-      const last = arr[arr.length-1];
-      console.log(last);
-       */
       // lp - lastPayment расчет последнего платежа
       if (calcs.length !== 0) {
         const lp = calcs[calcs.length - 1];
