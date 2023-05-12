@@ -57,7 +57,7 @@ export class AgreementsService {
 
     const debts = (await this.modelDebt.findAll({
       where: { id: { [Op.in]: debtIdArray } },
-      include: ['DebtCalcs'],
+      include: [{ association: 'DebtCalcs' }],
     })) as Debt[];
 
     const persons = await this.modelPerson.findAll({
@@ -87,11 +87,18 @@ export class AgreementsService {
       ) || []) as DebtCalc[][];
       const dc = ([] as DebtCalc[]).concat(...dcd);
 
-      const calcs = dc.filter(
-        (item) =>
-          moment(agreement.conclusion_date).isBefore(moment(item.dt)) &&
-          moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
-      );
+      //ALSO Расчет платежей на дату после заключения соглашения
+      const calcs = dc
+        .filter(
+          (item) =>
+            moment(agreement.conclusion_date).isBefore(moment(item.dt)) &&
+            moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
+        )
+        .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
+
+      calcs.map((item) => {
+        console.log(item.dt);
+      });
 
       const sum = calcs
         .map((item) => item.sum)
@@ -99,10 +106,22 @@ export class AgreementsService {
           return prev + curr;
         }, 0);
       dataValuesAgreement.sumAfterAgr = sum;
-      const lp = null;
-      dataValuesAgreement.lastPayment = lp;
-      const fp = null;
-      dataValuesAgreement.firstPayment = fp;
+
+      /**
+      const arr = [ 5, 3, 2, 7, 8 ];
+      const last = arr[arr.length-1];
+      console.log(last);
+       */
+      // lp - lastPayment расчет последнего платежа
+      if (calcs.length !== 0) {
+        const lp = calcs[calcs.length - 1];
+        const sumLP = lp.sum;
+        dataValuesAgreement.lastPayment = sumLP;
+        // fp - frstPayment расчет первого платежа
+        const fp = calcs[0];
+        const sumFP = fp.sum;
+        dataValuesAgreement.firstPayment = sumFP;
+      }
     }
     return agreements;
   }
