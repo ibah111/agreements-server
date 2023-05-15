@@ -27,6 +27,7 @@ export class LocalDatabaseSeed {
 
     try {
       await this.sequelizeContact.authenticate();
+      await this.sequelize.authenticate();
       await umzug.up();
       await this.seed();
     } catch (e) {

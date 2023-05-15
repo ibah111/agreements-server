@@ -103,11 +103,14 @@ export class AgreementsService {
         }, 0);
       dataValuesAgreement.sumAfterAgr = sum;
 
-      // lp - lastPayment расчет последнего платежа
       if (calcs.length !== 0) {
+        // lp - lastPayment расчет последнего платежа
         const lp = calcs[calcs.length - 1];
         const sumLP = lp.sum;
         dataValuesAgreement.lastPayment = sumLP;
+        // lpdate - дата последняя
+        const lpdate = lp.dt;
+        dataValuesAgreement.lastPaymentDate = lpdate;
         // fp - frstPayment расчет первого платежа
         const fp = calcs[0];
         const sumFP = fp.sum;
@@ -138,6 +141,7 @@ export class AgreementsService {
 
   async deleteAgreement(auth: AuthResult, id: number) {
     const Agreement = await this.modelAgreement.findByPk(id, {
+      include: { model: this.modelAgreementDebtsLink },
       rejectOnEmpty: new NotFoundException(
         'Соглашение не найдено и не удалено',
       ),
@@ -147,6 +151,9 @@ export class AgreementsService {
       row_id: Agreement.id,
       user: auth.userLocal.id,
     });
+    for (const debtLink of Agreement.DebtLinks || []) {
+      await debtLink.destroy();
+    }
     await Agreement.destroy();
     return { result: 'success' };
   }
