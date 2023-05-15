@@ -18,6 +18,7 @@ export class SearchService {
         : undefined;
 
     optionsDebt.include = [
+      'StatusDict',
       {
         model: this.modelPerson,
         where: fio

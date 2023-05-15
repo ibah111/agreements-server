@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AgreementsModule } from './Agreements/Agr.module';
 import { AgreementToDebtModule } from './AgreementsToDebt/AgreementToDebt.module';
-import { DebtModule } from './AgreenentDebt/AgreementDebt.module';
+import { DebtModule } from './AgreementDebt/AgreementDebt.module';
 import { LoginModule } from './Login/Login.module';
-import PurposePage from './Purpose/Purpose.page';
+import { PurposeModule } from './Purpose/Purpose.module';
 import { SearchModule } from './Search/Search.module';
 import { UserModule } from './User/User.module';
 
@@ -12,7 +12,7 @@ import { UserModule } from './User/User.module';
     LoginModule,
     UserModule,
     AgreementsModule,
-    PurposePage,
+    PurposeModule,
     SearchModule,
     DebtModule,
     AgreementToDebtModule,

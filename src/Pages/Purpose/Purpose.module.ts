@@ -9,4 +9,4 @@ import PurposeService from './purpose.service';
   providers: [PurposeService],
   controllers: [PurposeController],
 })
-export default class PurposePage {}
+export class PurposeModule {}

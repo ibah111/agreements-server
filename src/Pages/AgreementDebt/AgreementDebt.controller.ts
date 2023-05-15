@@ -27,12 +27,6 @@ export class DebtController {
   }
 
   @CheckCan((ability) => ability.can(Action.Read, User))
-  @Get('Person/:parent_id')
-  getPersonDebts(@Param('parent_id', ParseIntPipe) parent_id: number) {
-    return this.service.getAllPersonDebts(parent_id);
-  }
-
-  @CheckCan((ability) => ability.can(Action.Read, User))
   @Get('/Payments/:id')
   getAllPayments(@Param('id', ParseIntPipe) id: number) {
     return this.service.getAllDebtPayments(id);

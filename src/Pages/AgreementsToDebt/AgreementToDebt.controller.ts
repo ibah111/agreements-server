@@ -16,11 +16,11 @@ import {
 import { AgreementToDebtSerivce } from './AgreementToDebt.service';
 
 @ApiTags('AgreementToDebt')
-@Controller('AgreementToDebtConnection')
+@Controller('AgreementToDebt')
 export class AgreementToDebtController {
   constructor(private readonly service: AgreementToDebtSerivce) {}
   @Post()
-  agreementToDebtConnection(@Body() body: AgreementToDebtInput) {
+  agreementToDebt(@Body() body: AgreementToDebtInput) {
     return this.service.createAgreementToDebt(body);
   }
 
