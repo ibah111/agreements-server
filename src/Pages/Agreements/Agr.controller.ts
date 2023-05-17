@@ -10,7 +10,11 @@ import { Body, Delete, Post } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
-import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
+import {
+  CreateAgreementInput,
+  DeleteSelectedAgreements,
+  EditAgreementInput,
+} from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
@@ -52,6 +56,12 @@ export class AgreementsController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.service.deleteAgreement(auth, id);
+  }
+
+  @CheckCan((ability) => ability.can(Action.Update, Agreement))
+  @Delete()
+  DeleteSelectedAgreements(@Body() body: DeleteSelectedAgreements) {
+    return this.service.deleteSelectedAgreements(body.list);
   }
 
   @CheckCan((ability) => ability.can(Action.Update, Agreement))

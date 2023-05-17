@@ -158,6 +158,14 @@ export class AgreementsService {
     return { result: 'success' };
   }
 
+  async deleteSelectedAgreements(idArray: number[]) {
+    let count = 0;
+    for (const id of idArray) {
+      count += await this.modelAgreement.destroy({ where: { id: id } });
+    }
+    return [count, idArray];
+  }
+
   async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
     const agreement = await this.modelAgreement.findByPk(id, {
       rejectOnEmpty: new NotFoundException('Запись не найдена'),

@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { Expose, Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsNotEmpty,
@@ -112,11 +113,13 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   receipt_dt: Date;
 }
 
-export class DeleteAgreementInput {
+export class DeleteSelectedAgreements {
   @Expose()
-  @IsNumber()
-  @ApiPropertyOptional()
-  id: number;
+  @IsArray()
+  @IsNumber({ maxDecimalPlaces: 0 }, { each: true })
+  @IsNotEmpty()
+  @ApiProperty({ type: [Number] })
+  list: number[];
 }
 /*
  * Получение соглашение
