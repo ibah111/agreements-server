@@ -26,6 +26,19 @@ export class CaslAbilityFactory {
     if (roles.includes('admin')) {
       can(Action.Manage, 'all');
     }
+    if (roles.includes('moderator')) {
+      can(
+        [Action.Create, Action.Delete, Action.Read], // Разрешенные действия
+        Agreement, // Что разрешено к просмотру
+        // ['conclusion_date'], <--- разрешенное к взаимодействию поле
+        // { -------условие "если дата заключения 18.05.2015 - разрешено к ред-у"
+        //   conclusion_date: moment('18.05.2015', 'DD.MM.YYYY').toDate(),
+        // },
+      );
+    }
+    if (roles.includes('User')) {
+      can(Action.Read, Agreement);
+    }
     return build({
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
