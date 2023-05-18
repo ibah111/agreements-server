@@ -81,11 +81,18 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
   month_pay_day: number;
 
+  // не используется
   @Expose()
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
   reg_doc?: boolean;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  new_regDoc: number;
 
   @Expose()
   @IsString()

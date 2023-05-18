@@ -30,6 +30,7 @@ import {
 } from '@sql-tools/sequelize-typescript';
 import AgreementDebtsLink from './AgreementDebtLink';
 import { PurposeType } from './PurposeType';
+import { RegDocType } from './RegDocType';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
@@ -101,6 +102,15 @@ export class Agreement extends Model<
   @Default(false)
   @Column(DataType.BOOLEAN)
   reg_doc: CreationOptional<boolean>;
+  /**
+   * новый ИД
+   */
+  @AllowNull(false)
+  @ForeignKey(() => RegDocType)
+  @Column(DataType.INTEGER)
+  new_regDoc: FK<number>;
+  @BelongsTo(() => RegDocType)
+  RegDocType?: BelongsToAttribute<NonAttribute<RegDocType>>;
   /**
    * Комментарии
    */

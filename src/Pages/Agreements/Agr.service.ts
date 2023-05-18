@@ -1,11 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  Debt,
-  DebtCalc,
-  LawAct,
-  Person,
-  PersonProperty,
-} from '@contact/models';
+import { Debt, DebtCalc, Person } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import {
@@ -25,12 +19,8 @@ export class AgreementsService {
    * на read
    */
   constructor(
-    @InjectModel(LawAct, 'contact')
-    private readonly modelLawAct: typeof LawAct,
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
-    @InjectModel(PersonProperty, 'contact')
-    private readonly modelPersonProperty: typeof PersonProperty,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(ActionLog, 'local')
