@@ -3,7 +3,6 @@ import { CreationAttributes } from '@sql-tools/sequelize';
 import { Expose, Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsNumber,
@@ -81,16 +80,9 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
   month_pay_day: number;
 
-  // не используется
   @Expose()
-  @IsBoolean()
-  @IsOptional()
-  @ApiPropertyOptional()
-  reg_doc?: boolean;
-
-  @Expose()
-  @IsNotEmpty()
   @IsNumber()
+  @IsOptional()
   @ApiProperty()
   new_regDoc: number;
 

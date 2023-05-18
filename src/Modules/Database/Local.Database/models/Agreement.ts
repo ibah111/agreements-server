@@ -105,7 +105,7 @@ export class Agreement extends Model<
   /**
    * новый ИД
    */
-  @AllowNull(false)
+  @AllowNull(true)
   @ForeignKey(() => RegDocType)
   @Column(DataType.INTEGER)
   new_regDoc: FK<number>;
