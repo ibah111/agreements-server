@@ -6,6 +6,7 @@ import { LoginModule } from './Login/Login.module';
 import { PurposeModule } from './Purpose/Purpose.module';
 import { SearchModule } from './Search/Search.module';
 import { UserModule } from './User/User.module';
+import { RegDocModule } from './RegDoc/RegDoc.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UserModule } from './User/User.module';
     UserModule,
     AgreementsModule,
     PurposeModule,
+    RegDocModule,
     SearchModule,
     DebtModule,
     AgreementToDebtModule,
