@@ -11,11 +11,12 @@ export class CanGuard implements CanActivate {
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
   canActivate(context: ExecutionContext): boolean {
-    const canHandlers = this.reflector.get<CanHandler[]>(
+    const canHandlers = this.reflector.get<CanHandler[] | null>(
       CHECK_POLICIES_KEY,
       context.getHandler(),
     );
-    const body: { user: AuthResult } = context.switchToHttp().getRequest();
+    if (!canHandlers) return true;
+    const body = context.switchToHttp().getRequest<{ user: AuthResult }>();
     const user = body.user.userLocal;
     const ability = this.caslAbilityFactory.createForUser(user);
     return canHandlers.every((handler) =>

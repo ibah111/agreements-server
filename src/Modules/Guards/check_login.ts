@@ -5,18 +5,13 @@ import client from 'src/utils/client';
 import bitrix from 'src/utils/bitrix';
 
 export const checkLogin = async (token: string) => {
-  if (!token) {
-    return false;
-  }
   // Тестируем систему................................
   if (client('demo'))
-    return !Number.isNaN(token)
-      ? ({
-          login_result: true,
-          id: token,
-          login: 'smorkalov@zakon43.ru',
-        } as unknown as AuthUserSuccess)
-      : ({ login_result: false } as AuthUserError);
+    return {
+      login_result: true,
+      login: 'baledin@zakon43.ru',
+    } as unknown as AuthUserSuccess;
+
   try {
     const result = await axios.get<AuthUser<boolean>>(
       bitrix('oauth') + '/oauth/login',

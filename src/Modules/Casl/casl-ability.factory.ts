@@ -36,9 +36,7 @@ export class CaslAbilityFactory {
         // },
       );
     }
-    if (roles.includes('User')) {
-      can(Action.Read, Agreement);
-    }
+    can(Action.Read, Agreement);
     return build({
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
