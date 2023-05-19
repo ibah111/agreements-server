@@ -11,7 +11,7 @@ import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
       password: 'contact',
       username: 'contact',
       name: 'contact',
-      logging: console.log,
+      logging: false,
       models: Models,
     }),
   ],
