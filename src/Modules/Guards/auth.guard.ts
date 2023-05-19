@@ -4,6 +4,7 @@ import {
   CanActivate,
   createParamDecorator,
   ExecutionContext,
+  ImATeapotException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -62,13 +63,16 @@ export class AuthGuard implements CanActivate {
         if (result?.login_result) {
           const user: AuthResult = {
             user: result,
-            userLocal: await this.modelUser.findOne({
-              where: { login: result.login },
-              rejectOnEmpty: new UnauthorizedException(
-                'Пользователь не найден',
-              ),
-              include: ['Roles'],
-            }),
+            userLocal:
+              (await this.modelUser.findOne({
+                where: { login: result.login },
+                include: ['Roles'],
+              })) ||
+              (await this.modelUser.findOne({
+                where: { login: 'guest' },
+                rejectOnEmpty: new ImATeapotException('Забыл добавить гостя'),
+                include: ['Roles'],
+              })),
           };
           data.user = user;
           return true;

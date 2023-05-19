@@ -6,8 +6,11 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CanGuard } from 'src/Modules/Casl/Can.guard';
+import { AuthGuard } from 'src/Modules/Guards/auth.guard';
 import {
   AgreementToDebtInput,
   DeleteAgrementToDebtInput,
@@ -16,6 +19,8 @@ import {
 import { AgreementToDebtSerivce } from './AgreementToDebt.service';
 
 @ApiTags('AgreementToDebt')
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
 @Controller('AgreementToDebt')
 export class AgreementToDebtController {
   constructor(private readonly service: AgreementToDebtSerivce) {}
