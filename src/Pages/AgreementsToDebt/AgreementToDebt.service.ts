@@ -1,4 +1,4 @@
-import { Debt, Person } from '@contact/models';
+import { Debt, Dict, Person } from '@contact/models';
 import {
   NotFoundException,
   UnprocessableEntityException,
@@ -23,6 +23,7 @@ export class AgreementToDebtSerivce {
   constructor(
     @InjectModel(Debt, 'contact')
     private readonly modelDebt: typeof Debt,
+    @InjectModel(Dict, 'contact') private ModelDict: typeof Dict,
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelAgreementDebtsLink: typeof AgreementDebtsLink,
     @InjectModel(Agreement, 'local')
@@ -44,6 +45,11 @@ export class AgreementToDebtSerivce {
     await this.modelDebt.findByPk(data.id_debt, {
       attributes: ['id'],
       include: [
+        {
+          model: this.ModelDict,
+          as: 'StatusDict',
+          attributes: ['name'],
+        },
         {
           model: this.modelPerson,
           where: { id: agreement.personId } as WhereOptions<Person>,
