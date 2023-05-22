@@ -44,24 +44,10 @@ export class CaslAbilityFactory {
         //   conclusion_date: moment('18.05.2015', 'DD.MM.YYYY').toDate(),
         // },
       );
-      can(
-        [Action.Create, Action.Delete, Action.Read], // Разрешенные действия
-        AgreementDebtsLink, // Что разрешено к просмотру
-        // ['conclusion_date'], <--- разрешенное к взаимодействию поле
-        // { -------условие "если дата заключения 18.05.2015 - разрешено к ред-у"
-        //   conclusion_date: moment('18.05.2015', 'DD.MM.YYYY').toDate(),
-        // },
-      );
+      can([Action.Create, Action.Delete, Action.Read], AgreementDebtsLink);
     }
     if (roles.includes('worker')) {
-      can(
-        [Action.Create, Action.Read], // Разрешенные действия
-        Agreement, // Что разрешено к просмотру
-        // ['conclusion_date'], <--- разрешенное к взаимодействию поле
-        // { -------условие "если дата заключения 18.05.2015 - разрешено к ред-у"
-        //   conclusion_date: moment('18.05.2015', 'DD.MM.YYYY').toDate(),
-        // },
-      );
+      can([Action.Create, Action.Read], Agreement);
       can([Action.Update, Action.Delete], Agreement, { user: user.id });
       can(
         [Action.Create, Action.Read, Action.Update, Action.Delete],

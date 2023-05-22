@@ -3,7 +3,7 @@
  * Таблица Данных не подцепляемых из контакта
  */
 // Это пиздец.... 🤔
-import { Person } from '@contact/models';
+import { Debt, Person } from '@contact/models';
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
@@ -128,8 +128,6 @@ export class Agreement extends Model<
   @Column(DataType.INTEGER)
   personId: number;
 
-  Person?: NonAttribute<Person>;
-
   @Column(DataType.STRING)
   actions_for_get: string;
 
@@ -139,4 +137,7 @@ export class Agreement extends Model<
 
   @HasMany(() => AgreementDebtsLink)
   DebtLinks?: NonAttribute<AgreementDebtsLink[]>;
+
+  Person?: NonAttribute<Person>;
+  Debt?: NonAttribute<Debt[]>;
 }

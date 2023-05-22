@@ -15,8 +15,8 @@ export class SearchService {
     if (contract)
       optionsDebt.where = contract
         ? { contract: { [Op.startsWith]: contract } }
-        : undefined;
-
+        : {};
+    optionsDebt.where = { ...optionsDebt.where, status: { [Op.notIn]: [7] } };
     optionsDebt.include = [
       'StatusDict',
       {
