@@ -12,6 +12,11 @@ import {
 } from './AgreementToDebt.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { Op, WhereOptions } from '@sql-tools/sequelize';
+import {
+  Action,
+  CaslAbilityFactory,
+} from 'src/Modules/Casl/casl-ability.factory';
+import { AuthResult } from 'src/Modules/Guards/auth.guard';
 
 @Injectable()
 export class AgreementToDebtSerivce {
@@ -24,14 +29,17 @@ export class AgreementToDebtSerivce {
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
+    private readonly serviceAbility: CaslAbilityFactory,
   ) {}
-  async createAgreementToDebt(data: AgreementToDebtInput) {
+  async createAgreementToDebt(auth: AuthResult, data: AgreementToDebtInput) {
+    const ability = this.serviceAbility.createForUser(auth.userLocal);
     const agreement = await this.modelAgreement.findByPk(data.id_agreement, {
       attributes: ['id', 'personId'],
       rejectOnEmpty: new UnprocessableEntityException(
         `Соглашение ${data.id_agreement} не найденно`,
       ),
     });
+    ability.can(Action.Link, agreement);
 
     await this.modelDebt.findByPk(data.id_debt, {
       attributes: ['id'],

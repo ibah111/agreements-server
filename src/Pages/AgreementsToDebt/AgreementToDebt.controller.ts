@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
-import { AuthGuard } from 'src/Modules/Guards/auth.guard';
+import { Auth, AuthGuard, AuthResult } from 'src/Modules/Guards/auth.guard';
 import {
   AgreementToDebtInput,
   DeleteAgrementToDebtInput,
@@ -25,8 +25,11 @@ import { AgreementToDebtSerivce } from './AgreementToDebt.service';
 export class AgreementToDebtController {
   constructor(private readonly service: AgreementToDebtSerivce) {}
   @Post()
-  agreementToDebt(@Body() body: AgreementToDebtInput) {
-    return this.service.createAgreementToDebt(body);
+  agreementToDebt(
+    @Auth() auth: AuthResult,
+    @Body() body: AgreementToDebtInput,
+  ) {
+    return this.service.createAgreementToDebt(auth, body);
   }
 
   @Delete()

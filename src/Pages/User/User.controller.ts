@@ -4,6 +4,7 @@ import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import { User } from 'src/Modules/Database/Local.Database/models/User.model';
+import { User_Role } from 'src/Modules/Database/Local.Database/models/User_Role.model';
 import { AuthGuard } from 'src/Modules/Guards/auth.guard';
 import { RoleInput, AddUserInput, RemoveUserInput } from './User.input';
 import { UserService } from './User.service';
@@ -27,12 +28,12 @@ export class UserController {
   destroyUser(@Body() body: RemoveUserInput) {
     return this.service.destroyUser(body);
   }
-  @CheckCan((ability) => ability.can(Action.Permit, User))
+  @CheckCan((ability) => ability.can(Action.Create, User_Role))
   @Post('role')
   addRole(@Body() body: RoleInput) {
     return this.service.addRole(body);
   }
-  @CheckCan((ability) => ability.can(Action.Permit, User))
+  @CheckCan((ability) => ability.can(Action.Delete, User_Role))
   @Delete('role')
   removeRole(@Body() body: RoleInput) {
     return this.service.removeRole(body);
