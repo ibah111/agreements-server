@@ -31,6 +31,7 @@ import {
 import AgreementDebtsLink from './AgreementDebtLink';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
+import { StatusAgreement } from './StatusAgreement';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
@@ -137,6 +138,13 @@ export class Agreement extends Model<
 
   @HasMany(() => AgreementDebtsLink)
   DebtLinks?: NonAttribute<AgreementDebtsLink[]>;
+
+  @AllowNull(true)
+  @ForeignKey(() => StatusAgreement)
+  @Column(DataType.INTEGER)
+  statusAgreement: FK<number>;
+  @BelongsTo(() => StatusAgreement)
+  StatusAgreement?: BelongsToAttribute<NonAttribute<StatusAgreement>>;
 
   Person?: NonAttribute<Person>;
   Debt?: NonAttribute<Debt[]>;

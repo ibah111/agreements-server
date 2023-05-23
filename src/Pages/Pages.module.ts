@@ -7,6 +7,7 @@ import { PurposeModule } from './Purpose/Purpose.module';
 import { SearchModule } from './Search/Search.module';
 import { UserModule } from './User/User.module';
 import { RegDocModule } from './RegDoc/RegDoc.module';
+import { StatusAgreementModule } from './StatusAgreement/StatusAgreement.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RegDocModule } from './RegDoc/RegDoc.module';
     SearchModule,
     DebtModule,
     AgreementToDebtModule,
+    StatusAgreementModule,
   ],
 })
 export class PagesModule {}

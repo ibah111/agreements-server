@@ -5,6 +5,7 @@ import AgreementDebtsLink from './AgreementDebtLink';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { Role } from './Role.model';
+import { StatusAgreement } from './StatusAgreement';
 import { User } from './User.model';
 import { User_Role } from './User_Role.model';
 
@@ -18,4 +19,5 @@ export const models = [
   AgreementDebtsLink,
   AgrGetAllDto,
   RegDocType,
+  StatusAgreement,
 ];

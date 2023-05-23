@@ -4,19 +4,23 @@ import { MigrationFn } from 'umzug';
 export const up: MigrationFn<QueryInterface> = ({ context }) =>
   context.sequelize.transaction((t) =>
     Promise.all([
-      context.sequelize.models.PurposeType.bulkCreate(
+      context.sequelize.models.StatusAgreement.bulkCreate(
         [
           {
             id: 1,
-            title: 'На исполнении',
+            title: 'Действующие',
           },
           {
             id: 2,
-            title: 'В регистраторе',
+            title: 'Исполненные',
           },
           {
             id: 3,
-            title: 'В архиве',
+            title: 'Утратившие силу',
+          },
+          {
+            id: 4,
+            title: 'Соглашения об отсупном',
           },
         ],
         { transaction: t },

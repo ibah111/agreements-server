@@ -54,6 +54,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
+  statusAgreement: number;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
   court_sum: number;
 
   @Expose()
