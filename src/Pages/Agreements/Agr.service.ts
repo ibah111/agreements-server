@@ -7,7 +7,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Op } from '@sql-tools/sequelize';
+import { Attributes, FindOptions, MIS, Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
@@ -35,7 +35,12 @@ export class AgreementsService {
       limit: 25,
       include: [this.modelAgreementDebtsLink],
     })) as unknown as AgrGetAllDto[];
-
+    /**
+     * Pagination
+     */
+    const options: FindOptions<Attributes<MIS<AgrGetAllDto>>> = {};
+    options.limit;
+    /** */
     const personIdArray: number[] = [];
     const debtIdArray: number[] = [];
     for (const agreement of agreements) {
@@ -85,12 +90,25 @@ export class AgreementsService {
             moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
         )
         .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
+      // расчет на сумму до соглашения
+      const calcsBefore = dc.filter((item) =>
+        moment(agreement.conclusion_date).isAfter(moment(item.dt)),
+      );
+      const sumBefore = calcsBefore
+        .map((item) => item.sum)
+        .reduce((prev, curr) => {
+          return prev + curr;
+        }, 0);
+      console.log('sumBefor:', sumBefore);
 
+      dataValuesAgreement.sumBeforeAgr = sumBefore;
+      // сумма платежей после соглашения
       const sum = calcs
         .map((item) => item.sum)
         .reduce((prev, curr) => {
           return prev + curr;
         }, 0);
+      console.log('sumAfter', sum);
       dataValuesAgreement.sumAfterAgr = sum;
 
       if (calcs.length !== 0) {
@@ -105,6 +123,9 @@ export class AgreementsService {
         const fp = calcs[0];
         const sumFP = fp.sum;
         dataValuesAgreement.firstPayment = sumFP;
+        // fpdate - дата первого платежа
+        const fpdate = fp.dt;
+        dataValuesAgreement.firstPaymentDate = fpdate;
       }
     }
     return agreements;
