@@ -8,11 +8,13 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
 import { CallbackValidate } from 'src/utils/validators/IsAfterValidate';
 import moment from 'moment';
+import { GridFilterModel, GridPaginationModel } from '@mui/x-data-grid-premium';
 
 export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
@@ -155,4 +157,25 @@ export class GetAgreementWith {
   @IsNumber()
   @ApiProperty()
   r_law_act_id: number;
+}
+export class PaginationValidator implements GridPaginationModel {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @Expose()
+  pageSize: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @Expose()
+  page: number;
+}
+export class AgreementsAll {
+  @ValidateNested()
+  @Type(() => PaginationValidator)
+  @Expose()
+  @IsNotEmpty()
+  paginationModel: PaginationValidator;
+  @Expose()
+  filterModel: GridFilterModel;
 }

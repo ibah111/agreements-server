@@ -6,7 +6,7 @@ export function getSwaggerOptions() {
 }
 export function getSwaggerOptionsCustom() {
   const options: SwaggerCustomOptions = {};
-  options.customSiteTitle = 'AgrementSwagger';
+  options.customSiteTitle = 'AgreementSwagger';
   options.validatorUrl = '';
   return options;
 }

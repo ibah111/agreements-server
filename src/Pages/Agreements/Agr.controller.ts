@@ -11,6 +11,7 @@ import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
 import {
+  AgreementsAll,
   CreateAgreementInput,
   DeleteSelectedAgreements,
   EditAgreementInput,
@@ -44,9 +45,9 @@ export class AgreementsController {
   }
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))
-  @Get()
-  async getAll() {
-    return await this.service.getAll();
+  @Post('/all')
+  async getAll(@Body() body: AgreementsAll) {
+    return await this.service.getAll(body);
   }
 
   @CheckCan((ability) => ability.can(Action.Delete, Agreement))

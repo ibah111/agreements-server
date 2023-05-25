@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Debt, DebtCalc, Person } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
-import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
+import {
+  AgreementsAll,
+  CreateAgreementInput,
+  EditAgreementInput,
+} from './Agr.input';
 import {
   ActionLog,
   Actions,
@@ -12,6 +16,9 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
 import moment from 'moment';
+import getSize from 'src/utils/getSize';
+import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
+
 @Injectable()
 export class AgreementsService {
   /**
@@ -30,16 +37,19 @@ export class AgreementsService {
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
   ) {}
 
-  async getAll(): Promise<AgrGetAllDto[]> {
+  async getAll(body: AgreementsAll): Promise<AgrGetAllDto[]> {
+    const size = getSize(body.paginationModel.pageSize);
+    const utils = getUtils();
+    const filter = utils.generateFilter(body.filterModel);
+    const data = filter('Agreement');
+    console.log(data);
     const agreements = (await this.modelAgreement.findAll({
-      limit: 25,
+      offset: body.paginationModel.page * size,
+      limit: size,
+      where: filter('Agreement'),
       include: [this.modelAgreementDebtsLink],
     })) as unknown as AgrGetAllDto[];
-    /**
-     * Pagination
-     */
-    const options: FindOptions<Attributes<MIS<AgrGetAllDto>>> = {};
-    options.limit;
+
     /** */
     const personIdArray: number[] = [];
     const debtIdArray: number[] = [];
