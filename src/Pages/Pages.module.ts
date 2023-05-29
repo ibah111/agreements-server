@@ -8,6 +8,7 @@ import { SearchModule } from './Search/Search.module';
 import { UserModule } from './User/User.module';
 import { RegDocModule } from './RegDoc/RegDoc.module';
 import { StatusAgreementModule } from './StatusAgreement/StatusAgreement.module';
+import { DictModule } from './Dict/Dict.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { StatusAgreementModule } from './StatusAgreement/StatusAgreement.module'
     DebtModule,
     AgreementToDebtModule,
     StatusAgreementModule,
+    DictModule,
   ],
 })
 export class PagesModule {}
