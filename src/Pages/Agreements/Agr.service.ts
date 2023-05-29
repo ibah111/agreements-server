@@ -11,7 +11,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Attributes, FindOptions, MIS, Op } from '@sql-tools/sequelize';
+import { Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
@@ -41,12 +41,35 @@ export class AgreementsService {
     const size = getSize(body.paginationModel.pageSize);
     const utils = getUtils();
     const filter = utils.generateFilter(body.filterModel);
-    const data = filter('Agreement');
-    console.log(data);
+    const agreements_ids = await this.modelAgreement.findAll({
+      attributes: ['id', 'personId'],
+      raw: true,
+      where: filter('Agreement'),
+    });
+    const persons_ids = (
+      await this.modelPerson.findAll({
+        raw: true,
+        where: {
+          [Op.and]: [
+            {
+              id: {
+                [Op.in]: agreements_ids.map((agreement) => agreement.personId),
+              },
+            },
+            filter('Person'),
+          ],
+        },
+      })
+    ).map((person) => person.id);
     const agreements = (await this.modelAgreement.findAll({
       offset: body.paginationModel.page * size,
       limit: size,
-      where: filter('Agreement'),
+      where: {
+        [Op.and]: [
+          { id: { [Op.in]: agreements_ids.map((agreement) => agreement.id) } },
+          { personId: { [Op.in]: persons_ids } },
+        ],
+      },
       include: [this.modelAgreementDebtsLink],
     })) as unknown as AgrGetAllDto[];
 
@@ -109,7 +132,6 @@ export class AgreementsService {
         .reduce((prev, curr) => {
           return prev + curr;
         }, 0);
-      console.log('sumBefor:', sumBefore);
 
       dataValuesAgreement.sumBeforeAgr = sumBefore;
       // сумма платежей после соглашения
@@ -118,7 +140,6 @@ export class AgreementsService {
         .reduce((prev, curr) => {
           return prev + curr;
         }, 0);
-      console.log('sumAfter', sum);
       dataValuesAgreement.sumAfterAgr = sum;
 
       if (calcs.length !== 0) {

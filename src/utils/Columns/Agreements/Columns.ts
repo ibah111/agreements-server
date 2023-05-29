@@ -23,7 +23,7 @@ export default function getColumns(): GridColDefAddon[] {
       type: 'number',
     },
     {
-      field: 'fio',
+      field: 'FIO',
       base: 'contact',
       col: Sequelize.fn(
         'concat',

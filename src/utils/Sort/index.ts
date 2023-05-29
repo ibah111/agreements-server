@@ -18,6 +18,7 @@ export default function Sort(
       if (field) {
         const operand = getSort(field);
         const order = field.sortOrder || [];
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const item: OrderItem = [...order, operand, sort.sort!];
         orders.push(item);
       }

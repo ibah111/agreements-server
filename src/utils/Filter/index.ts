@@ -12,6 +12,7 @@ export default function Filter(
   const getField = getFieldHandler(columnModel);
   filterModel.items.forEach((item) => {
     const Field = getField(item.field);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (Field) where.push(getItem(item, Field!));
   });
   if (filterModel.items.length > 0) {
