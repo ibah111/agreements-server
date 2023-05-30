@@ -83,6 +83,7 @@ export class AgreementToDebtSerivce {
     });
     const debtIdArray = links.map((link) => link.id_debt);
     const debts = await this.modelDebt.findAll({
+      include: ['StatusDict'],
       where: { id: { [Op.in]: debtIdArray } },
     });
     return debts;
