@@ -20,6 +20,6 @@
     "noFallthroughCasesInSwitch": false,
     "strict": true,
     "resolveJsonModule": true
-  },
-  "include": ["src"]
+  }
+  //"include": ["src"]
 }
