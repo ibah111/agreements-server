@@ -149,4 +149,9 @@ export class Agreement extends Model<
 
   Person?: NonAttribute<Person>;
   Debt?: NonAttribute<Debt[]>;
+
+  //TODO
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  registrator: string;
 }

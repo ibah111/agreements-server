@@ -118,6 +118,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
   @Type(() => Date)
   receipt_dt: Date;
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  registrator: string;
 }
 
 export class DeleteSelectedAgreements {
