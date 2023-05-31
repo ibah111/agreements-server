@@ -82,13 +82,11 @@ export class Agreement extends Model<
   /**
    * Сумма задолженности по пересчету
    */
-  @AllowNull(true)
   @Column(DataType.MONEY)
   recalculation_sum: number | null;
   /**
    * Дисконт
    */
-  @AllowNull(true)
   @Column(DataType.MONEY)
   discount_sum: number | null;
   /**
@@ -100,58 +98,52 @@ export class Agreement extends Model<
   /**
    * Наличие ИД
    */
-  @AllowNull(true)
+  @AllowNull(false)
   @Default(false)
   @Column(DataType.BOOLEAN)
   reg_doc: CreationOptional<boolean>;
   /**
    * новый ИД
    */
-  @AllowNull(true)
   @ForeignKey(() => RegDocType)
   @Column(DataType.INTEGER)
-  new_regDoc: FK<number>;
+  new_regDoc: FK<number> | null;
   @BelongsTo(() => RegDocType)
   RegDocType?: BelongsToAttribute<NonAttribute<RegDocType>>;
   /**
    * Комментарии
    */
-  @AllowNull(true)
+
   @Column(DataType.STRING)
   comment: string | null;
   /**
    * Ссылка на задачу
    */
-  @AllowNull(true)
   @Column(DataType.STRING)
-  task_link: string;
+  task_link: string | null;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
   personId: number;
 
   @Column(DataType.STRING)
-  actions_for_get: string;
+  actions_for_get: string | null;
 
-  @AllowNull(true)
   @Column(DataType.DATE)
-  receipt_dt: Date;
+  receipt_dt: Date | null;
 
   @HasMany(() => AgreementDebtsLink)
   DebtLinks?: NonAttribute<AgreementDebtsLink[]>;
 
-  @AllowNull(true)
   @ForeignKey(() => StatusAgreement)
   @Column(DataType.INTEGER)
-  statusAgreement: FK<number>;
+  statusAgreement: FK<number> | null;
   @BelongsTo(() => StatusAgreement)
   StatusAgreement?: BelongsToAttribute<NonAttribute<StatusAgreement>>;
 
   Person?: NonAttribute<Person>;
-  Debt?: NonAttribute<Debt[]>;
 
   //TODO
-  @AllowNull(true)
   @Column(DataType.STRING)
-  registrator: string;
+  registrator: string | null;
 }

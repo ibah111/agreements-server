@@ -1,4 +1,3 @@
-import { AgrGetAllDto } from 'src/Pages/Agreements/Agr.dto';
 import { ActionLog } from './ActionLog';
 import { Agreement } from './Agreement';
 import AgreementDebtsLink from './AgreementDebtLink';
@@ -17,7 +16,6 @@ export const models = [
   PurposeType,
   ActionLog,
   AgreementDebtsLink,
-  AgrGetAllDto,
   RegDocType,
   StatusAgreement,
 ];
