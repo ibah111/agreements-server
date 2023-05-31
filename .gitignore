@@ -4,3 +4,5 @@ node_modules
 .yarnrc.yml
 database.sqlite
 debug.log
+backup
+*.xlsx
