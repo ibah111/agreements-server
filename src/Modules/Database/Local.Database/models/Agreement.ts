@@ -2,8 +2,8 @@
  * Contact exception data
  * Таблица Данных не подцепляемых из контакта
  */
-// Это пиздец.... 🤔
-import { Debt, Person } from '@contact/models';
+
+import { Person } from '@contact/models';
 
 import {
   BelongsToAttribute,
