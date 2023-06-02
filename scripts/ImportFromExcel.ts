@@ -1,8 +1,10 @@
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { program } from 'commander';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { log } from 'console';
 import {
+  CellFormulaValue,
   CellHyperlinkValue,
   CellValue,
   Column,
@@ -31,6 +33,74 @@ const attributesDebt = Object.keys(AgreementDebtsLink.getAttributes());
 type ResultRow = CreationAttributes<Agreement> & {
   DebtLinks: CreationAttributes<AgreementDebtsLink>[];
 };
+function isFormula(value: unknown): value is CellFormulaValue {
+  return Object.prototype.hasOwnProperty.call(value, 'formula');
+}
+function isHyperLink(value: unknown): value is CellHyperlinkValue {
+  return (
+    Object.prototype.hasOwnProperty.call(value, 'hyperlink') &&
+    Object.prototype.hasOwnProperty.call(value, 'text')
+  );
+}
+class RegDoc {
+  name: string;
+  value: CellValue;
+}
+class Registrator {
+  name: string;
+  value: CellValue;
+}
+class Archive {
+  name: string;
+  value: CellValue;
+}
+function isRegDoc(value: CellValue, name: string) {
+  const new_regDoc: RegDoc = {
+    name: 'new_regDoc',
+    value: value,
+  };
+  switch (name) {
+    case new_regDoc.name:
+      if (value === 'да') {
+        return new_regDoc.value === 1 ? 1 : null;
+      }
+      return null;
+  }
+}
+function isRegistrator(value: CellValue, name: string) {
+  const registrator: Registrator = {
+    name: 'registrator',
+    value: value,
+  };
+  const new_regDoc: RegDoc = {
+    name: 'new_regDoc',
+    value: value,
+  };
+  switch (name) {
+    case registrator.name:
+      if (value === 'нет') return null;
+      else [registrator.value, new_regDoc.value === 2];
+  }
+}
+function isArchive(value: CellValue, name: string) {
+  const registrator: Registrator = {
+    name: 'registrator',
+    value: value,
+  };
+  const archive: Archive = {
+    name: 'archive',
+    value: value,
+  };
+  const new_regDoc: RegDoc = {
+    name: 'new_regDoc',
+    value: value,
+  };
+  switch (name) {
+    case archive.name:
+      if (value === 'нет') return null;
+      else return [archive.value === registrator.value, new_regDoc.value === 3];
+  }
+}
 /**
  * Конверт в нужный формат
  * @param value тип ячейки
@@ -39,60 +109,49 @@ type ResultRow = CreationAttributes<Agreement> & {
  */
 function convert(value: CellValue, name: string) {
   switch (name) {
-    case (name = 'id_debt'):
-      return value as number;
-    case (name = 'conclusion_date'):
-      return value as Date; /* OR => as unknown as moment.Moment; as -||-*/
-    case 'fio':
-      return value as string;
-    case 'birth_date':
-      return value as Date; // OR -||-
+    case 'court_sum':
+    case 'debt_sum':
+    case 'recalculation_sum':
+      if (value === '-') return null;
+      return value;
     case 'purpose': {
       switch (value) {
         case 'Задолженность взыскана банком':
-          return value as unknown as 1;
+          return 1;
         case 'Задолженность взыскана нами':
-          return value as unknown as 2;
+          return 2;
         case 'Пересчет':
-          return value as unknown as 3;
+          return 3;
         case 'Индексация':
-          return value as unknown as 4;
+          return 4;
+        default:
+          throw Error();
       }
-      return value as number;
     }
-    case 'court_sum':
-      return value as number;
-    case 'debt_sum':
-      return value as number;
-    case 'recalculation_sum':
-      return value as number;
-    case 'discount_sum':
-      return value as number;
-    case 'discount':
-      return value as number;
-    case 'month_pay_day':
-      return value as number;
     case 'new_regDoc':
-      if ((value = 'да')) return (value = 1);
+      return isRegDoc(value, name);
+    // if (value === 'да') return 1;
+    // return null;
     case 'registrator':
-      return value as string;
-    case 'receipt_dy':
-      return value as Date; // or -||-
-    case 'actions_for_get':
-      return value as string;
-    case 'comment':
-      return value as string;
+      return isRegistrator(value, name);
+    // if (value === 'нет') return null;
+    // return value;
+    case 'archive':
+      return isArchive(value, name);
     case 'task_link':
-      return (value as string) || (value as CellHyperlinkValue);
+      return isHyperLink(value) ? value.hyperlink : value;
+
     default:
-      log(`Не удалость прочитать данные CellValue: ${value}, Name: ${name}`);
-      break;
+      if (isFormula(value)) {
+        return value.result;
+      }
+      return value;
   }
 }
 
 /**
  * Импортирование
- * @param data
+ * @param data Таблица
  */
 async function importRunned(data: Worksheet) {
   const predata: Record<string, Row[]> = {};
@@ -128,9 +187,8 @@ async function importRunned(data: Worksheet) {
     {},
     { key: 'new_regDoc' },
     { key: 'registrator' },
-    {},
+    { key: 'archive' },
     { key: 'receipt_dt' },
-    {},
     { key: 'actions_for_get' },
     {},
     {},
@@ -159,14 +217,13 @@ async function importRunned(data: Worksheet) {
     if (!predata[unique]) predata[unique] = [];
     predata[unique].push(row);
   }
-  console.log(Object.keys(Agreement.getAttributes()));
   for (const rows of Object.values(predata)) {
     const agreement_data = { DebtLinks: [] } as unknown as ResultRow;
     const first = rows[0];
     for (const attribute of attributesAgremment) {
       try {
         const cell = first.getCell(attribute);
-        if (cell) agreement_data[attribute] = cell.value;
+        if (cell) agreement_data[attribute] = convert(cell.value, attribute);
       } catch {}
     }
 
