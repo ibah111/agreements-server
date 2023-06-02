@@ -2,7 +2,7 @@ import { CreationAttributes } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { program } from 'commander';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { log } from 'console';
+
 import {
   CellFormulaValue,
   CellHyperlinkValue,
@@ -42,64 +42,10 @@ function isHyperLink(value: unknown): value is CellHyperlinkValue {
     Object.prototype.hasOwnProperty.call(value, 'text')
   );
 }
-class RegDoc {
+
+class CaseClass {
   name: string;
   value: CellValue;
-}
-class Registrator {
-  name: string;
-  value: CellValue;
-}
-class Archive {
-  name: string;
-  value: CellValue;
-}
-function isRegDoc(value: CellValue, name: string) {
-  const new_regDoc: RegDoc = {
-    name: 'new_regDoc',
-    value: value,
-  };
-  switch (name) {
-    case new_regDoc.name:
-      if (value === 'да') {
-        return new_regDoc.value === 1 ? 1 : null;
-      }
-      return null;
-  }
-}
-function isRegistrator(value: CellValue, name: string) {
-  const registrator: Registrator = {
-    name: 'registrator',
-    value: value,
-  };
-  const new_regDoc: RegDoc = {
-    name: 'new_regDoc',
-    value: value,
-  };
-  switch (name) {
-    case registrator.name:
-      if (value === 'нет') return null;
-      else [registrator.value, new_regDoc.value === 2];
-  }
-}
-function isArchive(value: CellValue, name: string) {
-  const registrator: Registrator = {
-    name: 'registrator',
-    value: value,
-  };
-  const archive: Archive = {
-    name: 'archive',
-    value: value,
-  };
-  const new_regDoc: RegDoc = {
-    name: 'new_regDoc',
-    value: value,
-  };
-  switch (name) {
-    case archive.name:
-      if (value === 'нет') return null;
-      else return [archive.value === registrator.value, new_regDoc.value === 3];
-  }
 }
 /**
  * Конверт в нужный формат
@@ -108,6 +54,18 @@ function isArchive(value: CellValue, name: string) {
  * @returns Функция конвертирования в данных их excel в формат SQLite
  */
 function convert(value: CellValue, name: string) {
+  const regDoc: CaseClass = {
+    name: 'new_regDoc',
+    value: value,
+  };
+  const registrator: CaseClass = {
+    name: 'registrator',
+    value: value,
+  };
+  const archive: CaseClass = {
+    name: 'archive',
+    value: value,
+  };
   switch (name) {
     case 'court_sum':
     case 'debt_sum':
@@ -128,19 +86,17 @@ function convert(value: CellValue, name: string) {
           throw Error();
       }
     }
-    case 'new_regDoc':
-      return isRegDoc(value, name);
-    // if (value === 'да') return 1;
-    // return null;
-    case 'registrator':
-      return isRegistrator(value, name);
-    // if (value === 'нет') return null;
-    // return value;
-    case 'archive':
-      return isArchive(value, name);
+    case regDoc.name:
+      if (regDoc.value === 'да') return 1;
+      return null;
+    case registrator.name:
+      if (registrator.value === 'нет') return null;
+      return registrator.value;
+    case archive.name:
+      if (archive.value === 'нет') return null;
+      return archive.value;
     case 'task_link':
       return isHyperLink(value) ? value.hyperlink : value;
-
     default:
       if (isFormula(value)) {
         return value.result;
@@ -239,8 +195,18 @@ async function importRunned(data: Worksheet) {
     }
     result.push(agreement_data);
   }
+
+  for (const resultRow of result) {
+    if (resultRow.registrator && !resultRow.archive) {
+      resultRow.new_regDoc = 2;
+    }
+    if (resultRow.archive && !resultRow.registrator) {
+      resultRow.new_regDoc = 3;
+    }
+  }
   console.log(result);
 }
+
 async function main() {
   const opts = program.option('-p, --path <string>').parse().opts() as Opts;
   const workbook = new Workbook();

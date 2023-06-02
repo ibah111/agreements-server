@@ -124,6 +124,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiProperty()
   registrator: string;
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  archive: string;
 }
 
 export class DeleteSelectedAgreements {

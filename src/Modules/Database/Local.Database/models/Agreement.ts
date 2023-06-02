@@ -110,6 +110,11 @@ export class Agreement extends Model<
   new_regDoc: FK<number> | null;
   @BelongsTo(() => RegDocType)
   RegDocType?: BelongsToAttribute<NonAttribute<RegDocType>>;
+  @Column(DataType.STRING)
+  registrator: string | null;
+
+  @Column(DataType.STRING)
+  archive: string | null;
   /**
    * Комментарии
    */
@@ -142,8 +147,4 @@ export class Agreement extends Model<
   StatusAgreement?: BelongsToAttribute<NonAttribute<StatusAgreement>>;
 
   Person?: NonAttribute<Person>;
-
-  //TODO
-  @Column(DataType.STRING)
-  registrator: string | null;
 }
