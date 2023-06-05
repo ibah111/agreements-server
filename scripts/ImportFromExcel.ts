@@ -1,8 +1,7 @@
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { program } from 'commander';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
+import { procesFuncArray } from './PostProcess';
 import {
   CellFormulaValue,
   CellHyperlinkValue,
@@ -16,21 +15,31 @@ import moment from 'moment';
 import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
-interface Opts {
-  path: string;
-}
-/**
- * seq
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import Models, { Person } from '@contact/models';
+
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: 'database.sqlite',
   models: models,
+  logging: false,
 });
+
+const contactsequelize = new Sequelize({
+  dialect: 'mssql',
+  host: 'newct.usb.ru',
+  database: 'i_collect3',
+  password: 'contact',
+  username: 'contact',
+  logging: false,
+  models: Models,
+});
+
+interface Opts {
+  path: string;
+}
 const attributesAgremment = Object.keys(Agreement.getAttributes());
 const attributesDebt = Object.keys(AgreementDebtsLink.getAttributes());
-type ResultRow = CreationAttributes<Agreement> & {
+export type ResultRow = CreationAttributes<Agreement> & {
   DebtLinks: CreationAttributes<AgreementDebtsLink>[];
 };
 function isFormula(value: unknown): value is CellFormulaValue {
@@ -70,19 +79,21 @@ function convert(value: CellValue, name: string) {
     case 'court_sum':
     case 'debt_sum':
     case 'recalculation_sum':
-      if (value === '-') return null;
+      if (value === '-' || !value) return 0;
       return value;
     case 'purpose': {
-      switch (value) {
-        case 'Задолженность взыскана банком':
+      switch (value?.toString().trim().toLowerCase()) {
+        case 'задолженность взыскана банком':
           return 1;
-        case 'Задолженность взыскана нами':
+        case 'задолженность взыскана нами':
           return 2;
-        case 'Пересчет':
+        case 'пересчёт':
+        case 'пересчет':
           return 3;
-        case 'Индексация':
+        case 'индексация':
           return 4;
         default:
+          console.log(value);
           throw Error();
       }
     }
@@ -180,7 +191,7 @@ async function importRunned(data: Worksheet) {
       try {
         const cell = first.getCell(attribute);
         if (cell) agreement_data[attribute] = convert(cell.value, attribute);
-      } catch {}
+      } catch (error) {}
     }
 
     for (const row of rows) {
@@ -189,7 +200,7 @@ async function importRunned(data: Worksheet) {
         try {
           const cell = row.getCell(attribute);
           if (cell) debt_data[attribute] = convert(cell.value, attribute);
-        } catch {}
+        } catch (error) {}
       }
       agreement_data.DebtLinks.push(debt_data);
     }
@@ -197,14 +208,11 @@ async function importRunned(data: Worksheet) {
   }
 
   for (const resultRow of result) {
-    if (resultRow.registrator && !resultRow.archive) {
-      resultRow.new_regDoc = 2;
-    }
-    if (resultRow.archive && !resultRow.registrator) {
-      resultRow.new_regDoc = 3;
-    }
+    procesFuncArray.forEach((func) => {
+      func(resultRow);
+    });
   }
-  console.log(result);
+  return result;
 }
 
 async function main() {
@@ -222,6 +230,48 @@ async function main() {
   if (!worksheet_break) return;
   const worksheet_out = workbook.worksheets[3]; // Соглашения об отсутпном
   if (!worksheet_out) return;
-  importRunned(worksheet_runned);
+  const results = await importRunned(worksheet_runned);
+
+  await sequelize.transaction(async (transaction) => {
+    for (const result of results) {
+      console.log(result);
+      const debt = result.DebtLinks[0];
+      const person = await Person.findOne({ where: { id: debt.id_debt } });
+      // if (person) {
+      const agr = await Agreement.create(
+        {
+          conclusion_date: result.conclusion_date,
+          court_sum: result.court_sum,
+          debt_sum: result.debt_sum,
+          month_pay_day: result.month_pay_day,
+          personId: person!.id,
+          purpose: result.purpose,
+          actions_for_get: result.actions_for_get,
+          archive: result.archive,
+          comment: result.archive,
+          discount_sum: result.discount_sum,
+          finish_date: result.finish_date,
+          new_regDoc: result.new_regDoc,
+          recalculation_sum: result.recalculation_sum,
+          receipt_dt: result.receipt_dt,
+          reg_doc: result.reg_doc,
+          registrator: result.registrator,
+          statusAgreement: result.statusAgreement,
+          task_link: result.task_link,
+        },
+        { transaction },
+      );
+      for (const debt of result.DebtLinks) {
+        await AgreementDebtsLink.create(
+          {
+            id_agreement: agr.id,
+            id_debt: debt.id_debt,
+          },
+          { transaction },
+        );
+      }
+      // }
+    }
+  });
 }
 main();
