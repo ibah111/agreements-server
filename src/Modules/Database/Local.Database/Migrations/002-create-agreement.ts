@@ -1,16 +1,15 @@
 import { DataTypes, QueryInterface } from '@sql-tools/sequelize';
 import { MigrationFn } from 'umzug';
 
-export const up: MigrationFn<QueryInterface> = ({ context }) =>
-  context.sequelize.transaction((t) =>
-    Promise.all([
-      context.createTable('purpose_types', {
-        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        title: { type: DataTypes.STRING },
-        createdAt: { type: DataTypes.DATE, allowNull: false },
-        updatedAt: { type: DataTypes.DATE, allowNull: false },
-      }),
-      context.createTable(
+export const up: MigrationFn<QueryInterface> = async ({ context }) => {
+  await context.sequelize.transaction(async (t) => {
+    await context.createTable('purpose_types', {
+      id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+      title: { type: DataTypes.STRING },
+      createdAt: { type: DataTypes.DATE, allowNull: false },
+      updatedAt: { type: DataTypes.DATE, allowNull: false },
+    }),
+      await context.createTable(
         'Agreements',
         {
           id: {
@@ -84,9 +83,9 @@ export const up: MigrationFn<QueryInterface> = ({ context }) =>
           },
         },
         { transaction: t },
-      ),
-    ]),
-  );
+      );
+  });
+};
 export const down: MigrationFn<QueryInterface> = ({ context }) =>
   context.sequelize.transaction((t) =>
     Promise.all([

@@ -92,7 +92,6 @@ export class Agreement extends Model<
   /**
    * Число платежа каждого месяца
    */
-  @AllowNull(false)
   @Column(DataType.INTEGER)
   month_pay_day: number;
   /**

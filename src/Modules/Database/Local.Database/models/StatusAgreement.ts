@@ -19,7 +19,7 @@ import {
 } from '@sql-tools/sequelize-typescript';
 import { Agreement } from './Agreement';
 
-@Table({ tableName: 'statusAgreementTypes' })
+@Table({ tableName: 'statusAgreement' })
 export class StatusAgreement extends Model<
   InferAttributes<StatusAgreement>,
   InferCreationAttributes<StatusAgreement>,

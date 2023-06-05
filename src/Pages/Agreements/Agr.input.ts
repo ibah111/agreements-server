@@ -83,7 +83,6 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   discount_sum?: number | null;
 
   @Expose()
-  @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
   month_pay_day: number;

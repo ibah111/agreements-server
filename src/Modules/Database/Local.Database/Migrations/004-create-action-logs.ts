@@ -14,12 +14,12 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
     row_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'Agreements', key: 'id' },
+      // references: { model: 'Agreements', key: 'id' },
     },
     user: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'Users', key: 'id' },
+      // references: { model: 'Users', key: 'id' },
     },
     old_value: { type: DataTypes.STRING(4000) },
     new_value: { type: DataTypes.STRING(4000) },
