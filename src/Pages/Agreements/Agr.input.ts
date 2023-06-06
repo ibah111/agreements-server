@@ -6,6 +6,7 @@ import {
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   ValidateNested,
@@ -62,6 +63,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
+  bank_sum: number;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
   court_sum: number;
 
   @Expose()
@@ -81,6 +88,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
   discount_sum?: number | null;
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
+  discount?: number | null;
 
   @Expose()
   @IsNumber()
@@ -187,6 +200,8 @@ export class AgreementsAll {
   @Expose()
   @IsNotEmpty()
   paginationModel: PaginationValidator;
+  @ApiProperty()
+  @IsObject()
   @Expose()
   filterModel: GridFilterModel;
 }

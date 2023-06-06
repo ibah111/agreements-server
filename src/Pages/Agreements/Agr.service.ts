@@ -37,7 +37,7 @@ export class AgreementsService {
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
   ) {}
 
-  async getAll(body: AgreementsAll): Promise<AgrGetAllDto[]> {
+  async getAll(body: AgreementsAll) {
     const size = getSize(body.paginationModel.pageSize);
     const utils = getUtils();
     const filter = utils.generateFilter(body.filterModel);
@@ -61,7 +61,7 @@ export class AgreementsService {
         },
       })
     ).map((person) => person.id);
-    const agreements = (await this.modelAgreement.findAll({
+    const agreements = (await this.modelAgreement.findAndCountAll({
       offset: body.paginationModel.page * size,
       limit: size,
       where: {
@@ -70,13 +70,13 @@ export class AgreementsService {
           { personId: { [Op.in]: persons_ids } },
         ],
       },
-      include: [this.modelAgreementDebtsLink],
-    })) as unknown as AgrGetAllDto[];
+      include: [{ model: this.modelAgreementDebtsLink, separate: true }],
+    })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
     /** */
     const personIdArray: number[] = [];
     const debtIdArray: number[] = [];
-    for (const agreement of agreements) {
+    for (const agreement of agreements.rows) {
       personIdArray.push(agreement.personId);
       for (const debtLink of agreement.DebtLinks || []) {
         debtIdArray.push(debtLink.id_debt);
@@ -93,7 +93,7 @@ export class AgreementsService {
       attributes: ['fio', 'id', 'f', 'i', 'o'],
     });
     //Перебираем соглашения и добавляем данные
-    for (const agreement of agreements) {
+    for (const agreement of agreements.rows) {
       //Присоединяем Person
       const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
       const person = persons.find((person) => person.id === agreement.personId);

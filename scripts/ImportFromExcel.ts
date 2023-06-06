@@ -15,7 +15,7 @@ import moment from 'moment';
 import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
-import Models, { Person } from '@contact/models';
+import Models, { Debt, Person } from '@contact/models';
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -24,6 +24,7 @@ const sequelize = new Sequelize({
   logging: false,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const contactsequelize = new Sequelize({
   dialect: 'mssql',
   host: 'newct.usb.ru',
@@ -76,11 +77,14 @@ function convert(value: CellValue, name: string) {
     value: value,
   };
   switch (name) {
+    case 'bank_sum':
+      if (value) return value;
     case 'court_sum':
     case 'debt_sum':
     case 'recalculation_sum':
       if (value === '-' || !value) return 0;
-      return value;
+      else if (isFormula(value)) return value.result;
+      else return value;
     case 'purpose': {
       switch (value?.toString().trim().toLowerCase()) {
         case 'задолженность взыскана банком':
@@ -94,7 +98,8 @@ function convert(value: CellValue, name: string) {
           return 4;
         default:
           console.log(value);
-          throw Error();
+          return 5;
+        // throw Error();
       }
     }
     case regDoc.name:
@@ -108,6 +113,10 @@ function convert(value: CellValue, name: string) {
       return archive.value;
     case 'task_link':
       return isHyperLink(value) ? value.hyperlink : value;
+    case 'id_debt':
+      if (value) return value;
+      return null;
+
     default:
       if (isFormula(value)) {
         return value.result;
@@ -138,12 +147,12 @@ async function importRunned(data: Worksheet) {
     {},
     {},
     { key: 'purpose' },
-    {},
+    { key: 'bank_sum' },
     { key: 'court_sum' },
     { key: 'debt_sum' },
     { key: 'recalculation_sum' },
+    { key: 'discount_total' }, // тотал ( который высчитывается)
     { key: 'discount_sum' },
-    { key: 'discount' },
     {},
     {},
     {},
@@ -236,42 +245,48 @@ async function main() {
     for (const result of results) {
       console.log(result);
       const debt = result.DebtLinks[0];
-      const person = await Person.findOne({ where: { id: debt.id_debt } });
-      // if (person) {
-      const agr = await Agreement.create(
-        {
-          conclusion_date: result.conclusion_date,
-          court_sum: result.court_sum,
-          debt_sum: result.debt_sum,
-          month_pay_day: result.month_pay_day,
-          personId: person!.id,
-          purpose: result.purpose,
-          actions_for_get: result.actions_for_get,
-          archive: result.archive,
-          comment: result.archive,
-          discount_sum: result.discount_sum,
-          finish_date: result.finish_date,
-          new_regDoc: result.new_regDoc,
-          recalculation_sum: result.recalculation_sum,
-          receipt_dt: result.receipt_dt,
-          reg_doc: result.reg_doc,
-          registrator: result.registrator,
-          statusAgreement: result.statusAgreement,
-          task_link: result.task_link,
-        },
-        { transaction },
-      );
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create(
+      const debtContact = await Debt.findOne({
+        where: { id: debt.id_debt },
+        include: Person,
+      });
+      if (debtContact?.Person) {
+        const agr = await Agreement.create(
           {
-            id_agreement: agr.id,
-            id_debt: debt.id_debt,
+            conclusion_date: result.conclusion_date,
+            bank_sum: result.bank_sum,
+            court_sum: result.court_sum,
+            debt_sum: result.debt_sum,
+            month_pay_day: result.month_pay_day,
+            personId: debtContact.Person.id,
+            purpose: result.purpose,
+            actions_for_get: result.actions_for_get,
+            archive: result.archive,
+            comment: result.archive,
+            discount_sum: result.discount_sum,
+            finish_date: result.finish_date,
+            new_regDoc: result.new_regDoc,
+            recalculation_sum: result.recalculation_sum,
+            receipt_dt: result.receipt_dt,
+            reg_doc: result.reg_doc,
+            registrator: result.registrator,
+            statusAgreement: 1,
+            task_link: result.task_link,
           },
           { transaction },
         );
+        for (const debt of result.DebtLinks) {
+          await AgreementDebtsLink.create(
+            {
+              id_agreement: agr.id,
+              id_debt: debt.id_debt,
+            },
+            { transaction },
+          );
+        }
       }
-      // }
+      continue;
     }
   });
+  console.log('Finish');
 }
 main();

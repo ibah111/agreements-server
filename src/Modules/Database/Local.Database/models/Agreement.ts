@@ -68,6 +68,11 @@ export class Agreement extends Model<
   @BelongsTo(() => PurposeType)
   PurposeType?: BelongsToAttribute<NonAttribute<PurposeType>>;
   /**
+   * Сумма задолженности, переданная банком (эл. реестр)
+   */
+  @Column(DataType.MONEY)
+  bank_sum: number;
+  /**
    * Cумма задолженности по суд.акту
    */
   @AllowNull(false)
@@ -89,6 +94,11 @@ export class Agreement extends Model<
    */
   @Column(DataType.MONEY)
   discount_sum: number | null;
+  /**
+   * Статичный дисконт (никак не учавствует в расчетах, просто существует)
+   */
+  @Column(DataType.MONEY)
+  discount: number | null;
   /**
    * Число платежа каждого месяца
    */
