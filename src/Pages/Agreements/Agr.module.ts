@@ -1,4 +1,11 @@
-import { Debt, LawAct, Person, PersonProperty } from '@contact/models';
+import {
+  Debt,
+  LawAct,
+  LawExec,
+  Person,
+  PersonProperty,
+  Portfolio,
+} from '@contact/models';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
 import { ActionLog } from 'src/Modules/Database/Local.Database/models/ActionLog';
@@ -10,7 +17,7 @@ import { AgreementsService } from './Agr.service';
 @Module({
   imports: [
     SequelizeModule.forFeature(
-      [LawAct, Person, Debt, PersonProperty],
+      [LawAct, Person, Debt, PersonProperty, LawExec, Portfolio],
       'contact',
     ),
     SequelizeModule.forFeature(

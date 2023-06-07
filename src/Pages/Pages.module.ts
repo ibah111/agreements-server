@@ -9,6 +9,7 @@ import { UserModule } from './User/User.module';
 import { RegDocModule } from './RegDoc/RegDoc.module';
 import { StatusAgreementModule } from './StatusAgreement/StatusAgreement.module';
 import { DictModule } from './Dict/Dict.module';
+import { TypeAgreementModule } from './AgreementTyp/Type.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DictModule } from './Dict/Dict.module';
     AgreementToDebtModule,
     StatusAgreementModule,
     DictModule,
+    TypeAgreementModule,
   ],
 })
 export class PagesModule {}

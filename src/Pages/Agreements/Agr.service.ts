@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Debt, DebtCalc, Person } from '@contact/models';
+import { Debt, DebtCalc, LawExec, Person, Portfolio } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import {
   AgreementsAll,
@@ -35,6 +35,10 @@ export class AgreementsService {
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelAgreementDebtsLink: typeof AgreementDebtsLink,
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
+    @InjectModel(LawExec, 'contact')
+    private readonly modelLawExec: typeof LawExec,
+    @InjectModel(Portfolio, 'contact')
+    private readonly modelPortfolio: typeof Portfolio,
   ) {}
 
   async getAll(body: AgreementsAll) {
@@ -73,7 +77,6 @@ export class AgreementsService {
       include: [{ model: this.modelAgreementDebtsLink, separate: true }],
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
-    /** */
     const personIdArray: number[] = [];
     const debtIdArray: number[] = [];
     for (const agreement of agreements.rows) {
@@ -82,14 +85,25 @@ export class AgreementsService {
         debtIdArray.push(debtLink.id_debt);
       }
     }
-
     const debts = (await this.modelDebt.findAll({
       where: { id: { [Op.in]: debtIdArray } },
-      include: [{ association: 'DebtCalcs' }],
+      include: [
+        {
+          model: this.modelPortfolio,
+          attributes: ['id', 'name'],
+        },
+        {
+          association: 'DebtCalcs',
+        },
+      ],
     })) as Debt[];
-
     const persons = await this.modelPerson.findAll({
       where: { id: { [Op.in]: personIdArray } },
+      include: [
+        {
+          association: 'Debts',
+        },
+      ],
       attributes: ['fio', 'id', 'f', 'i', 'o'],
     });
     //Перебираем соглашения и добавляем данные
@@ -123,6 +137,7 @@ export class AgreementsService {
             moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
         )
         .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
+
       // расчет на сумму до соглашения
       const calcsBefore = dc.filter((item) =>
         moment(agreement.conclusion_date).isAfter(moment(item.dt)),

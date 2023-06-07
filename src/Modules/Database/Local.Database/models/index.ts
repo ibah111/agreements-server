@@ -1,6 +1,7 @@
 import { ActionLog } from './ActionLog';
 import { Agreement } from './Agreement';
 import AgreementDebtsLink from './AgreementDebtLink';
+import { TypeAgreement } from './AgreementType';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { Role } from './Role.model';
@@ -18,4 +19,5 @@ export const models = [
   AgreementDebtsLink,
   RegDocType,
   StatusAgreement,
+  TypeAgreement,
 ];

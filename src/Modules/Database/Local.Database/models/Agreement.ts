@@ -30,6 +30,7 @@ import {
   Table,
 } from '@sql-tools/sequelize-typescript';
 import AgreementDebtsLink from './AgreementDebtLink';
+import { TypeAgreement } from './AgreementType';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { StatusAgreement } from './StatusAgreement';
@@ -67,6 +68,16 @@ export class Agreement extends Model<
   purpose: FK<number>;
   @BelongsTo(() => PurposeType)
   PurposeType?: BelongsToAttribute<NonAttribute<PurposeType>>;
+  /**
+   * Тип соглашения
+   */
+  @AllowNull(false)
+  @ForeignKey(() => TypeAgreement)
+  @Column(DataType.INTEGER)
+  agreement_type: FK<number>;
+  @BelongsTo(() => TypeAgreement)
+  AgreementType?: BelongsToAttribute<NonAttribute<TypeAgreement>>;
+
   /**
    * Сумма задолженности, переданная банком (эл. реестр)
    */

@@ -97,10 +97,13 @@ function convert(value: CellValue, name: string) {
         case 'индексация':
           return 4;
         default:
-          console.log(value);
           return 5;
         // throw Error();
       }
+    }
+    case 'agreement_type': {
+      if (value === null) return 1;
+      else return 1;
     }
     case regDoc.name:
       if (regDoc.value === 'да') return 1;
@@ -262,6 +265,7 @@ async function main() {
             actions_for_get: result.actions_for_get,
             archive: result.archive,
             comment: result.archive,
+            agreement_type: 1,
             discount_sum: result.discount_sum,
             finish_date: result.finish_date,
             new_regDoc: result.new_regDoc,

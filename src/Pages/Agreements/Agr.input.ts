@@ -51,6 +51,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
+  agreement_type: number;
+
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
   purpose: number;
 
   @Expose()
