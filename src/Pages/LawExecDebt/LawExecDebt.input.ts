@@ -6,5 +6,5 @@ export class GetLawExecInput {
   @Expose()
   @IsNumber()
   @ApiProperty()
-  aggrementId: number;
+  agreementId: number;
 }

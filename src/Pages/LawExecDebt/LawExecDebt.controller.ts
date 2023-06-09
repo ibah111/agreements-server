@@ -15,6 +15,6 @@ export class LawExecDebtController {
 
   @Post('getExecs')
   async getExecs(@Body() body: GetLawExecInput) {
-    return await this.service.getLawExecDebt(body.aggrementId);
+    return await this.service.getLawExecDebt(body.agreementId);
   }
 }

@@ -18,17 +18,14 @@ export class LawExecDebtService {
   ) {}
 
   async getLawExecDebt(agreementId: number) {
-    const aggrement = await this.modelAgreement.findOne({
-      where: { id: agreementId },
-      include: { model: this.modelAgreementDebtsLink, required: false },
-      rejectOnEmpty: new NotFoundException(
-        `Не найденно соглашение ${agreementId}`,
-      ),
+    const DebtLinks = await this.modelAgreementDebtsLink.findAll({
+      where: { id_agreement: agreementId },
     });
-    const debtsIdArray = aggrement.DebtLinks?.map((item) => item.id_debt) || [];
+    const debtsIdArray = DebtLinks.map((item) => item.id_debt) || [];
 
     const lawExecs = await this.modelLawExec.findAll({
       where: { r_debt_id: { [Op.in]: debtsIdArray }, state: 7 },
+      include: [{ association: 'StateDict' }],
     });
     return lawExecs;
   }
