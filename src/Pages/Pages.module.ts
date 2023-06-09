@@ -10,6 +10,7 @@ import { RegDocModule } from './RegDoc/RegDoc.module';
 import { StatusAgreementModule } from './StatusAgreement/StatusAgreement.module';
 import { DictModule } from './Dict/Dict.module';
 import { TypeAgreementModule } from './AgreementTyp/Type.module';
+import { LawExecDebtModule } from './LawExecDebt/LawExecDebt.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TypeAgreementModule } from './AgreementTyp/Type.module';
     StatusAgreementModule,
     DictModule,
     TypeAgreementModule,
+    LawExecDebtModule,
   ],
 })
 export class PagesModule {}
