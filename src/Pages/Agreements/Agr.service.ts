@@ -229,7 +229,9 @@ export class AgreementsService {
     });
     const old = agreement[data.field];
     agreement[data.field] = data.value;
-    const changed = agreement.changed();
+    if (data.field === 'statusAgreement') {
+      if (data.value === 2) agreement.finish_date = new Date();
+    }
     await agreement.save();
     await this.modelActionLog.create({
       actionType: Actions.UPDATE,
@@ -239,6 +241,6 @@ export class AgreementsService {
       new_value: String(data.value),
       user: auth.userLocal.id,
     });
-    return Boolean(changed);
+    return agreement;
   }
 }

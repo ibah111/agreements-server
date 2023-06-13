@@ -8,7 +8,7 @@ import Filter from 'src/utils/Filter';
 import Sort from 'src/utils/Sort';
 import { AddonData } from '../../addons';
 import getColumns from '../Columns';
-import { getAttributes } from './getAttraibutes';
+import { getAttributes } from './getAttributes';
 export interface ResultColumn<T> extends AddonData {
   field: T;
   editable: boolean;
