@@ -20,6 +20,7 @@ import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
+import { Portfolio } from '@contact/models';
 @ApiTags('Agreements')
 @UseGuards(CanGuard)
 @UseGuards(AuthGuard)
@@ -37,16 +38,22 @@ export class AgreementsController {
     return this.service.сreateAgreement(auth, body);
   }
 
-  @CheckCan((ability) => ability.can(Action.Read, Agreement))
-  @Get(':id')
-  getAgreement(@Param('id', ParseIntPipe) id: number) {
-    return this.service.getAgreement(id);
+  @CheckCan((ability) => ability.can(Action.Read, Portfolio))
+  @Get('/portfolio')
+  getPortfolios() {
+    return this.service.getPortfolios();
   }
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))
   @Post('/all')
   async getAll(@Body() body: AgreementsAll) {
     return await this.service.getAll(body);
+  }
+
+  @CheckCan((ability) => ability.can(Action.Read, Agreement))
+  @Get(':id')
+  getAgreement(@Param('id', ParseIntPipe) id: number) {
+    return this.service.getAgreement(id);
   }
 
   @CheckCan((ability) => ability.can(Action.Delete, Agreement))

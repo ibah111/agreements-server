@@ -41,7 +41,15 @@ export class AgreementsService {
     @InjectModel(Portfolio, 'contact')
     private readonly modelPortfolio: typeof Portfolio,
   ) {}
-
+  getPortfolios() {
+    return from(
+      this.modelPortfolio.findAll({
+        attributes: ['id', 'name'],
+        raw: true,
+        where: { status: 2 },
+      }),
+    );
+  }
   async getAll(body: AgreementsAll) {
     const size = getSize(body.paginationModel.pageSize);
     const utils = getUtils();

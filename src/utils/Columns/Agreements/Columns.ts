@@ -1,4 +1,4 @@
-import { Person, Portfolio } from '@contact/models';
+import { Person } from '@contact/models';
 import { Sequelize } from '@sql-tools/sequelize';
 import { generateDefaults, GridColDefAddon } from '../addons';
 const generateDefault = generateDefaults('local', 'Agreement');
@@ -37,10 +37,9 @@ export default function getColumns(): GridColDefAddon[] {
       sortOrder: [Person],
     },
     {
-      ...generateDefault('portfolio'),
-      base: 'contact',
-      model: 'Portfolio',
-      sortOrder: [Portfolio],
+      ...generateDefault('agreement_type'),
+      type: 'number',
+      editable: true,
     },
     {
       ...generateDefault('purpose'),

@@ -5,6 +5,7 @@ import {
   createMongoAbility,
   ExtractSubjectType,
 } from '@casl/ability';
+import { Portfolio } from '@contact/models';
 import { Injectable } from '@nestjs/common';
 import { Agreement } from '../Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../Database/Local.Database/models/AgreementDebtLink';
@@ -24,6 +25,7 @@ type Subjects =
       | typeof User_Role
       | typeof Agreement
       | typeof AgreementDebtsLink
+      | typeof Portfolio
     >
   | 'all';
 export type AppAbility = PureAbility<[Action, Subjects]>;
