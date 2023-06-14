@@ -56,13 +56,11 @@ export class Agreement extends Model<
   /**
    * Конец соглашения
    */
-  @AllowNull(true)
   @Column(DataType.DATE)
   finish_date: Date | null;
   /**
    * Назначение
    */
-  @AllowNull(false)
   @ForeignKey(() => PurposeType)
   @Column(DataType.INTEGER)
   purpose: FK<number>;
@@ -71,13 +69,11 @@ export class Agreement extends Model<
   /**
    * Тип соглашения
    */
-  @AllowNull(false)
   @ForeignKey(() => TypeAgreement)
   @Column(DataType.INTEGER)
   agreement_type: FK<number>;
   @BelongsTo(() => TypeAgreement)
   AgreementType?: BelongsToAttribute<NonAttribute<TypeAgreement>>;
-
   /**
    * Сумма задолженности, переданная банком (эл. реестр)
    */
@@ -86,15 +82,13 @@ export class Agreement extends Model<
   /**
    * Cумма задолженности по суд.акту
    */
-  @AllowNull(false)
   @Column(DataType.MONEY)
-  court_sum: number;
+  court_sum: number | null;
   /**
    * Сумма задолженности ОД взысканная в пользу НБК / Вымпел
    */
-  @AllowNull(false)
   @Column(DataType.MONEY)
-  debt_sum: number;
+  debt_sum: number | null;
   /**
    * Сумма задолженности по пересчету
    */

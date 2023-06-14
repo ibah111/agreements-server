@@ -53,7 +53,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   agreement_type: number;
 
   @Expose()
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @ApiProperty()
   purpose: number;
@@ -65,20 +65,20 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   statusAgreement: number;
 
   @Expose()
-  @IsNotEmpty()
   @IsNumber()
+  @IsOptional()
   @ApiProperty()
   bank_sum: number;
 
   @Expose()
-  @IsNotEmpty()
   @IsNumber()
+  @IsOptional()
   @ApiProperty()
   court_sum: number;
 
   @Expose()
-  @IsNotEmpty()
   @IsNumber()
+  @IsOptional()
   @ApiProperty()
   debt_sum: number;
 

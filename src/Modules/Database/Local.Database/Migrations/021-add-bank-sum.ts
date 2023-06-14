@@ -5,7 +5,6 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
 
   await context.addColumn('Agreements', 'bank_sum', {
     type: DataTypes.INTEGER,
-    allowNull: false,
   });
 
   try {

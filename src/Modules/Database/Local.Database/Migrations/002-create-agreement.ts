@@ -33,16 +33,13 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
           },
           purpose: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             references: { model: 'purpose_types', key: 'id' },
           },
           court_sum: {
             type: DataTypes.MONEY,
-            allowNull: false,
           },
           debt_sum: {
             type: DataTypes.MONEY,
-            allowNull: false,
           },
           recalculation_sum: {
             type: DataTypes.MONEY,
