@@ -14,7 +14,6 @@ import {
   AgreementsAll,
   CreateAgreementInput,
   DeleteSelectedAgreements,
-  EditAgreementInput,
 } from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
@@ -70,7 +69,7 @@ export class AgreementsController {
   editAgreement(
     @Auth() auth: AuthResult,
     @Param('id') id: number,
-    @Body() data: EditAgreementInput,
+    @Body() data: any,
   ) {
     return this.service.editAgreement(auth, id, data);
   }

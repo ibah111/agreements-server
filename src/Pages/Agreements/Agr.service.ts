@@ -11,13 +11,14 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Op } from '@sql-tools/sequelize';
+import { Attributes, Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
 import moment from 'moment';
 import getSize from 'src/utils/getSize';
 import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
+import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 
 @Injectable()
 export class AgreementsService {
@@ -223,24 +224,38 @@ export class AgreementsService {
     return [count, idArray];
   }
 
-  async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
-    const agreement = await this.modelAgreement.findByPk(id, {
-      rejectOnEmpty: new NotFoundException('Запись не найдена'),
-    });
-    const old = agreement[data.field];
-    agreement[data.field] = data.value;
-    if (data.field === 'statusAgreement') {
-      if (data.value === 2) agreement.finish_date = new Date();
-    }
-    await agreement.save();
-    await this.modelActionLog.create({
-      actionType: Actions.UPDATE,
-      row_id: id,
-      field: data.field,
-      old_value: String(old),
-      new_value: String(data.value),
-      user: auth.userLocal.id,
-    });
-    return agreement;
+  editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
+    return from(
+      this.modelAgreement.findByPk(id, {
+        rejectOnEmpty: new NotFoundException('Запись не найдена'),
+      }),
+    ).pipe(
+      mergeMap((agreement) => {
+        for (const key of Object.keys(
+          data,
+        ) as (keyof Attributes<Agreement>)[]) {
+          agreement[key] = data[key];
+        }
+        const changed = agreement.changed() as
+          | (keyof Attributes<Agreement>)[]
+          | false;
+        if (!changed) return of(agreement);
+        return of(...changed).pipe(
+          map((field) =>
+            this.modelActionLog.create({
+              actionType: Actions.UPDATE,
+              row_id: id,
+              field: field,
+              old_value: String(agreement.previous(field)),
+              new_value: String(data[field]),
+              user: auth.userLocal.id,
+            }),
+          ),
+          combineLatestAll(),
+          mergeMap(() => agreement.save()),
+          map((agreement) => agreement),
+        );
+      }),
+    );
   }
 }

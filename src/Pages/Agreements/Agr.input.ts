@@ -12,7 +12,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
-import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
 import { CallbackValidate } from 'src/utils/validators/IsAfterValidate';
 import moment from 'moment';
 import { GridFilterModel, GridPaginationModel } from '@mui/x-data-grid-premium';
@@ -170,17 +169,7 @@ export class GetAgreementInput {
 /*
  * Редактирование соглашения (field, value)
  */
-export class EditAgreementInput {
-  @Expose()
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  field: string;
-  @Expose()
-  @ApiProperty()
-  @IsNumberOrStringOrBoolean()
-  value: number | string | boolean | null;
-}
+export class EditAgreementInput {}
 export class GetAgreementWith {
   @Expose()
   @IsNotEmpty()
