@@ -15,6 +15,7 @@ import { Agreement } from '../../Modules/Database/Local.Database/models/Agreemen
 import { CallbackValidate } from 'src/utils/validators/IsAfterValidate';
 import moment from 'moment';
 import { GridFilterModel, GridPaginationModel } from '@mui/x-data-grid-premium';
+import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
 
 export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
@@ -169,7 +170,17 @@ export class GetAgreementInput {
 /*
  * Редактирование соглашения (field, value)
  */
-export class EditAgreementInput {}
+export class EditAgreementInput {
+  @Expose()
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  field: string;
+  @Expose()
+  @ApiProperty()
+  @IsNumberOrStringOrBoolean()
+  value: number | string | boolean | null;
+}
 export class GetAgreementWith {
   @Expose()
   @IsNotEmpty()

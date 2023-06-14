@@ -233,6 +233,9 @@ export class AgreementsService {
   }
 
   editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
+    /**
+     * ретурн
+     */
     return from(
       this.modelAgreement.findByPk(id, {
         rejectOnEmpty: new NotFoundException('Запись не найдена'),
@@ -248,6 +251,12 @@ export class AgreementsService {
           | (keyof Attributes<Agreement>)[]
           | false;
         if (!changed) return of(agreement);
+        /**
+         * Условия второго статуса
+         */
+        if (data['statusAgreement'] === 2) {
+          agreement.finish_date = new Date();
+        }
         return of(...changed).pipe(
           map((field) =>
             this.modelActionLog.create({
