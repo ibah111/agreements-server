@@ -3,7 +3,7 @@
  * Таблица Данных не подцепляемых из контакта
  */
 
-import { Person } from '@contact/models';
+import { Person, Portfolio } from '@contact/models';
 
 import {
   BelongsToAttribute,
@@ -25,6 +25,7 @@ import {
   Default,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
@@ -161,4 +162,5 @@ export class Agreement extends Model<
   StatusAgreement?: BelongsToAttribute<NonAttribute<StatusAgreement>>;
 
   Person?: NonAttribute<Person>;
+  Portfolio?: NonAttribute<Portfolio>;
 }

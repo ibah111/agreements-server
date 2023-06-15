@@ -46,8 +46,8 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))
   @Post('/all')
-  async getAll(@Body() body: AgreementsAll) {
-    return await this.service.getAll(body);
+  getAll(@Body() body: AgreementsAll) {
+    return this.service.getAll(body);
   }
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))

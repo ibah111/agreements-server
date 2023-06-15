@@ -22,10 +22,6 @@ import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 
 @Injectable()
 export class AgreementsService {
-  /**
-   * нужны ли здесь caslAbility
-   * на read
-   */
   constructor(
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
@@ -232,10 +228,7 @@ export class AgreementsService {
     return [count, idArray];
   }
 
-  editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
-    /**
-     * ретурн
-     */
+  async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
     return from(
       this.modelAgreement.findByPk(id, {
         rejectOnEmpty: new NotFoundException('Запись не найдена'),
@@ -251,9 +244,6 @@ export class AgreementsService {
           | (keyof Attributes<Agreement>)[]
           | false;
         if (!changed) return of(agreement);
-        /**
-         * Условия второго статуса
-         */
         if (data['statusAgreement'] === 2) {
           agreement.finish_date = new Date();
         }
@@ -268,6 +258,7 @@ export class AgreementsService {
               user: auth.userLocal.id,
             }),
           ),
+
           combineLatestAll(),
           mergeMap(() => agreement.save()),
           map((agreement) => agreement),
