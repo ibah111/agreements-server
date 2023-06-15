@@ -19,6 +19,7 @@ import moment from 'moment';
 import getSize from 'src/utils/getSize';
 import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
+import { agreementCalculation } from './Agr.functions/agreementCalculations';
 
 @Injectable()
 export class AgreementsService {
@@ -71,7 +72,7 @@ export class AgreementsService {
       })
     ).map((person) => person.id);
     const agreements = (await this.modelAgreement.findAndCountAll({
-      offset: body.paginationModel.page * size,
+      offset: body.paginationModel?.page * size,
       limit: size,
       where: {
         [Op.and]: [
@@ -243,10 +244,23 @@ export class AgreementsService {
         const changed = agreement.changed() as
           | (keyof Attributes<Agreement>)[]
           | false;
-        if (!changed) return of(agreement);
+        if (!changed)
+          return of(agreement).pipe(
+            map((agr) =>
+              agreementCalculation(
+                this.modelPerson,
+                this.modelDebt,
+                this.modelAgreement,
+                this.modelAgreementDebtsLink,
+                this.modelPortfolio,
+                agr.id,
+              ),
+            ),
+          );
         if (data['statusAgreement'] === 2) {
           agreement.finish_date = new Date();
         }
+
         return of(...changed).pipe(
           map((field) =>
             this.modelActionLog.create({
@@ -262,6 +276,16 @@ export class AgreementsService {
           combineLatestAll(),
           mergeMap(() => agreement.save()),
           map((agreement) => agreement),
+          map((agr) =>
+            agreementCalculation(
+              this.modelPerson,
+              this.modelDebt,
+              this.modelAgreement,
+              this.modelAgreementDebtsLink,
+              this.modelPortfolio,
+              agr.id,
+            ),
+          ),
         );
       }),
     );
