@@ -1,63 +1,9 @@
-import { Person, DebtCalc, Debt, Portfolio } from '@contact/models';
-import { Op } from '@sql-tools/sequelize';
+import { DebtCalc } from '@contact/models';
 import moment from 'moment';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
-import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from '../Agr.dto';
 
-export async function agreementCalculation(
-  modelPerson: typeof Person,
-  modelDebt: typeof Debt,
-  modelAgreement: typeof Agreement,
-  modelAgreementDebtsLink: typeof AgreementDebtsLink,
-  modelPortfolio: typeof Portfolio,
-  agreementId: number,
-) {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const agreement = (await modelAgreement.findOne({
-    where: {
-      id: agreementId,
-    },
-    include: [{ model: modelAgreementDebtsLink, separate: true }],
-  }))!;
-
-  const debtIdArray: number[] = [];
-  for (const link of agreement?.DebtLinks || []) {
-    debtIdArray.push(link.id_debt);
-  }
-  const debts = (await modelDebt.findAll({
-    where: { id: { [Op.in]: debtIdArray } },
-    include: [
-      {
-        model: modelPortfolio,
-        attributes: ['id', 'name'],
-      },
-      {
-        association: 'DebtCalcs',
-      },
-    ],
-  })) as Debt[];
-  const person = await modelPerson.findOne({
-    where: { id: agreement?.personId },
-    include: [
-      {
-        association: 'Debts',
-      },
-    ],
-    attributes: ['fio', 'id', 'f', 'i', 'o'],
-  });
-  //Присоединяем Person
-  const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
-  if (person) {
-    dataValuesAgreement.Person = person as Person;
-  }
-  //Присоединяем Debt
-  for (const debtLink of agreement.DebtLinks || []) {
-    const dataValuesLink = debtLink.dataValues as AgreementDebtsLink;
-    dataValuesLink.Debt = debts.find((debt) => debt.id === debtLink.id_debt);
-    debtLink.Debt = dataValuesLink.Debt;
-  }
-
+export function agreementCalculation(agreement: Agreement) {
   //Достаём все истории всех платежей
   const dcd = (agreement.DebtLinks?.map((item) => item.Debt?.DebtCalcs || []) ||
     []) as DebtCalc[][];
@@ -81,7 +27,7 @@ export async function agreementCalculation(
     .reduce((prev, curr) => {
       return prev + curr;
     }, 0);
-
+  const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
   dataValuesAgreement.sumBeforeAgr = sumBefore;
   // сумма платежей после соглашения
   const sum = calcs

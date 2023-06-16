@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Debt, DebtCalc, LawExec, Person, Portfolio } from '@contact/models';
+import { Debt, LawExec, Person, Portfolio } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import {
   AgreementsAll,
@@ -15,7 +15,6 @@ import { Attributes, Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
-import moment from 'moment';
 import getSize from 'src/utils/getSize';
 import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
@@ -128,57 +127,7 @@ export class AgreementsService {
         );
         debtLink.Debt = dataValuesLink.Debt;
       }
-
-      //Достаём все истории всех платежей
-      const dcd = (agreement.DebtLinks?.map(
-        (item) => item.Debt?.DebtCalcs || [],
-      ) || []) as DebtCalc[][];
-      const dc = ([] as DebtCalc[]).concat(...dcd);
-
-      //ALSO Расчет платежей на дату после заключения соглашения
-      const calcs = dc
-        .filter(
-          (item) =>
-            moment(agreement.conclusion_date).isBefore(moment(item.dt)) &&
-            moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
-        )
-        .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
-
-      // расчет на сумму до соглашения
-      const calcsBefore = dc.filter((item) =>
-        moment(agreement.conclusion_date).isAfter(moment(item.dt)),
-      );
-      const sumBefore = calcsBefore
-        .map((item) => item.sum)
-        .reduce((prev, curr) => {
-          return prev + curr;
-        }, 0);
-
-      dataValuesAgreement.sumBeforeAgr = sumBefore;
-      // сумма платежей после соглашения
-      const sum = calcs
-        .map((item) => item.sum)
-        .reduce((prev, curr) => {
-          return prev + curr;
-        }, 0);
-      dataValuesAgreement.sumAfterAgr = sum;
-
-      if (calcs.length !== 0) {
-        // lp - lastPayment расчет последнего платежа
-        const lp = calcs[calcs.length - 1];
-        const sumLP = lp.sum;
-        dataValuesAgreement.lastPayment = sumLP;
-        // lpdate - дата последняя
-        const lpdate = lp.dt;
-        dataValuesAgreement.lastPaymentDate = lpdate;
-        // fp - frstPayment расчет первого платежа
-        const fp = calcs[0];
-        const sumFP = fp.sum;
-        dataValuesAgreement.firstPayment = sumFP;
-        // fpdate - дата первого платежа
-        const fpdate = fp.dt;
-        dataValuesAgreement.firstPaymentDate = fpdate;
-      }
+      agreementCalculation(agreement);
     }
     return agreements;
   }
@@ -228,13 +177,54 @@ export class AgreementsService {
     }
     return [count, idArray];
   }
+  async addDataContact(agreement: Agreement) {
+    const debtIdArray: number[] = [];
+    for (const link of agreement?.DebtLinks || []) {
+      debtIdArray.push(link.id_debt);
+    }
+    const debts = (await this.modelDebt.findAll({
+      where: { id: { [Op.in]: debtIdArray } },
+      include: [
+        {
+          model: this.modelPortfolio,
+          attributes: ['id', 'name'],
+        },
+        {
+          association: 'DebtCalcs',
+        },
+      ],
+    })) as Debt[];
+    const person = await this.modelPerson.findOne({
+      where: { id: agreement?.personId },
+      include: [
+        {
+          association: 'Debts',
+        },
+      ],
+      attributes: ['fio', 'id', 'f', 'i', 'o'],
+    });
+    //Присоединяем Person
+    const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
+    if (person) {
+      dataValuesAgreement.Person = person as Person;
+    }
+    //Присоединяем Debt
+    for (const debtLink of agreement.DebtLinks || []) {
+      const dataValuesLink = debtLink.dataValues as AgreementDebtsLink;
+      dataValuesLink.Debt = debts.find((debt) => debt.id === debtLink.id_debt);
+      debtLink.Debt = dataValuesLink.Debt;
+    }
+    return agreement;
+  }
 
   async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
     return from(
       this.modelAgreement.findByPk(id, {
+        include: ['DebtLinks'],
         rejectOnEmpty: new NotFoundException('Запись не найдена'),
       }),
     ).pipe(
+      mergeMap((agr) => this.addDataContact(agr)),
       mergeMap((agreement) => {
         for (const key of Object.keys(
           data,
@@ -245,18 +235,7 @@ export class AgreementsService {
           | (keyof Attributes<Agreement>)[]
           | false;
         if (!changed)
-          return of(agreement).pipe(
-            map((agr) =>
-              agreementCalculation(
-                this.modelPerson,
-                this.modelDebt,
-                this.modelAgreement,
-                this.modelAgreementDebtsLink,
-                this.modelPortfolio,
-                agr.id,
-              ),
-            ),
-          );
+          return of(agreement).pipe(map((agr) => agreementCalculation(agr)));
         if (data['statusAgreement'] === 2) {
           agreement.finish_date = new Date();
         }
@@ -272,20 +251,10 @@ export class AgreementsService {
               user: auth.userLocal.id,
             }),
           ),
-
           combineLatestAll(),
           mergeMap(() => agreement.save()),
           map((agreement) => agreement),
-          map((agr) =>
-            agreementCalculation(
-              this.modelPerson,
-              this.modelDebt,
-              this.modelAgreement,
-              this.modelAgreementDebtsLink,
-              this.modelPortfolio,
-              agr.id,
-            ),
-          ),
+          map((agr) => agreementCalculation(agr)),
         );
       }),
     );

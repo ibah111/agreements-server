@@ -246,7 +246,6 @@ async function main() {
 
   await sequelize.transaction(async (transaction) => {
     for (const result of results) {
-      console.log(result);
       const debt = result.DebtLinks[0];
       const debtContact = await Debt.findOne({
         where: { id: debt.id_debt },
