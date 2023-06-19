@@ -34,7 +34,6 @@ async function bootstrap() {
     getSwaggerOptions(),
   );
   SwaggerModule.setup('docs', app, document, getSwaggerOptionsCustom());
-  await app.get(LocalDatabaseSeed).sync();
   await app.listen(client('port'), '0.0.0.0');
   console.log(`Server is running on ${await app.getUrl()}/docs`);
 }
