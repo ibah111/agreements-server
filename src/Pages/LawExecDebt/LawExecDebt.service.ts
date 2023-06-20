@@ -1,6 +1,5 @@
-import { LawExec } from '@contact/models';
+import { LawExec, PersonProperty } from '@contact/models';
 import { Injectable } from '@nestjs/common';
-import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Op } from '@sql-tools/sequelize';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
@@ -15,6 +14,8 @@ export class LawExecDebtService {
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelAgreementDebtsLink: typeof AgreementDebtsLink,
+    @InjectModel(PersonProperty, 'contact')
+    private readonly modelPP: typeof PersonProperty,
   ) {}
 
   async getLawExecDebt(agreementId: number) {
@@ -22,11 +23,23 @@ export class LawExecDebtService {
       where: { id_agreement: agreementId },
     });
     const debtsIdArray = DebtLinks.map((item) => item.id_debt) || [];
-
     const lawExecs = await this.modelLawExec.findAll({
-      where: { r_debt_id: { [Op.in]: debtsIdArray }, state: 7 },
-      include: [{ association: 'StateDict' }],
+      where: { r_debt_id: { [Op.in]: debtsIdArray } },
+      include: [
+        { association: 'StateDict' },
+        {
+          association: 'Person',
+          include: [
+            {
+              association: 'PersonProperties',
+            },
+          ],
+        },
+      ],
     });
+    // const pp = await this.modelPP.findAll({
+    //   where: { r_debt_id: { [Op.in]: debtsIdArray } },
+    // });
     return lawExecs;
   }
 }

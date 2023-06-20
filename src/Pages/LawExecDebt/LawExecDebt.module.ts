@@ -1,4 +1,4 @@
-import { LawExec } from '@contact/models';
+import { LawExec, PersonProperty } from '@contact/models';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
@@ -8,7 +8,7 @@ import { LawExecDebtService } from './LawExecDebt.service';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([LawExec], 'contact'),
+    SequelizeModule.forFeature([LawExec, PersonProperty], 'contact'),
     SequelizeModule.forFeature([Agreement, AgreementDebtsLink], 'local'),
   ],
   providers: [LawExecDebtService],

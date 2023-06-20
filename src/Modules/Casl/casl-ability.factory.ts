@@ -5,7 +5,7 @@ import {
   createMongoAbility,
   ExtractSubjectType,
 } from '@casl/ability';
-import { Portfolio } from '@contact/models';
+import { DebtCalc, Portfolio } from '@contact/models';
 import { Injectable } from '@nestjs/common';
 import { Agreement } from '../Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../Database/Local.Database/models/AgreementDebtLink';
@@ -39,14 +39,11 @@ export class CaslAbilityFactory {
     }
     if (roles.includes('moderator')) {
       can(
-        [Action.Create, Action.Delete, Action.Read], // Разрешенные действия
-        Agreement, // Что разрешено к просмотру
-        // ['conclusion_date'], <--- разрешенное к взаимодействию поле
-        // { -------условие "если дата заключения 18.05.2015 - разрешено к ред-у"
-        //   conclusion_date: moment('18.05.2015', 'DD.MM.YYYY').toDate(),
-        // },
+        [Action.Create, Action.Read, Action.Update], // Разрешенные действия
+        Agreement,
       );
       can([Action.Create, Action.Delete, Action.Read], AgreementDebtsLink);
+      can([Action.Read], DebtCalc);
     }
     if (roles.includes('worker')) {
       can([Action.Create, Action.Read], Agreement);

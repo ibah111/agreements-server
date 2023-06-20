@@ -30,6 +30,7 @@ export class DebtService {
         parent_id: parent_id,
       },
     });
+
     return AllPayments;
   }
 }
