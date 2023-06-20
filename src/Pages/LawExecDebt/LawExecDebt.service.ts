@@ -37,9 +37,6 @@ export class LawExecDebtService {
         },
       ],
     });
-    // const pp = await this.modelPP.findAll({
-    //   where: { r_debt_id: { [Op.in]: debtsIdArray } },
-    // });
     return lawExecs;
   }
 }

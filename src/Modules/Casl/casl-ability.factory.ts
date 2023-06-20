@@ -25,6 +25,7 @@ type Subjects =
       | typeof User_Role
       | typeof Agreement
       | typeof AgreementDebtsLink
+      | typeof DebtCalc
       | typeof Portfolio
     >
   | 'all';
@@ -38,23 +39,19 @@ export class CaslAbilityFactory {
       can(Action.Manage, 'all');
     }
     if (roles.includes('moderator')) {
-      can(
-        [Action.Create, Action.Read, Action.Update], // Разрешенные действия
-        Agreement,
-      );
+      can([Action.Create, Action.Read, Action.Update], Agreement);
       can([Action.Create, Action.Delete, Action.Read], AgreementDebtsLink);
       can([Action.Read], DebtCalc);
+      can([Action.Read], Portfolio);
     }
     if (roles.includes('worker')) {
       can([Action.Create, Action.Read], Agreement);
-      can([Action.Update, Action.Delete], Agreement, { user: user.id });
-      can(
-        [Action.Create, Action.Read, Action.Update, Action.Delete],
-        AgreementDebtsLink,
-        {
-          user: user.id,
-        },
-      );
+      can([Action.Update], Agreement, { user: user.id });
+      can([Action.Create, Action.Read], AgreementDebtsLink, {
+        user: user.id,
+      });
+      can([Action.Read], DebtCalc);
+      can([Action.Read], Portfolio);
     }
     can(Action.Read, Agreement);
     return build({
