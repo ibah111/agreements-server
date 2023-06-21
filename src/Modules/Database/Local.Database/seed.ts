@@ -1,6 +1,7 @@
-import { Debt, LawAct } from '@contact/models';
+import { Debt, DebtCalc, LawAct } from '@contact/models';
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@sql-tools/nestjs-sequelize';
+import { Op } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { join } from 'path';
 import createUmzug from '../umzug';
@@ -12,6 +13,8 @@ export class LocalDatabaseSeed {
     @InjectConnection('local') private readonly sequelize: Sequelize,
     @InjectConnection('contact') private readonly sequelizeContact: Sequelize,
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
+    @InjectModel(DebtCalc, 'contact')
+    private readonly modelDebtCalc: typeof DebtCalc,
     @InjectModel(LawAct, 'contact') private readonly modelLawAct: typeof LawAct,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
@@ -36,6 +39,20 @@ export class LocalDatabaseSeed {
     }
     this.modelDebt.hasOne(this.modelLink, { foreignKey: 'id_agreement' });
     this.modelLink.belongsTo(this.modelDebt, { foreignKey: 'id_debt' });
+    this.modelDebt.hasMany(this.modelDebtCalc, {
+      foreignKey: 'parent_id',
+      as: 'LastCalcs',
+      scope: {
+        dt: {
+          [Op.gte]: Sequelize.fn(
+            'DATEADD',
+            Sequelize.literal('year'),
+            -1,
+            Sequelize.fn('GETDATE'),
+          ),
+        },
+      },
+    });
   }
   async seed() {
     const umzug = createUmzug(

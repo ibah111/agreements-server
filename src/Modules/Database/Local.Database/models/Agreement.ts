@@ -25,7 +25,6 @@ import {
   Default,
   ForeignKey,
   HasMany,
-  HasOne,
   Model,
   PrimaryKey,
   Table,

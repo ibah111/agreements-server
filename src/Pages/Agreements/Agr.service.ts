@@ -11,7 +11,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Attributes, Op } from '@sql-tools/sequelize';
+import { Attributes, Op, Sequelize } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
@@ -58,6 +58,8 @@ export class AgreementsService {
     const persons_ids = (
       await this.modelPerson.findAll({
         raw: true,
+        attributes: ['id'],
+        logging: true,
         where: {
           [Op.and]: [
             {
@@ -68,6 +70,25 @@ export class AgreementsService {
             filter('Person'),
           ],
         },
+        include: [
+          {
+            association: 'Debts',
+            attributes: [],
+            include: [
+              {
+                association: 'LastCalcs',
+                attributes: [],
+              },
+            ],
+          },
+        ],
+        group: ['Person.id', 'Debts.LastCalcs.parent_id'],
+        having: false
+          ? Sequelize.where(
+              Sequelize.fn('COUNT', Sequelize.col('Debts.LastCalcs.id')),
+              { [Op.eq]: 0 },
+            )
+          : undefined,
       })
     ).map((person) => person.id);
     const agreements = (await this.modelAgreement.findAndCountAll({
@@ -99,6 +120,10 @@ export class AgreementsService {
         },
         {
           association: 'DebtCalcs',
+        },
+        {
+          association: 'LastCalcs',
+          required: false,
         },
       ],
     })) as Debt[];

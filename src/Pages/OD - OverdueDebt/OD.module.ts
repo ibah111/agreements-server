@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
+import { OverdueDebtsController } from './OD.controller';
+import { OverdueService } from './OD.service';
 
 @Module({
   imports: [
@@ -12,10 +14,10 @@ import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/Agree
   /**
    * Контроллеры
    */
-  controllers: [],
+  controllers: [OverdueDebtsController],
   /**
    * service
    */
-  providers: [],
+  providers: [OverdueService],
 })
 export class OverdueModule {}

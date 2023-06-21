@@ -1,4 +1,4 @@
-import { Debt, LawAct } from '@contact/models';
+import { Debt, DebtCalc, LawAct } from '@contact/models';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
 import { models } from './models';
@@ -17,7 +17,7 @@ import { LocalDatabaseSeed } from './seed';
       models,
     }),
     SequelizeModule.forFeature([User, Agreement, AgreementDebtsLink], 'local'),
-    SequelizeModule.forFeature([LawAct, Debt], 'contact'),
+    SequelizeModule.forFeature([LawAct, Debt, DebtCalc], 'contact'),
   ],
   providers: [LocalDatabaseSeed],
 })
