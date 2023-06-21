@@ -201,7 +201,6 @@ export class PaginationValidator implements GridPaginationModel {
   page: number;
 }
 export class AgreementsAll {
-  /** обязательная штука 400 */
   @ValidateNested()
   @Type(() => PaginationValidator)
   @Expose()
