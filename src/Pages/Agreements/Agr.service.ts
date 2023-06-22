@@ -127,6 +127,7 @@ export class AgreementsService {
         },
       ],
     })) as Debt[];
+
     const persons = await this.modelPerson.findAll({
       where: { id: { [Op.in]: personIdArray } },
       include: [

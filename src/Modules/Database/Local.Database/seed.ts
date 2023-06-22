@@ -46,11 +46,12 @@ export class LocalDatabaseSeed {
         dt: {
           [Op.gte]: Sequelize.fn(
             'DATEADD',
-            Sequelize.literal('year'),
-            -1,
+            Sequelize.literal('day'),
+            -30,
             Sequelize.fn('GETDATE'),
           ),
         },
+        is_confirmed: 1,
       },
     });
   }

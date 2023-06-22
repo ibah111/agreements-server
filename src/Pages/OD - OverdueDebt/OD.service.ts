@@ -66,7 +66,7 @@ export class OverdueService {
             [Op.gte]: Sequelize.fn(
               'DATEADD',
               Sequelize.literal('month'),
-              -2,
+              -6,
               moment().toDate(),
             ),
           },
@@ -82,6 +82,52 @@ export class OverdueService {
    * Будет работать как простой GetAll с Соглашениями
    */
   async getAllAgreementOverdue() {
-    return;
+    const agreements_ids = await this.modelAgreement.findAll({
+      attributes: ['id', 'personId'],
+      raw: true,
+    });
+    const person_ids = await this.modelAgreement.findAll({
+      raw: true,
+      attributes: ['id'],
+      logging: true,
+      where: {
+        [Op.and]: [
+          {
+            id: {
+              [Op.in]: agreements_ids.map((agreement) => agreement.personId),
+            },
+          },
+        ],
+      },
+      include: [
+        {
+          association: 'Debts',
+          attributes: [],
+          include: [
+            {
+              association: 'LastCalcs',
+              attributes: [],
+            },
+          ],
+        },
+      ],
+      group: ['Person.id', 'Debts.LastCalcs.parent_id'],
+      having: false
+        ? Sequelize.where(
+            Sequelize.fn('COUNT', Sequelize.col('Debts.LastCalcs.id')),
+            { [Op.eq]: 0 },
+          )
+        : undefined,
+    });
+    const debtIdArray: number[] = [];
+    const debts = (await this.modelDebt.findAll({
+      where: { id: { [Op.in]: debtIdArray } },
+      include: [
+        { association: 'DebtCalcs' },
+        { association: 'LastCalcs', required: false },
+      ],
+    })) as Debt[];
+
+    return debts;
   }
 }

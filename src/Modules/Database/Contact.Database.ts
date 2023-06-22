@@ -7,7 +7,7 @@ import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
     SequelizeModule.forRoot({
       dialect: 'mssql',
       host: 'newct.usb.ru',
-      database: 'i_collect3',
+      database: 'i_collect',
       password: 'contact',
       username: 'contact',
       name: 'contact',

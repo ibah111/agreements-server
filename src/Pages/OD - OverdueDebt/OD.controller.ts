@@ -10,4 +10,9 @@ export class OverdueDebtsController {
   get(@Param('id', ParseIntPipe) id: number) {
     return this.service.checkAgreementOverdue(id);
   }
+
+  @Get(':all')
+  getAllOD() {
+    return this.service.getAllAgreementOverdue();
+  }
 }
