@@ -28,7 +28,7 @@ const sequelize = new Sequelize({
 const contactsequelize = new Sequelize({
   dialect: 'mssql',
   host: 'newct.usb.ru',
-  database: 'i_collect3',
+  database: 'i_collect',
   password: 'contact',
   username: 'contact',
   logging: false,

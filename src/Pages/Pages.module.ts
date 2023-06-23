@@ -11,7 +11,6 @@ import { StatusAgreementModule } from './StatusAgreement/StatusAgreement.module'
 import { DictModule } from './Dict/Dict.module';
 import { TypeAgreementModule } from './AgreementTyp/Type.module';
 import { LawExecDebtModule } from './LawExecDebt/LawExecDebt.module';
-import { OverdueModule } from './OD - OverdueDebt/OD.module';
 
 @Module({
   imports: [
@@ -27,7 +26,6 @@ import { OverdueModule } from './OD - OverdueDebt/OD.module';
     DictModule,
     TypeAgreementModule,
     LawExecDebtModule,
-    OverdueModule,
   ],
 })
 export class PagesModule {}
