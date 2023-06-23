@@ -19,7 +19,7 @@ export default function getColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
-      ...generateDefault('personId'), // parent_id = 221
+      ...generateDefault('personId'),
       type: 'number',
     },
     {
@@ -35,6 +35,13 @@ export default function getColumns(): GridColDefAddon[] {
       ),
       model: 'Person',
       sortOrder: [Person],
+    },
+    {
+      model: 'Debt',
+      col: 'r_portfolio_id',
+      base: 'contact',
+      type: 'number',
+      field: 'portfolio',
     },
     {
       ...generateDefault('agreement_type'),
@@ -57,25 +64,21 @@ export default function getColumns(): GridColDefAddon[] {
       type: 'number',
     },
     {
-      // заполняется
       ...generateDefault('debt_sum'),
       editable: true,
       type: 'number',
     },
     {
-      // заполняется
       ...generateDefault('recalculation_sum'),
       editable: true,
       type: 'number',
     },
     {
-      // заполняется
       ...generateDefault('discount_sum'),
       editable: true,
       type: 'number',
     },
     {
-      // вычисляемое
       ...generateDefault('total_dis_sum'),
       type: 'number',
       filterable: false,
@@ -91,13 +94,11 @@ export default function getColumns(): GridColDefAddon[] {
       filterable: false,
     },
     {
-      //todo высчитывается
       ...generateDefault('firstPayment'),
       type: 'number',
       filterable: false,
     },
     {
-      //todo высчитывается
       ...generateDefault('firstPaymentDate'),
       type: 'date',
       filterable: false,

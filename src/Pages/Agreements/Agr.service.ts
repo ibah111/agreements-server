@@ -55,11 +55,14 @@ export class AgreementsService {
       raw: true,
       where: filter('Agreement'),
     });
+    const filterPayable = body.filterModel.items.find(
+      (item) => item.field === 'payableStatus',
+    );
     const persons_ids = (
       await this.modelPerson.findAll({
         raw: true,
         attributes: ['id'],
-        logging: true,
+        // logging: true,
         where: {
           [Op.and]: [
             {
@@ -73,6 +76,8 @@ export class AgreementsService {
         include: [
           {
             association: 'Debts',
+            where: filter('Debt'),
+            required: true,
             attributes: [],
             include: [
               {
@@ -82,11 +87,11 @@ export class AgreementsService {
             ],
           },
         ],
-        group: ['Person.id', 'Debts.LastCalcs.parent_id'],
-        having: false
+        group: ['Person.id'],
+        having: filterPayable?.value
           ? Sequelize.where(
               Sequelize.fn('COUNT', Sequelize.col('Debts.LastCalcs.id')),
-              { [Op.eq]: 0 },
+              filterPayable.value === 'true' ? { [Op.gt]: 0 } : { [Op.eq]: 0 },
             )
           : undefined,
       })
