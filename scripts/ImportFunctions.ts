@@ -1,9 +1,9 @@
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { Worksheet, Row } from 'exceljs';
 import moment from 'moment';
-import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
-import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
+import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { convert } from './convert';
+import { attributesAgremment, attributesDebt } from './exportAttributes';
 import {
   agreementCompensationColumns,
   donedColumns,
@@ -12,10 +12,7 @@ import {
 } from './ImportColumnModels';
 import { ResultRow } from './ImportFromExcel';
 import { procesFuncArray } from './PostProcess';
-const attributesAgremment = Object.keys(Agreement.getAttributes());
-const attributesDebt = Object.keys(AgreementDebtsLink.getAttributes());
 /**
- *
  * @param data
  * @returns импорт Действующих
  */

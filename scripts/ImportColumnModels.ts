@@ -115,7 +115,7 @@ export const outOfStrengthColumns: (Partial<Column> & {})[] = [
   { key: 'sumBeforeAgreement' }, // сумма (платежей) после соглешeния Q
   { key: 'firstPaymentAgreement' }, //Дата поступления первого платежа по соглашения R
   { key: 'firstSumPaymentAgreement' }, //Сумма первого платежа по соглашению S
-  { key: 'month_pay_day' }, // ежемесячная дата платежа (день в который должен придти платеж) T
+  { key: 'month_pay_day' }, // Число платежа каждого месяца (день в который должен придти платеж) T
   { key: 'lastPaymentDate' }, // дата последнего платежа U
   { key: 'lastPaymentSum' }, // сумма последнего платежа V
   { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению W
@@ -126,9 +126,8 @@ export const outOfStrengthColumns: (Partial<Column> & {})[] = [
   { key: 'receipt_dt' }, // дата получения листа AB
   { key: 'actions_for_get' }, // действия для получения листа AC
   { key: 'limitationPeriod' }, // Срок исковой давности AD
-  { key: 'dateForceLawEntry' }, // дата поступления в законную силу AE
-  { key: 'id_submission_deadline' }, // Срок предъявления ИД AE
-  {}, // ??? AF
+  { key: 'id_submission_deadline' }, // Срок предъявления ИД
+  {}, // ???
   { key: 'registerCreditCount' }, //Количество кредитов в реестра AG
   { key: 'guarantorCount' }, //Наличие поручителей /правопреемников (наследников) AH
   { key: 'deposit_typ' }, // Наличие залогового имущества AI
@@ -144,43 +143,42 @@ export const outOfStrengthColumns: (Partial<Column> & {})[] = [
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
 export const agreementCompensationColumns: (Partial<Column> & {})[] = [
-  {},
-  {},
-  { key: 'id_debt' },
-  {},
-  { key: 'conclusion_date' },
-  { key: 'fio' },
-  { key: 'birth_date' },
-  {},
-  {},
-  { key: 'purpose' },
-  { key: 'bank_sum' },
-  { key: 'court_sum' },
-  { key: 'debt_sum' },
-  { key: 'recalculation_sum' },
-  { key: 'discount_total' }, // тотал ( который высчитывается)
-  { key: 'discount_sum' },
-  {},
-  {},
-  {},
-  { key: 'month_pay_day' },
-  {},
-  {},
-  {},
-  {},
-  { key: 'new_regDoc' },
-  { key: 'registrator' },
-  { key: 'archive' },
-  { key: 'receipt_dt' },
-  { key: 'actions_for_get' },
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  { key: 'comment' },
-  {},
-  { key: 'task_link' },
+  { key: 'id_dela' }, // хз как по другому назвать B
+  { key: 'id_debt' }, // id долга C
+  { key: 'last_check_date' }, //ласт проверка D
+  { key: 'conclusion_date' }, // дата заключения E
+  { key: 'fio' }, // фио F
+  { key: 'birth_date' }, // рождения должника G
+  { key: 'KD' }, // кд H
+  { key: 'portfolio' }, // портфель I
+  { key: 'purpose' }, // назначение J
+  { key: 'bank_sum' }, // сумма переданная банком K
+  { key: 'court_sum' }, // судебная сумма L
+  { key: 'debt_sum' }, // сумма долга M
+  { key: 'discount_total' }, // тотал ( который высчитывается) O
+  { key: 'discount_sum' }, // сумма дисконта P
+  { key: 'sumBeforeAgreement' }, // Поступление платежей до заключения соглашения Q
+  { key: 'firstPaymentAgreement' }, // Дата поступления первого платежа по соглашения R
+  { key: 'firstSumPaymentAgreement' }, // Сумма первого платежа по соглашению S
+  { key: 'month_pay_day' }, // Число платежа каждого месяца (день в который должен придти платеж) T
+  { key: 'lastPaymentDate' }, // дата последнего платежа U
+  { key: 'lastPaymentSum' }, // сумма последнего платежа V
+  { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению W
+  { key: 'restOfDueAfterLastPayment' }, // Остаток задолженности после поступления последнего платежа X
+  { key: 'new_regDoc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
+  { key: 'registrator' }, // наличие регистраторе Z
+  { key: 'archive' }, // наличие ИД в архиве AA
+  { key: 'receipt_dt' }, // дата получения листа AB
+  { key: 'actions_for_get' }, // действия для получения листа AC
+  { key: 'limitationPeriod' }, // Срок исковой давности AD
+  { key: 'id_submission_deadline' }, // Дата пропуска предъявления ИД
+  { key: '' }, // ???
+  { key: 'registerCreditCount' }, //Количество кредитов в реестра AG
+  { key: 'guarantorCount' }, //Наличие поручителей /правопреемников (наследников) AH
+  { key: 'deposit_typ' }, // Наличие залогового имущества AI
+  { key: 'comment' }, // коммент AJ
+  { key: 'recoverer' }, // Взыскатель AL
+  { key: 'status_debt' }, // Статус долга AK
+  { key: 'task_link' }, // ссылка на задачу AM
+  { key: 'Дата вступления закона в силу' },
 ];

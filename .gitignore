@@ -6,3 +6,4 @@ database.sqlite
 debug.log
 backup
 *.xlsx
+txtForAnyCase

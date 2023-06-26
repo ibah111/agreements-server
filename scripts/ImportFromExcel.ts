@@ -1,13 +1,11 @@
 //yarn migrate:excel --path .\Журнал учёта дополнительных соглашений 2.0.xlsx
 
 import { CreationAttributes } from '@sql-tools/sequelize';
-import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { program } from 'commander';
 import { Workbook } from 'exceljs';
-import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
-import Models, { Debt, Person } from '@contact/models';
+import { Debt, Person } from '@contact/models';
 import {
   importCompensationColumns,
   importDoned,
@@ -15,23 +13,6 @@ import {
   importRunned,
 } from './ImportFunctions';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'database.sqlite',
-  models: models,
-  logging: false,
-});
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const contactsequelize = new Sequelize({
-  dialect: 'mssql',
-  host: 'newct.usb.ru',
-  database: 'i_collect',
-  password: 'contact',
-  username: 'contact',
-  logging: false,
-  models: Models,
-});
 interface Opts {
   path: string;
 }
@@ -134,7 +115,7 @@ async function main() {
         receipt_dt: result.receipt_dt,
         reg_doc: result.reg_doc,
         registrator: result.registrator,
-        statusAgreement: 1,
+        statusAgreement: 2,
         task_link: result.task_link,
       });
       for (const debt of result.DebtLinks) {
@@ -148,49 +129,6 @@ async function main() {
   }
   console.log(donedResults);
   console.log('Finished donedResults');
-  for (const result of donedResults) {
-    const debt = result.DebtLinks[0];
-    const debtContact = await Debt.findOne({
-      where: { id: debt.id_debt },
-      include: Person,
-    });
-    if (debtContact?.Person) {
-      const agr = await Agreement.create({
-        conclusion_date: result.conclusion_date,
-        bank_sum: result.bank_sum,
-        court_sum: result.court_sum,
-        debt_sum: result.debt_sum,
-        month_pay_day: result.month_pay_day,
-        personId: debtContact.Person.id,
-        purpose: result.purpose,
-        actions_for_get: result.actions_for_get,
-        archive: result.archive,
-        comment: result.archive,
-        agreement_type: 1,
-        discount_sum: result.discount_sum,
-        finish_date: result.finish_date,
-        new_regDoc: result.new_regDoc,
-        recalculation_sum: result.recalculation_sum,
-        receipt_dt: result.receipt_dt,
-        reg_doc: result.reg_doc,
-        registrator: result.registrator,
-        statusAgreement: 1,
-        task_link: result.task_link,
-      });
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create({
-          id_agreement: agr.id,
-          id_debt: debt.id_debt,
-        });
-      }
-    }
-    continue;
-  }
-  console.log(donedResults);
-  console.log('Finished donedResults');
-  /**
-   * outOfStrengthResults
-   */
   for (const result of outOfStrengthResults) {
     const debt = result.DebtLinks[0];
     const debtContact = await Debt.findOne({
@@ -217,7 +155,7 @@ async function main() {
         receipt_dt: result.receipt_dt,
         reg_doc: result.reg_doc,
         registrator: result.registrator,
-        statusAgreement: 1,
+        statusAgreement: 3,
         task_link: result.task_link,
       });
       for (const debt of result.DebtLinks) {
@@ -252,7 +190,7 @@ async function main() {
         actions_for_get: result.actions_for_get,
         archive: result.archive,
         comment: result.archive,
-        agreement_type: 1,
+        agreement_type: 2,
         discount_sum: result.discount_sum,
         finish_date: result.finish_date,
         new_regDoc: result.new_regDoc,
