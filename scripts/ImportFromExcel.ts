@@ -1,5 +1,4 @@
 //yarn migrate:excel --path .\Журнал учёта дополнительных соглашений 2.0.xlsx
-
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { program } from 'commander';
 import { Workbook } from 'exceljs';
@@ -7,11 +6,12 @@ import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreeme
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { Debt, Person } from '@contact/models';
 import {
-  importCompensationColumns,
-  importDoned,
-  importOutOfStregth,
-  importRunned,
-} from './ImportFunctions';
+  agreementCompensationColumns,
+  donedColumns,
+  outOfStrengthColumns,
+  runnedColumns,
+} from './ImportColumnModels';
+import innerFunction from './innerFunction';
 
 interface Opts {
   path: string;
@@ -23,9 +23,9 @@ export type ResultRow = CreationAttributes<Agreement> & {
  * Импортирование
  * @param data Таблица
  */
+export const workbook = new Workbook();
 async function main() {
   const opts = program.option('-p, --path <string>').parse().opts() as Opts;
-  const workbook = new Workbook();
   await workbook.xlsx.readFile(opts.path);
   const worksheet_runned = workbook.worksheets[0];
   if (!worksheet_runned) return;
@@ -36,15 +36,16 @@ async function main() {
   const worksheet_compenstaion_columns = workbook.worksheets[3];
   if (!worksheet_compenstaion_columns) return;
 
-  const runnedResults = await importRunned(worksheet_runned);
-  const donedResults = await importDoned(worksheet_doned);
-  const outOfStrengthResults = await importOutOfStregth(
-    worksheet_out_of_stregth,
+  const runnedResults = innerFunction(runnedColumns, workbook.worksheets[0]);
+  const donedResults = innerFunction(donedColumns, workbook.worksheets[1]);
+  const outOfStrengthResults = innerFunction(
+    outOfStrengthColumns,
+    workbook.worksheets[2],
   );
-  const compensationResults = await importCompensationColumns(
-    worksheet_compenstaion_columns,
+  const compensationResults = innerFunction(
+    agreementCompensationColumns,
+    workbook.worksheets[3],
   );
-
   /**
    * Действующие
    */
@@ -57,26 +58,9 @@ async function main() {
     });
     if (debtContact?.Person) {
       const agr = await Agreement.create({
-        conclusion_date: result.conclusion_date,
-        bank_sum: result.bank_sum,
-        court_sum: result.court_sum,
-        debt_sum: result.debt_sum,
-        month_pay_day: result.month_pay_day,
-        personId: debtContact.Person.id,
-        purpose: result.purpose,
-        actions_for_get: result.actions_for_get,
-        archive: result.archive,
-        comment: result.archive,
+        ...result,
         agreement_type: 1,
-        discount_sum: result.discount_sum,
-        finish_date: result.finish_date,
-        new_regDoc: result.new_regDoc,
-        recalculation_sum: result.recalculation_sum,
-        receipt_dt: result.receipt_dt,
-        reg_doc: result.reg_doc,
-        registrator: result.registrator,
         statusAgreement: 1,
-        task_link: result.task_link,
       });
       for (const debt of result.DebtLinks) {
         await AgreementDebtsLink.create({
@@ -85,9 +69,7 @@ async function main() {
         });
       }
     }
-    continue;
   }
-  console.log(runnedResults);
   console.log('Finished runnedResults');
   for (const result of donedResults) {
     const debt = result.DebtLinks[0];
@@ -97,26 +79,9 @@ async function main() {
     });
     if (debtContact?.Person) {
       const agr = await Agreement.create({
-        conclusion_date: result.conclusion_date,
-        bank_sum: result.bank_sum,
-        court_sum: result.court_sum,
-        debt_sum: result.debt_sum,
-        month_pay_day: result.month_pay_day,
-        personId: debtContact.Person.id,
-        purpose: result.purpose,
-        actions_for_get: result.actions_for_get,
-        archive: result.archive,
-        comment: result.archive,
+        ...result,
         agreement_type: 1,
-        discount_sum: result.discount_sum,
-        finish_date: result.finish_date,
-        new_regDoc: result.new_regDoc,
-        recalculation_sum: result.recalculation_sum,
-        receipt_dt: result.receipt_dt,
-        reg_doc: result.reg_doc,
-        registrator: result.registrator,
         statusAgreement: 2,
-        task_link: result.task_link,
       });
       for (const debt of result.DebtLinks) {
         await AgreementDebtsLink.create({
@@ -125,49 +90,34 @@ async function main() {
         });
       }
     }
-    continue;
   }
-  console.log(donedResults);
   console.log('Finished donedResults');
   for (const result of outOfStrengthResults) {
     const debt = result.DebtLinks[0];
     const debtContact = await Debt.findOne({
       where: { id: debt.id_debt },
-      include: Person,
+      attributes: ['id', 'parent_id'],
+      raw: true,
     });
     if (debtContact?.Person) {
-      const agr = await Agreement.create({
-        conclusion_date: result.conclusion_date,
-        bank_sum: result.bank_sum,
-        court_sum: result.court_sum,
-        debt_sum: result.debt_sum,
-        month_pay_day: result.month_pay_day,
-        personId: debtContact.Person.id,
-        purpose: result.purpose,
-        actions_for_get: result.actions_for_get,
-        archive: result.archive,
-        comment: result.archive,
-        agreement_type: 1,
-        discount_sum: result.discount_sum,
-        finish_date: result.finish_date,
-        new_regDoc: result.new_regDoc,
-        recalculation_sum: result.recalculation_sum,
-        receipt_dt: result.receipt_dt,
-        reg_doc: result.reg_doc,
-        registrator: result.registrator,
-        statusAgreement: 3,
-        task_link: result.task_link,
-      });
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create({
-          id_agreement: agr.id,
-          id_debt: debt.id_debt,
-        });
-      }
+      const agr = await Agreement.create(
+        {
+          ...result,
+          agreement_type: 1,
+          statusAgreement: 3,
+          personId: debtContact.parent_id,
+          //@ts-ignore
+          DebtLinks: [
+            result.DebtLinks.map((debt) => ({
+              id_agreement: agr.id,
+              id_debt: debt.id_debt,
+            })),
+          ],
+        },
+        { include: AgreementDebtsLink },
+      );
     }
-    continue;
   }
-  console.log(outOfStrengthResults);
   console.log('Finished outOfStrengthResults');
   /**
    * compensationResults
@@ -180,26 +130,9 @@ async function main() {
     });
     if (debtContact?.Person) {
       const agr = await Agreement.create({
-        conclusion_date: result.conclusion_date,
-        bank_sum: result.bank_sum,
-        court_sum: result.court_sum,
-        debt_sum: result.debt_sum,
-        month_pay_day: result.month_pay_day,
-        personId: debtContact.Person.id,
-        purpose: result.purpose,
-        actions_for_get: result.actions_for_get,
-        archive: result.archive,
-        comment: result.archive,
+        ...result,
         agreement_type: 2,
-        discount_sum: result.discount_sum,
-        finish_date: result.finish_date,
-        new_regDoc: result.new_regDoc,
-        recalculation_sum: result.recalculation_sum,
-        receipt_dt: result.receipt_dt,
-        reg_doc: result.reg_doc,
-        registrator: result.registrator,
         statusAgreement: 1,
-        task_link: result.task_link,
       });
       for (const debt of result.DebtLinks) {
         await AgreementDebtsLink.create({
@@ -208,9 +141,7 @@ async function main() {
         });
       }
     }
-    continue;
   }
-  console.log(compensationResults);
   console.log('Finished outOfStrengthResults');
 }
 main();

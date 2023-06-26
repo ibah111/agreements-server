@@ -12,6 +12,7 @@ import { LocalDatabaseSeed } from './seed';
     SequelizeModule.forRoot({
       name: 'local',
       dialect: 'sqlite',
+      // database: 'agreement',
       storage: 'database.sqlite',
       logging: false,
       models,

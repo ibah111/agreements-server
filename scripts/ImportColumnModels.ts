@@ -143,7 +143,7 @@ export const outOfStrengthColumns: (Partial<Column> & {})[] = [
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
 export const agreementCompensationColumns: (Partial<Column> & {})[] = [
-  { key: 'id_dela' }, // хз как по другому назвать B
+  { key: 'id_dela' }, // ID дела
   { key: 'id_debt' }, // id долга C
   { key: 'last_check_date' }, //ласт проверка D
   { key: 'conclusion_date' }, // дата заключения E
@@ -155,13 +155,14 @@ export const agreementCompensationColumns: (Partial<Column> & {})[] = [
   { key: 'bank_sum' }, // сумма переданная банком K
   { key: 'court_sum' }, // судебная сумма L
   { key: 'debt_sum' }, // сумма долга M
+  { key: 'recalculation_sum' }, // сумма к погашению с по соглашению с дисконтом
   { key: 'discount_total' }, // тотал ( который высчитывается) O
   { key: 'discount_sum' }, // сумма дисконта P
   { key: 'sumBeforeAgreement' }, // Поступление платежей до заключения соглашения Q
-  { key: 'firstPaymentAgreement' }, // Дата поступления первого платежа по соглашения R
-  { key: 'firstSumPaymentAgreement' }, // Сумма первого платежа по соглашению S
-  { key: 'month_pay_day' }, // Число платежа каждого месяца (день в который должен придти платеж) T
+  { key: 'firstPaymentDate' }, // Дата поступления первого платежа по соглашения R
   { key: 'lastPaymentDate' }, // дата последнего платежа U
+  { key: 'lastPaymentSum' }, // Сумма первого платежа по соглашению S
+  { key: 'month_pay_day' }, // Число платежа каждого месяца (день в который должен придти платеж) T
   { key: 'lastPaymentSum' }, // сумма последнего платежа V
   { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению W
   { key: 'restOfDueAfterLastPayment' }, // Остаток задолженности после поступления последнего платежа X
@@ -177,8 +178,8 @@ export const agreementCompensationColumns: (Partial<Column> & {})[] = [
   { key: 'guarantorCount' }, //Наличие поручителей /правопреемников (наследников) AH
   { key: 'deposit_typ' }, // Наличие залогового имущества AI
   { key: 'comment' }, // коммент AJ
-  { key: 'recoverer' }, // Взыскатель AL
   { key: 'status_debt' }, // Статус долга AK
+  { key: 'recoverer' }, // Взыскатель AL
   { key: 'task_link' }, // ссылка на задачу AM
-  { key: 'Дата вступления закона в силу' },
+  { key: 'date_law_on' }, // Дата вступления в закон силу
 ];
