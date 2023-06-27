@@ -3,18 +3,25 @@ import {
   CellHyperlinkValue,
   CellValue,
   CellRichTextValue,
+  CellSharedFormulaValue,
 } from 'exceljs';
-
+function isSharedFormula(value: unknown): value is CellSharedFormulaValue {
+  if (!value) return false;
+  return Object.prototype.hasOwnProperty.call(value, 'sharedFormula');
+}
 function isFormula(value: unknown): value is CellFormulaValue {
+  if (!value) return false;
   return Object.prototype.hasOwnProperty.call(value, 'formula');
 }
 function isHyperLink(value: unknown): value is CellHyperlinkValue {
+  if (!value) return false;
   return (
     Object.prototype.hasOwnProperty.call(value, 'hyperlink') &&
     Object.prototype.hasOwnProperty.call(value, 'text')
   );
 }
 function isCellRichText(value: unknown): value is CellRichTextValue {
+  if (!value) return false;
   return Object.prototype.hasOwnProperty.call(value, 'richText');
 }
 function convertHyperLink(
@@ -41,13 +48,15 @@ export function convert(value: CellValue, name: string) {
     case 'court_sum':
     case 'debt_sum':
     case 'recalculation_sum':
+    case 'discount_sum':
       if (value === '-' || !value) return 0;
-      else if (isFormula(value)) return value.result;
+      else if (isFormula(value) || isSharedFormula(value)) return value.result;
       else {
         if (Number.isNaN(Number(value))) {
-          const data = value.toString().replace(',', '.').replaceAll(' ', '');
-          if (Number.isNaN(Number(data))) {
-            console.log(name, value, Number(data));
+          const data = Number(
+            value.toString().replace(',', '.').replaceAll(' ', ''),
+          );
+          if (Number.isNaN(data)) {
             throw Error('stop');
           }
           return data;
