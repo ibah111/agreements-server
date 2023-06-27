@@ -3,20 +3,21 @@ import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'database.sqlite',
-  models: models,
+new Sequelize({
+  dialect: 'mssql',
+  host: 'newct.usb.ru',
+  database: 'agreements',
+  password: 'usN7WYxkhGEmjOAF',
+  username: 'agreements',
   logging: false,
+  models,
 });
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const contactsequelize = new Sequelize({
+new Sequelize({
   dialect: 'mssql',
   host: 'newct.usb.ru',
   database: 'i_collect',
-  password: 'contact',
-  username: 'contact',
+  password: 'usN7WYxkhGEmjOAF',
+  username: 'agreements',
   logging: false,
   models: Models,
 });
