@@ -1,15 +1,23 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { LocalDatabaseSeed } from './Modules/Database/Local.Database/seed';
 import client from './utils/client';
+import https from './utils/https';
 import { getSwaggerOptions, getSwaggerOptionsCustom } from './utils/swagger';
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter({ https: https()! }),
+  );
 
   app.enableCors();
 
