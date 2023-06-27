@@ -1,10 +1,10 @@
 //yarn migrate:excel --path .\Журнал учёта дополнительных соглашений 2.0.xlsx
-import { CreationAttributes } from '@sql-tools/sequelize';
+import { CreationAttributes, Op } from '@sql-tools/sequelize';
 import { program } from 'commander';
 import { Workbook } from 'exceljs';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
-import { Debt, Person } from '@contact/models';
+import { Debt } from '@contact/models';
 import {
   agreementCompensationColumns,
   donedColumns,
@@ -12,7 +12,7 @@ import {
   runnedColumns,
 } from './ImportColumnModels';
 import innerFunction from './innerFunction';
-
+import _ from 'lodash';
 interface Opts {
   path: string;
 }
@@ -38,7 +38,7 @@ async function main() {
 
   const runnedResults = innerFunction(runnedColumns, workbook.worksheets[0]);
   const donedResults = innerFunction(donedColumns, workbook.worksheets[1]);
-  const outOfStrengthResults = innerFunction(
+  const expiredResults = innerFunction(
     outOfStrengthColumns,
     workbook.worksheets[2],
   );
@@ -50,72 +50,79 @@ async function main() {
    * Действующие
    */
   //TODO ДЕЙСТВУЮЩИЕ STATUS
+  const mapper = (rows: ResultRow[]) =>
+    rows.map((item) => item.DebtLinks?.[0].id_debt);
+  const debt_ids = _.concat(
+    mapper(runnedResults),
+    mapper(donedResults),
+    mapper(expiredResults),
+    mapper(compensationResults),
+  );
+  const Debts = await Debt.findAll({ where: { id: { [Op.in]: debt_ids } } });
+
   for (const result of runnedResults) {
-    const debt = result.DebtLinks[0];
-    const debtContact = await Debt.findOne({
-      where: { id: debt.id_debt },
-      attributes: ['id', 'parent_id'],
-      raw: true,
-    });
-    if (debtContact) {
-      const agr = await Agreement.create({
-        ...result,
-        person_id: debtContact.parent_id,
-        agreement_type: 1,
-        statusAgreement: 1,
-      });
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create({
-          id_agreement: agr.id,
-          id_debt: debt.id_debt,
-        });
-      }
-    }
+    const debtContactId = Debts.find(
+      (item) => item.id === result.DebtLinks[0].id_debt,
+    );
+    if (debtContactId)
+      await Agreement.create(
+        {
+          ...result,
+          person_id: debtContactId.parent_id,
+          agreement_type: 1,
+          statusAgreement: 1,
+          //@ts-ignore
+          DebtLinks: result.DebtLinks.map((debt) => ({
+            id_debt: debt.id_debt,
+          })),
+        },
+        {
+          include: AgreementDebtsLink,
+        },
+      );
   }
   console.log('Finished runnedResults');
   for (const result of donedResults) {
-    const debt = result.DebtLinks[0];
-    const debtContact = await Debt.findOne({
-      where: { id: debt.id_debt },
-      attributes: ['id', 'parent_id'],
-      raw: true,
-    });
-    if (debtContact) {
-      const agr = await Agreement.create({
-        ...result,
-        person_id: debtContact.parent_id,
-        agreement_type: 1,
-        statusAgreement: 2,
-      });
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create({
-          id_agreement: agr.id,
-          id_debt: debt.id_debt,
-        });
-      }
+    const debtContactId = Debts.find(
+      (item) => item.id === result.DebtLinks[0].id_debt,
+    );
+    if (debtContactId) {
+      await Agreement.create(
+        {
+          ...result,
+          person_id: debtContactId.parent_id,
+          agreement_type: 1,
+          statusAgreement: 2,
+          //@ts-ignore
+          DebtLinks: result.DebtLinks.map((debt) => ({
+            id_debt: debt.id_debt,
+          })),
+        },
+        {
+          include: AgreementDebtsLink,
+        },
+      );
     }
   }
   console.log('Finished donedResults');
-  for (const result of outOfStrengthResults) {
-    const debt = result.DebtLinks[0];
-    const debtContact = await Debt.findOne({
-      where: { id: debt.id_debt },
-      attributes: ['id', 'parent_id'],
-      raw: true,
-    });
-    if (debtContact) {
-      const agr = await Agreement.create({
-        ...result,
-        agreement_type: 1,
-        statusAgreement: 3,
-        person_id: debtContact.parent_id,
-      });
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create({
-          id_agreement: agr.id,
-          id_debt: debt.id_debt,
-        });
-      }
+  for (const result of expiredResults) {
+    const debtContactId = Debts.find(
+      (item) => item.id === result.DebtLinks[0].id_debt,
+    );
+    if (debtContactId) {
+      await Agreement.create(
+        {
+          ...result,
+          agreement_type: 1,
+          statusAgreement: 3,
+          person_id: debtContactId.parent_id,
+          //@ts-ignore
+          DebtLinks: result.DebtLinks.map((debt) => ({
+            id_debt: debt.id_debt,
+          })),
+        },
+        { include: AgreementDebtsLink },
+      );
     }
   }
   console.log('Finished outOfStrengthResults');
@@ -123,26 +130,26 @@ async function main() {
    * compensationResults
    */
   for (const result of compensationResults) {
-    const debt = result.DebtLinks[0];
-    const debtContact = await Debt.findOne({
-      where: { id: debt.id_debt },
-      include: Person,
-    });
-    if (debtContact) {
-      const agr = await Agreement.create({
-        ...result,
-        agreement_type: 2,
-        statusAgreement: 1,
-        person_id: debtContact.parent_id,
-      });
-      for (const debt of result.DebtLinks) {
-        await AgreementDebtsLink.create({
-          id_agreement: agr.id,
-          id_debt: debt.id_debt,
-        });
-      }
+    const debtContactId = Debts.find(
+      (item) => item.id === result.DebtLinks[0].id_debt,
+    );
+    if (debtContactId) {
+      await Agreement.create(
+        {
+          ...result,
+          agreement_type: 2,
+          statusAgreement: 1,
+          person_id: debtContactId.parent_id,
+          //@ts-ignore
+          DebtLinks: result.DebtLinks.map((debt) => ({
+            id_debt: debt.id_debt,
+          })),
+        },
+        { include: AgreementDebtsLink },
+      );
     }
   }
   console.log('Finished compensationResults');
+  console.log('End');
 }
 main();

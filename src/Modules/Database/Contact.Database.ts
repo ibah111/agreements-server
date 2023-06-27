@@ -1,7 +1,6 @@
 import Models from '@contact/models';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
-/**модели берутеся из контакта */
 @Module({
   imports: [
     SequelizeModule.forRoot({
