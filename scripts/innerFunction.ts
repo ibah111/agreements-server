@@ -6,7 +6,11 @@ import { convert } from './convert';
 import { attributesAgremment, attributesDebt } from './exportAttributes';
 import { ResultRow } from './ImportFromExcel';
 import { procesFuncArray } from './PostProcess';
-
+function getCell(row: Row, name: string | number) {
+  try {
+    return row.getCell(name);
+  } catch {}
+}
 export default function innerFunction(
   // eslint-disable-next-line @typescript-eslint/ban-types
   columns: (Partial<Column> & {})[],
@@ -35,19 +39,15 @@ export default function innerFunction(
     const agreement_data = { DebtLinks: [] } as unknown as ResultRow;
     const first = rows[0];
     for (const attribute of attributesAgremment) {
-      try {
-        const cell = first.getCell(attribute);
-        if (cell) agreement_data[attribute] = convert(cell.value, attribute);
-      } catch (error) {}
+      const cell = getCell(first, attribute);
+      if (cell) agreement_data[attribute] = convert(cell.value, attribute);
     }
 
     for (const row of rows) {
       const debt_data = {} as CreationAttributes<AgreementDebtsLink>;
       for (const attribute of attributesDebt) {
-        try {
-          const cell = row.getCell(attribute);
-          if (cell) debt_data[attribute] = convert(cell.value, attribute);
-        } catch (error) {}
+        const cell = getCell(row, attribute);
+        if (cell) debt_data[attribute] = convert(cell.value, attribute);
       }
       agreement_data.DebtLinks.push(debt_data);
     }

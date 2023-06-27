@@ -38,13 +38,22 @@ function convertHyperLink(
 export function convert(value: CellValue, name: string) {
   switch (name) {
     case 'bank_sum':
-      if (value) return value;
     case 'court_sum':
     case 'debt_sum':
     case 'recalculation_sum':
       if (value === '-' || !value) return 0;
       else if (isFormula(value)) return value.result;
-      else return value;
+      else {
+        if (Number.isNaN(Number(value))) {
+          const data = value.toString().replace(',', '.').replaceAll(' ', '');
+          if (Number.isNaN(Number(data))) {
+            console.log(name, value, Number(data));
+            throw Error('stop');
+          }
+          return data;
+        }
+        return Number(value);
+      }
     case 'purpose': {
       switch (value?.toString().trim().toLowerCase()) {
         case 'задолженность взыскана банком':
