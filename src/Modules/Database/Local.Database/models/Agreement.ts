@@ -121,7 +121,7 @@ export class Agreement extends Model<
    */
   @ForeignKey(() => RegDocType)
   @Column(DataType.INTEGER)
-  new_regDoc: FK<number> | null;
+  new_reg_doc: FK<number> | null;
   @BelongsTo(() => RegDocType)
   RegDocType?: BelongsToAttribute<NonAttribute<RegDocType>>;
   @Column(DataType.STRING)
@@ -143,7 +143,7 @@ export class Agreement extends Model<
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  personId: number;
+  person_id: number;
 
   @Column(DataType.STRING)
   actions_for_get: string | null;

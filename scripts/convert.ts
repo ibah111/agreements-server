@@ -1,4 +1,9 @@
-import { CellFormulaValue, CellHyperlinkValue, CellValue } from 'exceljs';
+import {
+  CellFormulaValue,
+  CellHyperlinkValue,
+  CellValue,
+  CellRichTextValue,
+} from 'exceljs';
 
 function isFormula(value: unknown): value is CellFormulaValue {
   return Object.prototype.hasOwnProperty.call(value, 'formula');
@@ -9,10 +14,20 @@ function isHyperLink(value: unknown): value is CellHyperlinkValue {
     Object.prototype.hasOwnProperty.call(value, 'text')
   );
 }
-
-class CaseClass {
-  name: string;
-  value: CellValue;
+function isCellRichText(value: unknown): value is CellRichTextValue {
+  return Object.prototype.hasOwnProperty.call(value, 'richText');
+}
+function convertHyperLink(
+  value: CellHyperlinkValue,
+  name: keyof CellHyperlinkValue = 'hyperlink',
+): string {
+  if (name === 'text') {
+    if (isCellRichText(value.text))
+      return value.text.richText.map((item) => item.text).join('');
+    return value.text;
+  }
+  if (name === 'hyperlink') return value.hyperlink;
+  throw Error('name not implement');
 }
 /**
  * Конверт в нужный формат
@@ -21,18 +36,6 @@ class CaseClass {
  * @returns Функция конвертирования в данных их excel в формат SQLite
  */
 export function convert(value: CellValue, name: string) {
-  const regDoc: CaseClass = {
-    name: 'new_regDoc',
-    value: value,
-  };
-  const registrator: CaseClass = {
-    name: 'registrator',
-    value: value,
-  };
-  const archive: CaseClass = {
-    name: 'archive',
-    value: value,
-  };
   switch (name) {
     case 'bank_sum':
       if (value) return value;
@@ -55,31 +58,28 @@ export function convert(value: CellValue, name: string) {
           return 4;
         default:
           return 5;
-        // throw Error();
       }
     }
-    case 'agreement_type': {
-      if (value === null) return 1;
-      else return 1;
-    }
-    case regDoc.name:
-      if (regDoc.value === 'да') return 1;
+    case 'new_reg_doc':
+      if (value === 'да') return 1;
       return null;
-    case registrator.name:
-      if (registrator.value === 'нет') return null;
-      return registrator.value;
-    case archive.name:
-      if (archive.value === 'нет') return null;
-      return archive.value;
+    case 'registrator':
+    case 'archive':
+      if (value === 'нет') return null;
+      return value;
     case 'task_link':
-      return isHyperLink(value) ? value.hyperlink : value;
+      return isHyperLink(value) && convertHyperLink(value);
     case 'id_debt':
       if (value) return value;
       return null;
 
     default:
+      if (isHyperLink(value)) return convertHyperLink(value, 'text');
       if (isFormula(value)) {
         return value.result;
+      }
+      if (isCellRichText(value)) {
+        return value.richText.map((item) => item.text).join('');
       }
       return value;
   }

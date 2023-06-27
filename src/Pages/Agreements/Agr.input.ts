@@ -21,7 +21,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @ApiProperty()
   @Expose()
   @IsNumber()
-  personId: number;
+  person_id: number;
 
   @CallbackValidate<CreateAgreementInput, Date>(
     (obj) => obj.finish_date,
@@ -63,7 +63,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  statusAgreement: number;
+  status_agreement: number;
 
   @Expose()
   @IsNumber()
@@ -111,7 +111,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  new_regDoc: number;
+  new_reg_doc: number;
 
   @Expose()
   @IsString()

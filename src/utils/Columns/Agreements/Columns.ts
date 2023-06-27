@@ -19,7 +19,7 @@ export default function getColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
-      ...generateDefault('personId'),
+      ...generateDefault('person_id'),
       type: 'number',
     },
     {
@@ -89,37 +89,37 @@ export default function getColumns(): GridColDefAddon[] {
       filterable: false,
     },
     {
-      ...generateDefault('sumBeforeAgr'),
+      ...generateDefault('sum_before_agreement'),
       type: 'number',
       filterable: false,
     },
     {
-      ...generateDefault('firstPayment'),
+      ...generateDefault('first_payment'),
       type: 'number',
       filterable: false,
     },
     {
-      ...generateDefault('firstPaymentDate'),
+      ...generateDefault('first_payment_date'),
       type: 'date',
       filterable: false,
     },
     {
-      ...generateDefault('lastPayment'),
+      ...generateDefault('last_payment'),
       type: 'number',
       filterable: false,
     },
     {
-      ...generateDefault('lastPaymentDate'),
+      ...generateDefault('last_payment_date'),
       type: 'date',
       filterable: false,
     },
     {
-      ...generateDefault('sumAfterAgr'),
+      ...generateDefault('sum_after_agreement'),
       type: 'number',
       filterable: false,
     },
     {
-      ...generateDefault('new_regDoc'),
+      ...generateDefault('new_reg_doc'),
       type: 'number',
       editable: true,
     },

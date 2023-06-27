@@ -54,11 +54,13 @@ async function main() {
     const debt = result.DebtLinks[0];
     const debtContact = await Debt.findOne({
       where: { id: debt.id_debt },
-      include: Person,
+      attributes: ['id', 'parent_id'],
+      raw: true,
     });
-    if (debtContact?.Person) {
+    if (debtContact) {
       const agr = await Agreement.create({
         ...result,
+        person_id: debtContact.parent_id,
         agreement_type: 1,
         statusAgreement: 1,
       });
@@ -75,11 +77,13 @@ async function main() {
     const debt = result.DebtLinks[0];
     const debtContact = await Debt.findOne({
       where: { id: debt.id_debt },
-      include: Person,
+      attributes: ['id', 'parent_id'],
+      raw: true,
     });
-    if (debtContact?.Person) {
+    if (debtContact) {
       const agr = await Agreement.create({
         ...result,
+        person_id: debtContact.parent_id,
         agreement_type: 1,
         statusAgreement: 2,
       });
@@ -99,23 +103,19 @@ async function main() {
       attributes: ['id', 'parent_id'],
       raw: true,
     });
-    if (debtContact?.Person) {
-      const agr = await Agreement.create(
-        {
-          ...result,
-          agreement_type: 1,
-          statusAgreement: 3,
-          personId: debtContact.parent_id,
-          //@ts-ignore
-          DebtLinks: [
-            result.DebtLinks.map((debt) => ({
-              id_agreement: agr.id,
-              id_debt: debt.id_debt,
-            })),
-          ],
-        },
-        { include: AgreementDebtsLink },
-      );
+    if (debtContact) {
+      const agr = await Agreement.create({
+        ...result,
+        agreement_type: 1,
+        statusAgreement: 3,
+        person_id: debtContact.parent_id,
+      });
+      for (const debt of result.DebtLinks) {
+        await AgreementDebtsLink.create({
+          id_agreement: agr.id,
+          id_debt: debt.id_debt,
+        });
+      }
     }
   }
   console.log('Finished outOfStrengthResults');
@@ -128,11 +128,12 @@ async function main() {
       where: { id: debt.id_debt },
       include: Person,
     });
-    if (debtContact?.Person) {
+    if (debtContact) {
       const agr = await Agreement.create({
         ...result,
         agreement_type: 2,
         statusAgreement: 1,
+        person_id: debtContact.parent_id,
       });
       for (const debt of result.DebtLinks) {
         await AgreementDebtsLink.create({
@@ -142,6 +143,6 @@ async function main() {
       }
     }
   }
-  console.log('Finished outOfStrengthResults');
+  console.log('Finished compensationResults');
 }
 main();

@@ -3,7 +3,7 @@ import { MigrationFn } from 'umzug';
 export const up: MigrationFn<QueryInterface> = async ({ context }) => {
   const transaction = await context.sequelize.transaction();
 
-  await context.addColumn('Agreements', 'new_regDoc', {
+  await context.addColumn('Agreements', 'new_reg_doc', {
     type: DataTypes.INTEGER,
     allowNull: true,
   });
@@ -18,7 +18,7 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
 export const down: MigrationFn<QueryInterface> = async ({ context }) => {
   const transaction = await context.sequelize.transaction();
 
-  await context.removeColumn('Agreements', 'new_regDoc');
+  await context.removeColumn('Agreements', 'new_reg_doc');
 
   try {
     await transaction.commit();

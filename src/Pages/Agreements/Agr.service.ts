@@ -51,7 +51,7 @@ export class AgreementsService {
     const utils = getUtils();
     const filter = utils.generateFilter(body.filterModel);
     const agreements_ids = await this.modelAgreement.findAll({
-      attributes: ['id', 'personId'],
+      attributes: ['id', 'person_id'],
       raw: true,
       where: filter('Agreement'),
     });
@@ -67,7 +67,7 @@ export class AgreementsService {
           [Op.and]: [
             {
               id: {
-                [Op.in]: agreements_ids.map((agreement) => agreement.personId),
+                [Op.in]: agreements_ids.map((agreement) => agreement.person_id),
               },
             },
             filter('Person'),
@@ -102,7 +102,7 @@ export class AgreementsService {
       where: {
         [Op.and]: [
           { id: { [Op.in]: agreements_ids.map((agreement) => agreement.id) } },
-          { personId: { [Op.in]: persons_ids } },
+          { person_id: { [Op.in]: persons_ids } },
         ],
       },
       include: [{ model: this.modelAgreementDebtsLink, separate: true }],
@@ -111,7 +111,7 @@ export class AgreementsService {
     const personIdArray: number[] = [];
     const debtIdArray: number[] = [];
     for (const agreement of agreements.rows) {
-      personIdArray.push(agreement.personId);
+      personIdArray.push(agreement.person_id);
       for (const debtLink of agreement.DebtLinks || []) {
         debtIdArray.push(debtLink.id_debt);
       }
@@ -146,7 +146,9 @@ export class AgreementsService {
     for (const agreement of agreements.rows) {
       //Присоединяем Person
       const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
-      const person = persons.find((person) => person.id === agreement.personId);
+      const person = persons.find(
+        (person) => person.id === agreement.person_id,
+      );
       if (person) {
         dataValuesAgreement.Person = person as Person;
       }
@@ -226,7 +228,7 @@ export class AgreementsService {
       ],
     })) as Debt[];
     const person = await this.modelPerson.findOne({
-      where: { id: agreement?.personId },
+      where: { id: agreement?.person_id },
       include: [
         {
           association: 'Debts',

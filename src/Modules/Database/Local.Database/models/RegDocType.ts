@@ -19,7 +19,7 @@ import {
 } from '@sql-tools/sequelize-typescript';
 import { Agreement } from './Agreement';
 
-@Table({ tableName: 'new_reg_doc_types' })
+@Table({ tableName: 'newRegDocTypes' })
 export class RegDocType extends Model<
   InferAttributes<RegDocType>,
   InferCreationAttributes<RegDocType>,
@@ -33,5 +33,5 @@ export class RegDocType extends Model<
   @Column(DataType.STRING)
   title: string;
   @HasMany(() => Agreement)
-  Agreements?: HasManyAttribute<NonAttribute<Agreement[]>, 'new_regDoc'>;
+  Agreements?: HasManyAttribute<NonAttribute<Agreement[]>, 'new_reg_doc'>;
 }

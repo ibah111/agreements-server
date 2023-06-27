@@ -28,7 +28,7 @@ export const runnedColumns: (Partial<Column> & {})[] = [
   {},
   {},
   {},
-  { key: 'new_regDoc' },
+  { key: 'new_reg_doc' },
   { key: 'registrator' },
   { key: 'archive' },
   { key: 'receipt_dt' },
@@ -75,7 +75,7 @@ export const donedColumns: (Partial<Column> & {})[] = [
   { key: 'lastPaymentSum' }, // сумма последнего платежа
   { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению
   { key: 'restOfDueAfterLastPayment' }, // Остаток задолженности после поступления последнего платежа
-  { key: 'new_regDoc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита))
+  { key: 'new_reg_doc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита))
   { key: 'registrator' }, // регистратор
   { key: 'archive' }, // наличие в архиве
   { key: 'receipt_dt' }, // дата получения листа
@@ -120,7 +120,7 @@ export const outOfStrengthColumns: (Partial<Column> & {})[] = [
   { key: 'lastPaymentSum' }, // сумма последнего платежа V
   { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению W
   { key: 'restOfDueAfterLastPayment' }, // Остаток задолженности после поступления последнего платежа X
-  { key: 'new_regDoc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
+  { key: 'new_reg_doc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
   { key: 'registrator' }, // регистратор Z
   { key: 'archive' }, // наличие в архиве AA
   { key: 'receipt_dt' }, // дата получения листа AB
@@ -166,7 +166,7 @@ export const agreementCompensationColumns: (Partial<Column> & {})[] = [
   { key: 'lastPaymentSum' }, // сумма последнего платежа V
   { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению W
   { key: 'restOfDueAfterLastPayment' }, // Остаток задолженности после поступления последнего платежа X
-  { key: 'new_regDoc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
+  { key: 'new_reg_doc' }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
   { key: 'registrator' }, // наличие регистраторе Z
   { key: 'archive' }, // наличие ИД в архиве AA
   { key: 'receipt_dt' }, // дата получения листа AB

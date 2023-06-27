@@ -35,7 +35,7 @@ export class AgreementToDebtSerivce {
   async createAgreementToDebt(auth: AuthResult, data: AgreementToDebtInput) {
     const ability = this.serviceAbility.createForUser(auth.userLocal);
     const agreement = await this.modelAgreement.findByPk(data.id_agreement, {
-      attributes: ['id', 'personId'],
+      attributes: ['id', 'person_id'],
       rejectOnEmpty: new UnprocessableEntityException(
         `Соглашение ${data.id_agreement} не найденно`,
       ),
@@ -52,7 +52,7 @@ export class AgreementToDebtSerivce {
         },
         {
           model: this.modelPerson,
-          where: { id: agreement.personId } as WhereOptions<Person>,
+          where: { id: agreement.person_id } as WhereOptions<Person>,
           required: true,
         },
       ],
@@ -90,7 +90,7 @@ export class AgreementToDebtSerivce {
   }
   async getAllowedDebts(id_agreement: number) {
     const agreement = await this.modelAgreement.findByPk(id_agreement, {
-      attributes: ['id', 'personId'],
+      attributes: ['id', 'person_id'],
       rejectOnEmpty: new NotFoundException(
         `Не найденно соглашение ${id_agreement}`,
       ),
@@ -98,7 +98,7 @@ export class AgreementToDebtSerivce {
     });
     const linkedDebts = agreement.DebtLinks?.map((link) => link.id_debt);
     const personAgreement = await this.modelPerson.findByPk(
-      agreement.personId,
+      agreement.person_id,
       {
         include: {
           required: false,
@@ -106,7 +106,7 @@ export class AgreementToDebtSerivce {
           where: { id: { [Op.notIn]: linkedDebts } } as WhereOptions<Debt>,
         },
         rejectOnEmpty: new NotFoundException(
-          `Не найден человек с Id ${agreement.personId}`,
+          `Не найден человек с Id ${agreement.person_id}`,
         ),
       },
     );
