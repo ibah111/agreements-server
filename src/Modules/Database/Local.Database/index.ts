@@ -10,10 +10,12 @@ import { LocalDatabaseSeed } from './seed';
 @Module({
   imports: [
     SequelizeModule.forRoot({
+      dialect: 'mssql',
+      host: 'newct.usb.ru',
+      database: 'agreements',
+      password: 'usN7WYxkhGEmjOAF',
+      username: 'agreements',
       name: 'local',
-      dialect: 'sqlite',
-      // database: 'agreement',
-      storage: 'database.sqlite',
       logging: false,
       models,
     }),
