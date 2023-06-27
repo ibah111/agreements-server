@@ -5,6 +5,9 @@ import {
   CellRichTextValue,
   CellSharedFormulaValue,
 } from 'exceljs';
+function round(value: number) {
+  return Math.round(value * 100) / 100;
+}
 function isSharedFormula(value: unknown): value is CellSharedFormulaValue {
   if (!value) return false;
   return Object.prototype.hasOwnProperty.call(value, 'sharedFormula');
@@ -59,10 +62,17 @@ export function convert(value: CellValue, name: string) {
           if (Number.isNaN(data)) {
             throw Error('stop');
           }
-          return data;
+          return round(data);
         }
-        return Number(value);
+        return round(value as number);
       }
+    case 'month_pay_day':
+      if (
+        value?.toString().startsWith('единовременно') ||
+        value?.toString().startsWith('Единовременно')
+      )
+        return 0;
+      return value;
     case 'purpose': {
       switch (value?.toString().trim().toLowerCase()) {
         case 'задолженность взыскана банком':

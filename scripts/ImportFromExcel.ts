@@ -64,7 +64,7 @@ async function main() {
     const debtContactId = Debts.find(
       (item) => item.id === result.DebtLinks[0].id_debt,
     );
-    if (debtContactId)
+    if (debtContactId) {
       await Agreement.create(
         {
           ...result,
@@ -80,6 +80,7 @@ async function main() {
           include: AgreementDebtsLink,
         },
       );
+    }
   }
   console.log('Finished runnedResults');
   for (const result of donedResults) {

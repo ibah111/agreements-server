@@ -161,8 +161,8 @@ export const agreementCompensationColumns: (Partial<Column> & {})[] = [
   { key: 'sumBeforeAgreement' }, // Поступление платежей до заключения соглашения Q
   { key: 'firstPaymentDate' }, // Дата поступления первого платежа по соглашения R
   { key: 'lastPaymentDate' }, // дата последнего платежа U
-  { key: 'lastPaymentSum' }, // Сумма первого платежа по соглашению S
   { key: 'month_pay_day' }, // Число платежа каждого месяца (день в который должен придти платеж) T
+  { key: 'lastPaymentSumAfterAgr' }, // Сумма первого платежа по соглашению S
   { key: 'lastPaymentSum' }, // сумма последнего платежа V
   { key: 'totalSumAgreement' }, // Общая сумма платежей поступивших по соглашению W
   { key: 'restOfDueAfterLastPayment' }, // Остаток задолженности после поступления последнего платежа X
