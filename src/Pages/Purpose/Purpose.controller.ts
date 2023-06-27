@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/Modules/Guards/auth.guard';
-import PurposeService from './purpose.service';
+import PurposeService from './Purpose.service';
 
 @ApiTags('Purpose')
 @UseGuards(AuthGuard)
