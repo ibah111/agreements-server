@@ -13,10 +13,13 @@ import {
 } from './ImportColumnModels';
 import innerFunction from './innerFunction';
 import _ from 'lodash';
+import { sql } from './exportAttributes';
+import moment from 'moment';
 interface Opts {
   path: string;
 }
 export type ResultRow = CreationAttributes<Agreement> & {
+  last_check_date: Date;
   DebtLinks: CreationAttributes<AgreementDebtsLink>[];
 };
 /**
@@ -37,10 +40,17 @@ async function main() {
   if (!worksheet_compenstaion_columns) return;
 
   const runnedResults = innerFunction(runnedColumns, workbook.worksheets[0]);
-  const donedResults = innerFunction(donedColumns, workbook.worksheets[1]);
+  const donedResults = innerFunction(
+    donedColumns,
+    workbook.worksheets[1],
+  ).filter((item) =>
+    moment(item.conclusion_date).isAfter(moment('2022', 'YYYY')),
+  );
   const expiredResults = innerFunction(
     outOfStrengthColumns,
     workbook.worksheets[2],
+  ).filter((item) =>
+    moment(item.conclusion_date).isAfter(moment('2022', 'YYYY')),
   );
   const compensationResults = innerFunction(
     agreementCompensationColumns,
@@ -59,98 +69,106 @@ async function main() {
     mapper(compensationResults),
   );
   const Debts = await Debt.findAll({ where: { id: { [Op.in]: debt_ids } } });
-
-  for (const result of runnedResults) {
-    const debtContactId = Debts.find(
-      (item) => item.id === result.DebtLinks[0].id_debt,
-    );
-    if (debtContactId) {
-      await Agreement.create(
-        {
-          ...result,
-          person_id: debtContactId.parent_id,
-          agreement_type: 1,
-          statusAgreement: 1,
-          //@ts-ignore
-          DebtLinks: result.DebtLinks.map((debt) => ({
-            id_debt: debt.id_debt,
-          })),
-        },
-        {
-          include: AgreementDebtsLink,
-        },
+  await sql.transaction(async (t) => {
+    for (const result of runnedResults) {
+      const debtContactId = Debts.find(
+        (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      if (debtContactId) {
+        await Agreement.create(
+          {
+            ...result,
+            person_id: debtContactId.parent_id,
+            agreement_type: 1,
+            statusAgreement: 1,
+            //@ts-ignore
+            DebtLinks: result.DebtLinks.map((debt) => ({
+              id_debt: debt.id_debt,
+            })),
+          },
+          {
+            include: AgreementDebtsLink,
+            transaction: t,
+          },
+        );
+      }
     }
-  }
-  console.log('Finished runnedResults');
-  for (const result of donedResults) {
-    const debtContactId = Debts.find(
-      (item) => item.id === result.DebtLinks[0].id_debt,
-    );
-    if (debtContactId) {
-      await Agreement.create(
-        {
-          ...result,
-          person_id: debtContactId.parent_id,
-          agreement_type: 1,
-          statusAgreement: 2,
-          //@ts-ignore
-          DebtLinks: result.DebtLinks.map((debt) => ({
-            id_debt: debt.id_debt,
-          })),
-        },
-        {
-          include: AgreementDebtsLink,
-        },
+    console.log('Finished runnedResults');
+    for (const result of donedResults) {
+      const debtContactId = Debts.find(
+        (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      if (!result.last_check_date) throw Error('Нету finish_date');
+      if (debtContactId) {
+        await Agreement.create(
+          {
+            ...result,
+            person_id: debtContactId.parent_id,
+            agreement_type: 1,
+            statusAgreement: 2,
+            finish_date: result.last_check_date,
+            //@ts-ignore
+            DebtLinks: result.DebtLinks.map((debt) => ({
+              id_debt: debt.id_debt,
+            })),
+          },
+          {
+            include: AgreementDebtsLink,
+            transaction: t,
+          },
+        );
+      }
     }
-  }
-  console.log('Finished donedResults');
-  for (const result of expiredResults) {
-    const debtContactId = Debts.find(
-      (item) => item.id === result.DebtLinks[0].id_debt,
-    );
-    if (debtContactId) {
-      await Agreement.create(
-        {
-          ...result,
-          agreement_type: 1,
-          statusAgreement: 3,
-          person_id: debtContactId.parent_id,
-          //@ts-ignore
-          DebtLinks: result.DebtLinks.map((debt) => ({
-            id_debt: debt.id_debt,
-          })),
-        },
-        { include: AgreementDebtsLink },
+    console.log('Finished donedResults');
+    for (const result of expiredResults) {
+      const debtContactId = Debts.find(
+        (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      if (!result.last_check_date) throw Error('Нету finish_date');
+      if (debtContactId) {
+        await Agreement.create(
+          {
+            ...result,
+            agreement_type: 1,
+            statusAgreement: 3,
+            person_id: debtContactId.parent_id,
+            finish_date: result.last_check_date,
+            //@ts-ignore
+            DebtLinks: result.DebtLinks.map((debt) => ({
+              id_debt: debt.id_debt,
+            })),
+          },
+          { include: AgreementDebtsLink, transaction: t },
+        );
+      }
     }
-  }
-  console.log('Finished outOfStrengthResults');
-  /**
-   * compensationResults
-   */
-  for (const result of compensationResults) {
-    const debtContactId = Debts.find(
-      (item) => item.id === result.DebtLinks[0].id_debt,
-    );
-    if (debtContactId) {
-      await Agreement.create(
-        {
-          ...result,
-          agreement_type: 2,
-          statusAgreement: 1,
-          person_id: debtContactId.parent_id,
-          //@ts-ignore
-          DebtLinks: result.DebtLinks.map((debt) => ({
-            id_debt: debt.id_debt,
-          })),
-        },
-        { include: AgreementDebtsLink },
+    console.log('Finished outOfStrengthResults');
+    /**
+     * compensationResults
+     */
+    for (const result of compensationResults) {
+      const debtContactId = Debts.find(
+        (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      if (debtContactId) {
+        await Agreement.create(
+          {
+            ...result,
+            agreement_type: 2,
+            statusAgreement: 1,
+            person_id: debtContactId.parent_id,
+            //@ts-ignore
+            DebtLinks: result.DebtLinks.map((debt) => ({
+              id_debt: debt.id_debt,
+            })),
+          },
+          { include: AgreementDebtsLink, transaction: t },
+        );
+      }
     }
-  }
-  console.log('Finished compensationResults');
-  console.log('End');
+    console.log('Finished compensationResults');
+    console.log('End');
+    //throw Error('Остановить транзакцию');
+  });
 }
 main();

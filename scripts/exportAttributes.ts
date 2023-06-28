@@ -3,7 +3,7 @@ import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
-new Sequelize({
+export const sql = new Sequelize({
   dialect: 'mssql',
   host: 'newct.usb.ru',
   database: 'agreements',

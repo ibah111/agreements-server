@@ -1,7 +1,7 @@
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { Column, Row, Worksheet } from 'exceljs';
 import moment from 'moment';
-import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
+import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { convert } from './convert';
 import { attributesAgremment, attributesDebt } from './exportAttributes';
 import { ResultRow } from './ImportFromExcel';
@@ -42,6 +42,12 @@ export default function innerFunction(
       const cell = getCell(first, attribute);
       if (cell) agreement_data[attribute] = convert(cell.value, attribute);
     }
+    const tmp = getCell(first, 'last_check_date');
+    if (tmp)
+      agreement_data['last_check_date' as string] = convert(
+        tmp.value,
+        'last_check_date',
+      );
 
     for (const row of rows) {
       const debt_data = {} as CreationAttributes<AgreementDebtsLink>;
