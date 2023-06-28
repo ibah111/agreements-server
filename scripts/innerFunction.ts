@@ -1,11 +1,32 @@
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { Column, Row, Worksheet } from 'exceljs';
+import _ from 'lodash';
 import moment from 'moment';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { convert } from './convert';
 import { attributesAgremment, attributesDebt } from './exportAttributes';
 import { ResultRow } from './ImportFromExcel';
 import { procesFuncArray } from './PostProcess';
+function createColumnsExcel(
+  data: (Partial<Column> & {
+    position: number;
+  })[],
+) {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const cols = _.max(data.map((item) => item.position))!;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const columns: (Partial<Column> & {})[] = new Array(cols);
+  for (const item of data) {
+    const { position, ...col } = item;
+    columns[position - 1] = col;
+  }
+  for (let i = 0; i < columns.length; i++) {
+    if (!columns[i]) columns[i] = {};
+  }
+
+  console.log(columns);
+  return columns;
+}
 function getCell(row: Row, name: string | number) {
   try {
     return row.getCell(name);
@@ -13,12 +34,12 @@ function getCell(row: Row, name: string | number) {
 }
 export default function innerFunction(
   // eslint-disable-next-line @typescript-eslint/ban-types
-  columns: (Partial<Column> & {})[],
+  columns: (Partial<Column> & { position: number })[],
   data: Worksheet,
 ) {
   const predata: Record<string, Row[]> = {};
   const result: ResultRow[] = [];
-  const r_columns = columns;
+  const r_columns = createColumnsExcel(columns);
   data.columns = r_columns;
   const rows = data.getRows(2, data.rowCount) || [];
   for (const row of rows) {

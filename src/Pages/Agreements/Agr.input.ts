@@ -149,6 +149,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiProperty()
   archive: string;
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  collector: string;
 }
 
 export class DeleteSelectedAgreements {

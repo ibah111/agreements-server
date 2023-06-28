@@ -81,6 +81,7 @@ async function main() {
             person_id: debtContactId.parent_id,
             agreement_type: 1,
             statusAgreement: 1,
+
             //@ts-ignore
             DebtLinks: result.DebtLinks.map((debt) => ({
               id_debt: debt.id_debt,

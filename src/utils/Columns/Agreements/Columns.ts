@@ -133,6 +133,10 @@ export default function getColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
+      ...generateDefault('collector'),
+      editable: true,
+    },
+    {
       ...generateDefault('comment'),
       editable: true,
     },

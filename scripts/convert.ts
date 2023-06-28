@@ -39,12 +39,6 @@ function convertHyperLink(
   if (name === 'hyperlink') return value.hyperlink;
   throw Error('name not implement');
 }
-/**
- * Конверт в нужный формат
- * @param value тип ячейки
- * @param name имя ячейки
- * @returns Функция конвертирования в данных их excel в формат SQLite
- */
 export function convert(value: CellValue, name: string) {
   switch (name) {
     case 'bank_sum':
@@ -57,6 +51,7 @@ export function convert(value: CellValue, name: string) {
       else {
         if (Number.isNaN(Number(value))) {
           const data = Number(
+            //@ts-ignore
             value.toString().replace(',', '.').replaceAll(' ', ''),
           );
           if (Number.isNaN(data)) {
@@ -100,6 +95,8 @@ export function convert(value: CellValue, name: string) {
     case 'id_debt':
       if (value) return value;
       return null;
+    case 'collector':
+      return value;
 
     default:
       if (isHyperLink(value)) return convertHyperLink(value, 'text');

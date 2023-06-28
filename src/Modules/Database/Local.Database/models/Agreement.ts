@@ -132,6 +132,8 @@ export class Agreement extends Model<
   /**
    * Комментарии
    */
+  @Column(DataType.STRING)
+  collector: string | null;
 
   @Column(DataType.STRING)
   comment: string | null;
