@@ -11,6 +11,7 @@ import {
 } from '@sql-tools/sequelize';
 import {
   AllowNull,
+  AutoIncrement,
   Column,
   DataType,
   ForeignKey,
@@ -34,6 +35,7 @@ export class ActionLog extends Model<
   /**
    * ID действия
    */
+  @AutoIncrement
   @PrimaryKey
   @Column(DataType.INTEGER)
   id: CreationOptional<number>;
