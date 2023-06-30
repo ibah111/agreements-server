@@ -63,7 +63,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  status_agreement: number;
+  statusAgreement: number;
 
   @Expose()
   @IsNumber()
@@ -151,7 +151,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   archive: string;
 
   @Expose()
-  @IsNumber()
+  @IsString()
   @IsOptional()
   @ApiPropertyOptional({ type: String })
   collector: string;

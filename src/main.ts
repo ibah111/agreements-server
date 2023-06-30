@@ -16,6 +16,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     new FastifyAdapter({ https: https()! }),
   );
 

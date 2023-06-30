@@ -36,4 +36,8 @@ export class UserService {
     await user.removeRole(body.role_id);
     return { result: 'success' };
   }
+  async getAllUsers() {
+    const users = await this.modelUser.findAll({});
+    return [users, { result: 'success' }];
+  }
 }

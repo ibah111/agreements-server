@@ -21,5 +21,6 @@ new Sequelize({
   logging: false,
   models: Models,
 });
+
 export const attributesAgremment = Object.keys(Agreement.getAttributes());
 export const attributesDebt = Object.keys(AgreementDebtsLink.getAttributes());
