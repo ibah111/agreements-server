@@ -105,7 +105,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  month_pay_day: number;
+  month_pay_day?: number | null;
 
   @Expose()
   @IsNumber()

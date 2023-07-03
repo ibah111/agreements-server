@@ -108,7 +108,7 @@ export class Agreement extends Model<
    * Число платежа каждого месяца
    */
   @Column(DataType.INTEGER)
-  month_pay_day: number;
+  month_pay_day: number | null;
   /**
    * Наличие ИД
    */
