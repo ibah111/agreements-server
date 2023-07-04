@@ -47,7 +47,6 @@ export function agreementCalculation(agreement: Agreement) {
     dataValuesAgreement.firstPayment = sumFP;
     const fpdate = fp.dt;
     dataValuesAgreement.firstPaymentDate = fpdate;
-    return [sumLP, lpdate, sumFP, fpdate];
   }
   return agreement;
 }
