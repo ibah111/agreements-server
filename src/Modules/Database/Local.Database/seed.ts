@@ -1,4 +1,4 @@
-import { Debt, DebtCalc, LawAct } from '@contact/models';
+import { Debt, DebtCalc } from '@contact/models';
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Op } from '@sql-tools/sequelize';
@@ -15,7 +15,6 @@ export class LocalDatabaseSeed {
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
     @InjectModel(DebtCalc, 'contact')
     private readonly modelDebtCalc: typeof DebtCalc,
-    @InjectModel(LawAct, 'contact') private readonly modelLawAct: typeof LawAct,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(AgreementDebtsLink, 'local')

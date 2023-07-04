@@ -11,8 +11,12 @@ export function agreementCalculation(agreement: Agreement) {
   const calcs = dc
     .filter(
       (item) =>
-        moment(agreement.conclusion_date).isBefore(moment(item.dt)) &&
-        moment(agreement.finish_date || undefined).isAfter(moment(item.dt)),
+        moment(agreement.conclusion_date)
+          .startOf('day')
+          .isBefore(moment(item.dt)) &&
+        moment(agreement.finish_date || undefined)
+          .endOf('day')
+          .isAfter(moment(item.dt)),
     )
     .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
   const calcsBefore = dc.filter((item) =>
@@ -43,6 +47,7 @@ export function agreementCalculation(agreement: Agreement) {
     dataValuesAgreement.firstPayment = sumFP;
     const fpdate = fp.dt;
     dataValuesAgreement.firstPaymentDate = fpdate;
+    return [sumLP, lpdate, sumFP, fpdate];
   }
   return agreement;
 }
