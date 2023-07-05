@@ -62,7 +62,6 @@ export class AgreementsService {
       await this.modelPerson.findAll({
         raw: true,
         attributes: ['id'],
-        // logging: true,
         where: {
           [Op.and]: [
             {
@@ -142,9 +141,7 @@ export class AgreementsService {
       ],
       attributes: ['fio', 'id', 'f', 'i', 'o'],
     });
-    //Перебираем соглашения и добавляем данные
     for (const agreement of agreements.rows) {
-      //Присоединяем Person
       const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
       const person = persons.find(
         (person) => person.id === agreement.person_id,
@@ -152,7 +149,6 @@ export class AgreementsService {
       if (person) {
         dataValuesAgreement.Person = person as Person;
       }
-      //Присоединяем Debt
       for (const debtLink of agreement.DebtLinks || []) {
         const dataValuesLink = debtLink.dataValues as AgreementDebtsLink;
         dataValuesLink.Debt = debts.find(

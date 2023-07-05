@@ -5,7 +5,7 @@ import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreeme
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
 export const sql = new Sequelize({
   dialect: 'mssql',
-  host: 'BALEZIN.usb.ru',
+  host: 'newct.usb.ru',
   database: 'agreements',
   password: 'usN7WYxkhGEmjOAF',
   username: 'agreements',
