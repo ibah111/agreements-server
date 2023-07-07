@@ -12,6 +12,7 @@ import { DictModule } from './Dict/Dict.module';
 import { TypeAgreementModule } from './AgreementTyp/Type.module';
 import { LawExecDebtModule } from './LawExecDebt/LawExecDebt.module';
 import { HealthModule } from './Health/Health.module';
+import { CollectorModule } from './Collector/Collector.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { HealthModule } from './Health/Health.module';
     TypeAgreementModule,
     LawExecDebtModule,
     HealthModule,
+    CollectorModule,
   ],
 })
 export class PagesModule {}

@@ -2,7 +2,6 @@
  * Contact exception data
  * Таблица Данных не подцепляемых из контакта
  */
-
 import { Person, Portfolio } from '@contact/models';
 
 import {
@@ -130,11 +129,18 @@ export class Agreement extends Model<
   @Column(DataType.STRING)
   archive: string | null;
   /**
-   * Комментарии
+   * Взыскатель (строка из экселя)
    */
   @Column(DataType.STRING)
   collector: string | null;
-
+  /**
+   * Взыскатель id
+   */
+  @Column(DataType.INTEGER)
+  collector_id: number | null;
+  /**
+   * Комментарий
+   */
   @Column(DataType.STRING)
   comment: string | null;
   /**

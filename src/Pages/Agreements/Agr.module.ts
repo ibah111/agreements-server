@@ -5,6 +5,7 @@ import {
   Person,
   PersonProperty,
   Portfolio,
+  User as UserContact,
 } from '@contact/models';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@sql-tools/nestjs-sequelize';
@@ -17,7 +18,7 @@ import { AgreementsService } from './Agr.service';
 @Module({
   imports: [
     SequelizeModule.forFeature(
-      [LawAct, Person, Debt, PersonProperty, LawExec, Portfolio],
+      [LawAct, Person, Debt, PersonProperty, LawExec, Portfolio, UserContact],
       'contact',
     ),
     SequelizeModule.forFeature(
