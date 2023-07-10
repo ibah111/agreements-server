@@ -46,11 +46,15 @@ export class LocalDatabaseSeed {
           [Op.gte]: Sequelize.fn(
             'DATEADD',
             Sequelize.literal('day'),
-            -30,
+            -31,
             Sequelize.fn('GETDATE'),
           ),
         },
         is_confirmed: 1,
+        is_cancel: 0,
+        purpose: {
+          [Op.ne]: 7,
+        },
       },
     });
   }
