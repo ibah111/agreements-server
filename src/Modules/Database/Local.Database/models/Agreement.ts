@@ -77,7 +77,7 @@ export class Agreement extends Model<
    * Сумма задолженности, переданная банком (эл. реестр)
    */
   @Column(DataType.MONEY)
-  bank_sum: number;
+  bank_sum: number | null;
   /**
    * Cумма задолженности по суд.акту
    */

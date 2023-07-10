@@ -29,7 +29,6 @@ export class DebtService {
       where: {
         parent_id: parent_id,
       },
-      include: ['PurposeDict'],
     });
 
     return AllPayments;

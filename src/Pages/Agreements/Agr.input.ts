@@ -69,37 +69,37 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  bank_sum: number;
+  bank_sum: number | null;
 
   @Expose()
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  court_sum: number;
+  court_sum: number | null;
 
   @Expose()
   @IsNumber()
   @IsOptional()
   @ApiProperty()
-  debt_sum: number;
+  debt_sum: number | null;
 
   @Expose()
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
-  recalculation_sum?: number | null;
+  recalculation_sum: number | null;
 
   @Expose()
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
-  discount_sum?: number | null;
+  discount_sum: number | null;
 
   @Expose()
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
-  discount?: number | null;
+  discount: number | null;
 
   @Expose()
   @IsNumber()
@@ -117,19 +117,19 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({ type: String })
-  comment?: string | null;
+  comment: string | null;
 
   @Expose()
   @IsString()
   @ApiProperty()
   @IsOptional()
-  task_link: string;
+  task_link: string | null;
 
   @Expose()
   @IsString()
   @ApiProperty()
   @IsOptional()
-  actions_for_get: string;
+  actions_for_get: string | null;
 
   @Expose()
   @IsDate()
@@ -142,25 +142,25 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsString()
   @IsOptional()
   @ApiProperty()
-  registrator: string;
+  registrator: string | null;
 
   @Expose()
   @IsString()
   @IsOptional()
   @ApiProperty()
-  archive: string;
+  archive: string | null;
 
   @Expose()
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({ type: String })
-  collector: string;
+  collector: string | null;
 
   @Expose()
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
-  collector_id: number;
+  collector_id: number | null;
 }
 
 export class DeleteSelectedAgreements {
