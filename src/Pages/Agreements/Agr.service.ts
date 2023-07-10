@@ -19,6 +19,7 @@ import getSize from 'src/utils/getSize';
 import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 import { agreementCalculation } from './Agr.functions/agreementCalculations';
+import _ from 'lodash';
 
 @Injectable()
 export class AgreementsService {
@@ -52,6 +53,7 @@ export class AgreementsService {
     const filter = utils.generateFilter(body.filterModel);
     const agreements_ids = await this.modelAgreement.findAll({
       attributes: ['id', 'person_id'],
+      include: [{ association: 'DebtLinks', attributes: ['id_debt'] }],
       raw: true,
       where: filter('Agreement'),
     });
@@ -66,7 +68,9 @@ export class AgreementsService {
           [Op.and]: [
             {
               id: {
-                [Op.in]: agreements_ids.map((agreement) => agreement.person_id),
+                [Op.in]: _.uniq(
+                  agreements_ids.map((agreement) => agreement.person_id),
+                ),
               },
             },
             filter('Person'),
@@ -82,6 +86,16 @@ export class AgreementsService {
               {
                 association: 'LastCalcs',
                 attributes: [],
+                required: false,
+                where: {
+                  parent_id: {
+                    [Op.in]: _.uniq(
+                      agreements_ids
+                        .filter((item) => item['DebtLinks.id_debt'] !== null)
+                        .map((item) => item['DebtLinks.id_debt']),
+                    ),
+                  },
+                },
               },
             ],
           },
@@ -100,8 +114,12 @@ export class AgreementsService {
       limit: size,
       where: {
         [Op.and]: [
-          { id: { [Op.in]: agreements_ids.map((agreement) => agreement.id) } },
-          { person_id: { [Op.in]: persons_ids } },
+          {
+            id: {
+              [Op.in]: _.uniq(agreements_ids.map((agreement) => agreement.id)),
+            },
+          },
+          { person_id: { [Op.in]: _.uniq(persons_ids) } },
         ],
       },
       include: [{ model: this.modelAgreementDebtsLink, separate: true }],
