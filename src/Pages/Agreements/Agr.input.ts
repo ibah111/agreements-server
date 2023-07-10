@@ -25,7 +25,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
 
   @CallbackValidate<CreateAgreementInput, Date>(
     (obj) => obj.finish_date,
-    (value1, value2) => (value1 ? moment(value1).isAfter(value2) : true),
+    (value1, value2) => (value1 ? moment(value1).isSameOrAfter(value2) : true),
     { message: 'Дата введена неверно $property' },
   )
   @Expose()
@@ -37,7 +37,7 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
 
   @CallbackValidate<CreateAgreementInput, Date>(
     (obj) => obj.conclusion_date,
-    (value1, value2) => moment(value1).isBefore(value2),
+    (value1, value2) => moment(value1).isSameOrBefore(value2),
     { message: 'Дата введена неверно $property' },
   )
   @Expose()
