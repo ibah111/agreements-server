@@ -35,9 +35,10 @@ export class CommentModel extends Model<
   id: CreationOptional<number>;
 
   @AllowNull(false)
-  @Column(DataType.INTEGER)
   @ForeignKey(() => Agreement)
+  @Column(DataType.INTEGER)
   id_agreement: FK<number>;
+
   @BelongsTo(() => Agreement)
   Agreement?: BelongsToAttribute<NonAttribute<Agreement>>;
 

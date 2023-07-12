@@ -286,7 +286,6 @@ export class AgreementsService {
         if (data['statusAgreement'] === 2) {
           agreement.finish_date = new Date();
         }
-
         return of(...changed).pipe(
           map((field) =>
             this.modelActionLog.create({
