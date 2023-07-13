@@ -24,10 +24,10 @@ import { Agreement } from './Agreement';
 import { User } from './User.model';
 
 @Table({ tableName: 'comments' })
-export class CommentModel extends Model<
-  InferAttributes<CommentModel>,
-  InferCreationAttributes<CommentModel>,
-  CreateLiteralAssociation<CommentModel>
+export class Comment extends Model<
+  InferAttributes<Comment>,
+  InferCreationAttributes<Comment>,
+  CreateLiteralAssociation<Comment>
 > {
   @AutoIncrement
   @PrimaryKey

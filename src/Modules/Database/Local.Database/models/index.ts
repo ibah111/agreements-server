@@ -2,7 +2,7 @@ import { ActionLog } from './ActionLog';
 import { Agreement } from './Agreement';
 import AgreementDebtsLink from './AgreementDebtLink';
 import { TypeAgreement } from './AgreementType';
-import { CommentModel } from './Comment';
+import { Comment } from './Comment';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { Role } from './Role.model';
@@ -21,5 +21,5 @@ export const models = [
   RegDocType,
   StatusAgreement,
   TypeAgreement,
-  CommentModel,
+  Comment,
 ];
