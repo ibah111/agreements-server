@@ -3,15 +3,17 @@ import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
+
 export const sql = new Sequelize({
   dialect: 'mssql',
-  host: 'newct.usb.ru',
+  host: 'BALEZIN.usb.ru',
   database: 'agreements',
   password: 'usN7WYxkhGEmjOAF',
   username: 'agreements',
   logging: false,
   models,
 });
+/** readonly */
 new Sequelize({
   dialect: 'mssql',
   host: 'newct.usb.ru',

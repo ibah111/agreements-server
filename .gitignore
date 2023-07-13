@@ -7,3 +7,6 @@ debug.log
 backup
 *.xlsx
 txtForAnyCase
+scripts/exportAttributes.ts
+
+src/Modules/Database/Local.Database/index.ts
