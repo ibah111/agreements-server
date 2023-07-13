@@ -26,4 +26,13 @@ export class CommentService {
       throw error;
     }
   }
+  async getAll(id_agreement: number) {
+    try {
+      return await this.modelComment.findAll({
+        where: {
+          id_agreement: id_agreement,
+        },
+      });
+    } catch (error) {}
+  }
 }

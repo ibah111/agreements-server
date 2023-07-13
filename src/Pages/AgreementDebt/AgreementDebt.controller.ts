@@ -7,7 +7,7 @@ import { DebtService } from './AgreementDebt.service';
 @ApiBasicAuth()
 export class DebtController {
   constructor(private readonly service: DebtService) {}
-  @Get(':id')
+  @Get('/Person/:id')
   getDebtPerson(@Param('id', ParseIntPipe) id: number) {
     return this.service.getPersonDebts(id);
   }
