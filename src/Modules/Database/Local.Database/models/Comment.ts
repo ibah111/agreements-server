@@ -49,5 +49,7 @@ export class Comment extends Model<
   @AllowNull(false)
   @Column(DataType.INTEGER)
   user: number;
+
+  @BelongsTo(() => User)
   User?: BelongsToAttribute<NonAttribute<User>>;
 }

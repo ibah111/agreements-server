@@ -4,6 +4,7 @@ import { CreateCommentInput } from './Comment.input';
 import { Comment } from 'src/Modules/Database/Local.Database/models/Comment';
 import { Body, Injectable, NotFoundException } from '@nestjs/common';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
+import { User } from '../../Modules/Database/Local.Database/models/User.model';
 const NotFounds: Record<string, string> = {
   comments_id_Agreements_fk: 'Такое соглашение не найдено',
   comments_id_Users_fk: 'Такого пользователя не существует',
@@ -11,8 +12,13 @@ const NotFounds: Record<string, string> = {
 @Injectable()
 export class CommentService {
   constructor(
+    /**
+     * this.modelAgreement.associations; прикол ассоциаций - на заметку
+     */
     @InjectModel(Comment, 'local')
     private readonly modelComment: typeof Comment,
+    @InjectModel(User, 'local')
+    private readonly modelUser: typeof User,
   ) {}
   async addComment(@Body() body: CreateCommentInput, auth: AuthResult) {
     try {
@@ -27,12 +33,11 @@ export class CommentService {
     }
   }
   async getAll(id_agreement: number) {
-    try {
-      return await this.modelComment.findAll({
-        where: {
-          id_agreement: id_agreement,
-        },
-      });
-    } catch (error) {}
+    return await this.modelComment.findAll({
+      where: {
+        id_agreement: id_agreement,
+      },
+      include: { model: this.modelUser, attributes: ['id', 'login'] },
+    });
   }
 }
