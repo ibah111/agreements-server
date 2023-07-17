@@ -9,6 +9,7 @@
     "court_sum": "number",
     "debt_sum": "number",
     "recalculation_sum": "number",
+    "discount": "number",
     "discount_sum": "number",
     "month_pay_day": "number",
     "reg_doc": "string",

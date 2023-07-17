@@ -12,8 +12,8 @@ export const runnedColumns: (Partial<Column> & { position: number })[] = [
   { key: 'court_sum', position: 12 },
   { key: 'debt_sum', position: 13 },
   { key: 'recalculation_sum', position: 14 },
-  { key: 'discount_total', position: 15 }, // тотал ( который высчитывается)
-  { key: 'discount_sum', position: 16 },
+  { key: 'sum', position: 15 },
+  { key: 'discount', position: 16 },
   { key: 'month_pay_day', position: 20 },
   { key: 'new_reg_doc', position: 25 },
   { key: 'registrator', position: 26 },
@@ -42,8 +42,8 @@ export const donedColumns: (Partial<Column> & { position: number })[] = [
   { key: 'court_sum', position: 12 }, // судебная сумма
   { key: 'debt_sum', position: 13 }, // сумма долга
   { key: 'recalculation_sum', position: 14 }, // сумма пересчета
-  { key: 'discount_total', position: 15 }, // тотал ( который высчитывается)
-  { key: 'discount_sum', position: 16 }, // сумма дисконта
+  { key: 'sum', position: 15 }, // Сумма задолженности к погашению по соглашению с дисконтом
+  { key: 'discount', position: 16 }, // тотал ( который высчитывается)
   { key: 'sumBeforeAgreement', position: 17 }, // сумма (платежей) после соглешния
   { key: 'firstPaymentAgreement', position: 18 }, //Дата поступления первого платежа по соглашения
   { key: 'firstSumPaymentAgreement', position: 19 }, //Сумма первого платежа по соглашению
@@ -87,8 +87,8 @@ export const outOfStrengthColumns: (Partial<Column> & { position: number })[] =
     { key: 'court_sum', position: 12 }, // судебная сумма L
     { key: 'debt_sum', position: 13 }, // сумма долга M
     { key: 'recalculation_sum', position: 14 }, // сумма пересчета/индексации N
-    { key: 'discount_total', position: 15 }, // тотал ( который высчитывается) O
-    { key: 'discount_sum', position: 16 }, // сумма дисконта P
+    { key: 'sum', position: 15 }, // сумма дисконта P
+    { key: 'discount', position: 16 }, // тотал ( который высчитывается) O
     { key: 'sumBeforeAgreement', position: 17 }, // сумма (платежей) после соглешeния Q
     { key: 'firstPaymentAgreement', position: 18 }, //Дата поступления первого платежа по соглашения R
     { key: 'firstSumPaymentAgreement', position: 19 }, //Сумма первого платежа по соглашению S
@@ -131,8 +131,8 @@ export const agreementCompensationColumns: (Partial<Column> & {
   { key: 'court_sum', position: 11 }, // судебная сумма L
   { key: 'debt_sum', position: 12 }, // сумма долга M
   { key: 'recalculation_sum', position: 13 }, // сумма к погашению с по соглашению с дисконтом
-  { key: 'discount_total', position: 14 }, // тотал ( который высчитывается) O
-  { key: 'discount_sum', position: 15 }, // сумма дисконта P
+  { key: 'sum', position: 14 }, // тотал ( который высчитывается) O
+  { key: 'discount', position: 15 }, // сумма дисконта P
   { key: 'sumBeforeAgreement', position: 16 }, // Поступление платежей до заключения соглашения Q
   { key: 'firstPaymentDate', position: 17 }, // Дата поступления первого платежа по соглашения R
   { key: 'lastPaymentDate', position: 18 }, // дата последнего платежа U

@@ -94,12 +94,12 @@ export class Agreement extends Model<
   @Column(DataType.MONEY)
   recalculation_sum: number | null;
   /**
-   * Дисконт
+   * Размер задолженности
    */
   @Column(DataType.MONEY)
-  discount_sum: number | null;
+  sum: number | null;
   /**
-   * Статичный дисконт (никак не учавствует в расчетах, просто существует)
+   * Дисконт
    */
   @Column(DataType.MONEY)
   discount: number | null;
