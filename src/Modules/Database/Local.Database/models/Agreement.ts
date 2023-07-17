@@ -74,26 +74,6 @@ export class Agreement extends Model<
   @BelongsTo(() => TypeAgreement)
   AgreementType?: BelongsToAttribute<NonAttribute<TypeAgreement>>;
   /**
-   * Сумма задолженности, переданная банком (эл. реестр)
-   */
-  @Column(DataType.MONEY)
-  bank_sum: number | null;
-  /**
-   * Cумма задолженности по суд.акту
-   */
-  @Column(DataType.MONEY)
-  court_sum: number | null;
-  /**
-   * Сумма задолженности ОД взысканная в пользу НБК / Вымпел
-   */
-  @Column(DataType.MONEY)
-  debt_sum: number | null;
-  /**
-   * Сумма задолженности по пересчету
-   */
-  @Column(DataType.MONEY)
-  recalculation_sum: number | null;
-  /**
    * Размер задолженности
    */
   @Column(DataType.MONEY)

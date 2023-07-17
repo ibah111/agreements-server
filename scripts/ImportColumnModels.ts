@@ -42,7 +42,7 @@ export const donedColumns: (Partial<Column> & { position: number })[] = [
   { key: 'court_sum', position: 12 }, // судебная сумма
   { key: 'debt_sum', position: 13 }, // сумма долга
   { key: 'recalculation_sum', position: 14 }, // сумма пересчета
-  { key: 'sum', position: 15 }, // Сумма задолженности к погашению по соглашению с дисконтом
+  { key: 'sum', position: 15 }, // Сумма задолженности к погашению по соглашению с дисконтом // Размер требования
   { key: 'discount', position: 16 }, // тотал ( который высчитывается)
   { key: 'sumBeforeAgreement', position: 17 }, // сумма (платежей) после соглешния
   { key: 'firstPaymentAgreement', position: 18 }, //Дата поступления первого платежа по соглашения

@@ -68,32 +68,8 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @Expose()
   @IsNumber()
   @IsOptional()
-  @ApiProperty()
-  bank_sum: number | null;
-
-  @Expose()
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  court_sum: number | null;
-
-  @Expose()
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  debt_sum: number | null;
-
-  @Expose()
-  @IsNumber()
-  @IsOptional()
   @ApiPropertyOptional({ type: Number })
-  recalculation_sum: number | null;
-
-  @Expose()
-  @IsNumber()
-  @IsOptional()
-  @ApiPropertyOptional({ type: Number })
-  discount_sum: number | null;
+  sum: number | null;
 
   @Expose()
   @IsNumber()
