@@ -28,6 +28,7 @@ export class DebtService {
     const AllPayments = await this.modelDebtCalc.findAll({
       where: {
         parent_id: parent_id,
+        is_cancel: 0,
       },
     });
 
