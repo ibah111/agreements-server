@@ -42,4 +42,10 @@ export const down: MigrationFn<QueryInterface> = async ({ context }) => {
     { type: DataTypes.MONEY },
     { transaction },
   );
+  try {
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
 };

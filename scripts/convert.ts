@@ -41,21 +41,22 @@ function convertHyperLink(
 }
 export function convert(value: CellValue, name: string) {
   switch (name) {
-    case 'bank_sum':
-    case 'court_sum':
-    case 'debt_sum':
-    case 'recalculation_sum':
-    case 'discount_sum':
+    case 'discount':
+    case 'sum':
       if (value === '-' || !value) return 0;
-      else if (isFormula(value) || isSharedFormula(value)) return value.result;
-      else {
+      else if (isFormula(value) || isSharedFormula(value)) {
+        const formulaRes = Number(value.result);
+        const point = round(formulaRes);
+        if (Number.isNaN(point)) {
+          return 0;
+        } else return point;
+      } else {
         if (Number.isNaN(Number(value))) {
           const data = Number(
-            //@ts-ignore
             value.toString().replace(',', '.').replaceAll(' ', ''),
           );
           if (Number.isNaN(data)) {
-            throw Error('stop');
+            return 0;
           }
           return round(data);
         }

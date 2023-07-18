@@ -169,7 +169,6 @@ async function main() {
     }
     console.log('Finished compensationResults');
     console.log('End');
-    //throw Error('Остановить транзакцию');
   });
 }
 main();

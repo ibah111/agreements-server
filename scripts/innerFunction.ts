@@ -23,8 +23,6 @@ function createColumnsExcel(
   for (let i = 0; i < columns.length; i++) {
     if (!columns[i]) columns[i] = {};
   }
-
-  console.log(columns);
   return columns;
 }
 function getCell(row: Row, name: string | number) {

@@ -19,7 +19,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
-  "include": ["src", "src/Modules/Database/Contact.Database.ts"]
+  "include": ["src", "src/Modules/Database/Contact.Database.ts", "./scripts"]
 }
