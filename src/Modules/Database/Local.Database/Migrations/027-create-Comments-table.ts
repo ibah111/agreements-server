@@ -32,8 +32,8 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
     name: 'comments_id_Users_fk',
     fields: ['user'],
     type: 'foreign key',
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     references: { field: 'id', table: 'Users' },
     transaction: t2,
   });
@@ -42,8 +42,8 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
     name: 'comments_id_Agreements_fk',
     fields: ['id_agreement'],
     type: 'foreign key',
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     references: { field: 'id', table: 'Agreements' },
     transaction: t2,
   });
