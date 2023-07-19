@@ -8,14 +8,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './Comment.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CreateCommentInput } from './Comment.input';
 import { Auth, AuthGuard, AuthResult } from 'src/Modules/Guards/auth.guard';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
-// @UseGuards(CanGuard)
-// @UseGuards(AuthGuard)
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
 @ApiTags('Comments')
 @Controller('Comments')
+@ApiBasicAuth()
 export class CommentController {
   constructor(private readonly service: CommentService) {}
 
