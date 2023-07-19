@@ -1,6 +1,7 @@
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Injectable } from '@nestjs/common';
 import { User as UserContact } from '@contact/models';
+import { Op } from '@sql-tools/sequelize';
 @Injectable()
 /**
  * Взыскатели
@@ -14,7 +15,10 @@ export class CollectorService {
   ) {}
   async getAllCollectors() {
     return await this.ModelUserContact.findAll({
-      where: { block_flag: 0, r_department_id: [2, 50] },
+      where: {
+        [Op.or]: [{ r_department_id: [2, 50] }, { id: 581 }],
+        block_flag: 0,
+      },
     });
   }
 }
