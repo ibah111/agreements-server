@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Debt, LawExec, Person, Portfolio } from '@contact/models';
+import { Debt, Person, Portfolio } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import {
   AgreementsAll,
@@ -20,6 +20,7 @@ import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 import { agreementCalculation } from './Agr.functions/agreementCalculations';
 import _ from 'lodash';
+import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
 
 @Injectable()
 export class AgreementsService {
@@ -33,10 +34,10 @@ export class AgreementsService {
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelAgreementDebtsLink: typeof AgreementDebtsLink,
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
-    @InjectModel(LawExec, 'contact')
-    private readonly modelLawExec: typeof LawExec,
     @InjectModel(Portfolio, 'contact')
     private readonly modelPortfolio: typeof Portfolio,
+    @InjectModel(Comment, 'local')
+    private readonly modelComment: typeof Comment,
   ) {}
   getPortfolios() {
     return from(
@@ -122,7 +123,10 @@ export class AgreementsService {
           { person_id: { [Op.in]: _.uniq(persons_ids) } },
         ],
       },
-      include: [{ model: this.modelAgreementDebtsLink, separate: true }],
+      include: [
+        { model: this.modelAgreementDebtsLink, separate: true },
+        { model: this.modelComment, separate: true },
+      ],
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
     const personIdArray: number[] = [];
@@ -190,6 +194,13 @@ export class AgreementsService {
 
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     const Agreement = await this.modelAgreement.create(data);
+    if (data.comment) {
+      await this.modelComment.create({
+        id_agreement: Agreement.id,
+        user: auth.userLocal.id,
+        comment: data.comment,
+      });
+    }
     await this.modelActionLog.create({
       actionType: Actions.CREATE,
       row_id: Agreement.id,

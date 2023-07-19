@@ -15,12 +15,14 @@ import innerFunction from './innerFunction';
 import _ from 'lodash';
 import { sql } from './exportAttributes';
 import moment from 'moment';
+import { Comment } from '../src/Modules/Database/Local.Database/models/Comment';
 interface Opts {
   path: string;
 }
 export type ResultRow = CreationAttributes<Agreement> & {
   last_check_date: Date;
   DebtLinks: CreationAttributes<AgreementDebtsLink>[];
+  Comments: CreationAttributes<Comment>[];
 };
 /**
  * Импортирование
@@ -75,13 +77,12 @@ async function main() {
         (item) => item.id === result.DebtLinks[0].id_debt,
       );
       if (debtContactId) {
-        await Agreement.create(
+        const agr = await Agreement.create(
           {
             ...result,
             person_id: debtContactId.parent_id,
             agreement_type: 1,
             statusAgreement: 1,
-
             //@ts-ignore
             DebtLinks: result.DebtLinks.map((debt) => ({
               id_debt: debt.id_debt,
@@ -92,6 +93,16 @@ async function main() {
             transaction: t,
           },
         );
+        if (agr.comment) {
+          await Comment.create(
+            {
+              id_agreement: agr.id,
+              comment: agr.comment,
+              user: 1,
+            },
+            { transaction: t },
+          );
+        }
       }
     }
     console.log('Finished runnedResults');
@@ -168,7 +179,6 @@ async function main() {
       }
     }
     console.log('Finished compensationResults');
-    console.log('End');
   });
 }
 main();

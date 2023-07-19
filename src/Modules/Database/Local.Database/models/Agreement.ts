@@ -33,6 +33,7 @@ import { TypeAgreement } from './AgreementType';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { StatusAgreement } from './StatusAgreement';
+import { Comment } from './Comment';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
@@ -119,29 +120,41 @@ export class Agreement extends Model<
   @Column(DataType.INTEGER)
   collector_id: number | null;
   /**
-   * Комментарий
-   */
-  @Column(DataType.STRING)
-  comment: string | null;
-  /**
    * Ссылка на задачу
    */
   @Column(DataType.STRING)
   task_link: string | null;
-
+  /**
+   * Id персоны
+   */
   @AllowNull(false)
   @Column(DataType.INTEGER)
   person_id: number;
-
+  /**
+   * Действия для получения листа
+   */
   @Column(DataType.STRING)
   actions_for_get: string | null;
-
+  /**
+   * Дата получения листа
+   */
   @Column(DataType.DATE)
   receipt_dt: Date | null;
-
+  /**
+   * Ссылки на долги
+   */
   @HasMany(() => AgreementDebtsLink)
   DebtLinks?: NonAttribute<AgreementDebtsLink[]>;
-
+  /**
+   * Комментарии
+   */
+  @Column(DataType.STRING)
+  comment: string | null;
+  @HasMany(() => Comment)
+  Comments?: NonAttribute<Comment[]>;
+  /**
+   * Статус соглашения
+   */
   @ForeignKey(() => StatusAgreement)
   @Column(DataType.INTEGER)
   statusAgreement: FK<number> | null;

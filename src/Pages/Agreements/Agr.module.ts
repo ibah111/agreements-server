@@ -14,6 +14,7 @@ import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement'
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgreementsController } from './Agr.controller';
 import { AgreementsService } from './Agr.service';
+import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { AgreementsService } from './Agr.service';
       'contact',
     ),
     SequelizeModule.forFeature(
-      [Agreement, ActionLog, AgreementDebtsLink],
+      [Agreement, ActionLog, AgreementDebtsLink, Comment],
       'local',
     ),
   ],

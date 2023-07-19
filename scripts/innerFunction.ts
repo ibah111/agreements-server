@@ -4,9 +4,14 @@ import _ from 'lodash';
 import moment from 'moment';
 import AgreementDebtsLink from '../src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { convert } from './convert';
-import { attributesAgremment, attributesDebt } from './exportAttributes';
+import {
+  attributesAgremment,
+  attributesComment,
+  attributesDebt,
+} from './exportAttributes';
 import { ResultRow } from './ImportFromExcel';
 import { procesFuncArray } from './PostProcess';
+import { Comment } from '../src/Modules/Database/Local.Database/models/Comment';
 function createColumnsExcel(
   data: (Partial<Column> & {
     position: number;
@@ -67,15 +72,20 @@ export default function innerFunction(
         tmp.value,
         'last_check_date',
       );
-
     for (const row of rows) {
       const debt_data = {} as CreationAttributes<AgreementDebtsLink>;
       for (const attribute of attributesDebt) {
         const cell = getCell(row, attribute);
         if (cell) debt_data[attribute] = convert(cell.value, attribute);
       }
+      const comm_data = {} as CreationAttributes<Comment>;
+      for (const attribute_c of attributesComment) {
+        const cell = getCell(row, attribute_c);
+        if (cell) comm_data[attribute_c] = convert(cell.value, attribute_c);
+      }
       agreement_data.DebtLinks.push(debt_data);
     }
+
     result.push(agreement_data);
   }
 
