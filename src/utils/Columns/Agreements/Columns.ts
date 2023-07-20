@@ -1,4 +1,4 @@
-import { Person } from '@contact/models';
+import { Debt, Person } from '@contact/models';
 import { Sequelize } from '@sql-tools/sequelize';
 import { generateDefaults, GridColDefAddon } from '../addons';
 const generateDefault = generateDefaults('local', 'Agreement');
@@ -35,6 +35,14 @@ export default function getColumns(): GridColDefAddon[] {
       ),
       model: 'Person',
       sortOrder: [Person],
+    },
+    {
+      field: 'KD',
+      base: 'contact',
+      model: 'Debt',
+      sortOrder: [Debt],
+      type: 'string',
+      col: 'contract',
     },
     {
       model: 'Debt',
