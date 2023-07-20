@@ -16,6 +16,7 @@ import _ from 'lodash';
 import { sql } from './exportAttributes';
 import moment from 'moment';
 import { Comment } from '../src/Modules/Database/Local.Database/models/Comment';
+import { round } from './convert';
 interface Opts {
   path: string;
 }
@@ -76,6 +77,8 @@ async function main() {
       const debtContactId = Debts.find(
         (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      const skidka = result.discount || 0;
+      const summa = result.sum || 0;
       if (debtContactId) {
         const agr = await Agreement.create(
           {
@@ -83,6 +86,7 @@ async function main() {
             person_id: debtContactId.parent_id,
             agreement_type: 1,
             statusAgreement: 1,
+            full_req: round(skidka + summa),
             //@ts-ignore
             DebtLinks: result.DebtLinks.map((debt) => ({
               id_debt: debt.id_debt,
@@ -110,15 +114,19 @@ async function main() {
       const debtContactId = Debts.find(
         (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      const skidka = result.discount || 0;
+      const summa = result.sum || 0;
+
       if (!result.last_check_date) throw Error('Нету finish_date');
       if (debtContactId) {
-        await Agreement.create(
+        const agr = await Agreement.create(
           {
             ...result,
             person_id: debtContactId.parent_id,
             agreement_type: 1,
             statusAgreement: 2,
             finish_date: result.last_check_date,
+            full_req: round(skidka + summa),
             //@ts-ignore
             DebtLinks: result.DebtLinks.map((debt) => ({
               id_debt: debt.id_debt,
@@ -129,6 +137,16 @@ async function main() {
             transaction: t,
           },
         );
+        if (agr.comment) {
+          await Comment.create(
+            {
+              id_agreement: agr.id,
+              comment: agr.comment,
+              user: 1,
+            },
+            { transaction: t },
+          );
+        }
       }
     }
     console.log('Finished donedResults');
@@ -136,13 +154,16 @@ async function main() {
       const debtContactId = Debts.find(
         (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      const skidka = result.discount || 0;
+      const summa = result.sum || 0;
       if (!result.last_check_date) throw Error('Нету finish_date');
       if (debtContactId) {
-        await Agreement.create(
+        const agr = await Agreement.create(
           {
             ...result,
             agreement_type: 1,
             statusAgreement: 3,
+            full_req: round(skidka + summa),
             person_id: debtContactId.parent_id,
             finish_date: result.last_check_date,
             //@ts-ignore
@@ -152,6 +173,16 @@ async function main() {
           },
           { include: AgreementDebtsLink, transaction: t },
         );
+        if (agr.comment) {
+          await Comment.create(
+            {
+              id_agreement: agr.id,
+              comment: agr.comment,
+              user: 1,
+            },
+            { transaction: t },
+          );
+        }
       }
     }
     console.log('Finished outOfStrengthResults');
@@ -162,13 +193,16 @@ async function main() {
       const debtContactId = Debts.find(
         (item) => item.id === result.DebtLinks[0].id_debt,
       );
+      const skidka = result.discount || 0;
+      const summa = result.sum || 0;
       if (debtContactId) {
-        await Agreement.create(
+        const agr = await Agreement.create(
           {
             ...result,
             agreement_type: 2,
             statusAgreement: 1,
             person_id: debtContactId.parent_id,
+            full_req: round(skidka + summa),
             //@ts-ignore
             DebtLinks: result.DebtLinks.map((debt) => ({
               id_debt: debt.id_debt,
@@ -176,6 +210,16 @@ async function main() {
           },
           { include: AgreementDebtsLink, transaction: t },
         );
+        if (agr.comment) {
+          await Comment.create(
+            {
+              id_agreement: agr.id,
+              comment: agr.comment,
+              user: 1,
+            },
+            { transaction: t },
+          );
+        }
       }
     }
     console.log('Finished compensationResults');

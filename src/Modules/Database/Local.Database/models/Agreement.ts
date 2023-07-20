@@ -85,6 +85,11 @@ export class Agreement extends Model<
   @Column(DataType.MONEY)
   discount: number | null;
   /**
+   *  Полное требование
+   */
+  @Column(DataType.MONEY)
+  full_req: number | null;
+  /**
    * Число платежа каждого месяца
    */
   @Column(DataType.INTEGER)

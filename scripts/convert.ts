@@ -5,7 +5,7 @@ import {
   CellRichTextValue,
   CellSharedFormulaValue,
 } from 'exceljs';
-function round(value: number) {
+export function round(value: number) {
   return Math.round(value * 100) / 100;
 }
 function isSharedFormula(value: unknown): value is CellSharedFormulaValue {
