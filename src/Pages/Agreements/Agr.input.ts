@@ -80,6 +80,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @Expose()
   @IsNumber()
   @IsOptional()
+  @ApiPropertyOptional({ type: Number })
+  full_req: number | null;
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
   @ApiProperty()
   month_pay_day?: number | null;
 
