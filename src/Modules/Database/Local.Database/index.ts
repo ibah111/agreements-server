@@ -11,7 +11,7 @@ import { LocalDatabaseSeed } from './seed';
   imports: [
     SequelizeModule.forRoot({
       dialect: 'mssql',
-      host: 'BALEZIN.usb.ru',
+      host: 'newct.usb.ru',
       database: 'agreements',
       password: 'usN7WYxkhGEmjOAF',
       username: 'agreements',

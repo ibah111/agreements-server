@@ -3,5 +3,5 @@
   "oauth": "https://apps.usb.ru:3008",
   "demo": false,
   "port": 3022,
-  "checkToken": false
+  "checkToken": true
 }
