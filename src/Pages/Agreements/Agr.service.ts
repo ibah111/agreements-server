@@ -81,7 +81,7 @@ export class AgreementsService {
           {
             association: 'Debts',
             where: filter('Debt'),
-            required: true,
+            required: false,
             attributes: [],
             include: [
               {
