@@ -259,7 +259,7 @@ export class AgreementsService {
           association: 'Debts',
         },
       ],
-      attributes: ['fio', 'id', 'f', 'i', 'o'],
+      attributes: ['fio', 'id', 'f', 'i', 'o', 'birth_date'],
     });
     //Присоединяем Person
     const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
