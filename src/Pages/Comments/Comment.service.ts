@@ -37,7 +37,10 @@ export class CommentService {
       where: {
         id_agreement: id_agreement,
       },
-      include: { model: this.modelUser, attributes: ['id', 'login'] },
+      include: {
+        model: this.modelUser,
+        attributes: ['id', 'login'],
+      },
     });
   }
 }
