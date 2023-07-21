@@ -278,7 +278,7 @@ export class AgreementsService {
   async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
     return from(
       this.modelAgreement.findByPk(id, {
-        include: ['DebtLinks'],
+        include: ['DebtLinks', 'Comments'],
         rejectOnEmpty: new NotFoundException('Запись не найдена'),
       }),
     ).pipe(
