@@ -23,6 +23,7 @@ export function agreementCalculation(agreement: Agreement) {
     moment(agreement.conclusion_date).isAfter(moment(item.dt)),
   );
   const sumBefore = calcsBefore
+
     .map((item) => item.sum)
     .reduce((prev, curr) => {
       return prev + curr;
@@ -30,6 +31,7 @@ export function agreementCalculation(agreement: Agreement) {
   const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
   dataValuesAgreement.sumBeforeAgr = sumBefore;
   const sum = calcs
+    .filter((item) => item.is_cancel != 1)
     .map((item) => item.sum)
     .reduce((prev, curr) => {
       return prev + curr;
