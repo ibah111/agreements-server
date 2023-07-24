@@ -25,6 +25,7 @@ export const sql2 = new Sequelize({
 const AgreementLocal = sql2.getRepository(Agreement);
 const AgreementWork = sql2.getRepository(Agreement);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function main() {
   const localAgreements = await AgreementLocal.findAll();
   const agreements = await AgreementWork.findAll();

@@ -30,6 +30,7 @@ export class DebtService {
         parent_id: parent_id,
         is_cancel: 0,
       },
+      order: ['dt'],
     });
 
     return AllPayments;
