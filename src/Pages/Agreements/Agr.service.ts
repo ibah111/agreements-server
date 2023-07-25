@@ -52,6 +52,7 @@ export class AgreementsService {
     const size = getSize(body.paginationModel.pageSize);
     const utils = getUtils();
     const filter = utils.generateFilter(body.filterModel);
+    const sort = utils.generateSort(body.sortModel || []);
     const agreements_ids = await this.modelAgreement.findAll({
       attributes: ['id', 'person_id'],
       include: [{ association: 'DebtLinks', attributes: ['id_debt'] }],
@@ -127,6 +128,7 @@ export class AgreementsService {
         { model: this.modelAgreementDebtsLink, separate: true },
         { model: this.modelComment, separate: true },
       ],
+      order: sort('local'),
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
     const personIdArray: number[] = [];

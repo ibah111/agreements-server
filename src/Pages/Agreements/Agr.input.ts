@@ -14,7 +14,11 @@ import {
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { CallbackValidate } from 'src/utils/validators/IsAfterValidate';
 import moment from 'moment';
-import { GridFilterModel, GridPaginationModel } from '@mui/x-data-grid-premium';
+import {
+  GridFilterModel,
+  GridPaginationModel,
+  GridSortModel,
+} from '@mui/x-data-grid-premium';
 import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
 
 export class CreateAgreementInput implements CreationAttributes<Agreement> {
@@ -205,4 +209,7 @@ export class AgreementsAll {
   @IsObject()
   @Expose()
   filterModel: GridFilterModel;
+  @ApiProperty()
+  @Expose()
+  sortModel?: GridSortModel;
 }
