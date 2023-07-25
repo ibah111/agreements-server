@@ -13,14 +13,14 @@ export function agreementCalculation(agreement: Agreement) {
       (item) =>
         moment(agreement.conclusion_date)
           .startOf('day')
-          .isBefore(moment(item.dt)) &&
+          .isBefore(moment(item.calc_date)) &&
         moment(agreement.finish_date || undefined)
           .endOf('day')
-          .isAfter(moment(item.dt)),
+          .isAfter(moment(item.calc_date)),
     )
-    .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
+    .sort((a, b) => moment(a.calc_date).diff(moment(b.calc_date)));
   const calcsBefore = dc.filter((item) =>
-    moment(agreement.conclusion_date).isAfter(moment(item.dt)),
+    moment(agreement.conclusion_date).isAfter(moment(item.calc_date)),
   );
   const sumBefore = calcsBefore
 
@@ -31,7 +31,7 @@ export function agreementCalculation(agreement: Agreement) {
   const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
   dataValuesAgreement.sumBeforeAgr = sumBefore;
   const sum = calcs
-    .filter((item) => item.is_cancel != 1)
+    .filter((item) => item.is_cancel !== 1)
     .map((item) => item.sum)
     .reduce((prev, curr) => {
       return prev + curr;
@@ -42,12 +42,12 @@ export function agreementCalculation(agreement: Agreement) {
     const lp = calcs[calcs.length - 1];
     const sumLP = lp.sum;
     dataValuesAgreement.lastPayment = sumLP;
-    const lpdate = lp.dt;
+    const lpdate = lp.calc_date;
     dataValuesAgreement.lastPaymentDate = lpdate;
     const fp = calcs[0];
     const sumFP = fp.sum;
     dataValuesAgreement.firstPayment = sumFP;
-    const fpdate = fp.dt;
+    const fpdate = fp.calc_date;
     dataValuesAgreement.firstPaymentDate = fpdate;
   }
   return agreement;
