@@ -10,9 +10,13 @@ export class PersonPropertyService {
   ) {}
   async getPersonProperties(person_id: number) {
     const pp = await this.modelPersonProperties.findAll({
-      attributes: ['id'],
+      attributes: ['id', 'status'],
       where: { r_person_id: person_id },
       include: [
+        {
+          association: 'StatusDict',
+          attributes: ['name'],
+        },
         {
           association: 'PersonPropertyParams',
           attributes: ['r_property_typ_params_id', 'value'],
