@@ -8,7 +8,7 @@ export function agreementCalculation(agreement: Agreement) {
     []) as DebtCalc[][];
   const dc = ([] as DebtCalc[]).concat(...dcd);
 
-  const calcs = dc
+  const calcsInAgr = dc
     .filter(
       (item) =>
         moment(agreement.conclusion_date)
@@ -18,9 +18,9 @@ export function agreementCalculation(agreement: Agreement) {
           .endOf('day')
           .isAfter(moment(item.calc_date)),
     )
-    .sort((a, b) => moment(a.calc_date).diff(moment(b.calc_date)));
+    .sort((a, b) => moment(a.dt).diff(moment(b.dt)));
   const calcsBefore = dc.filter((item) =>
-    moment(agreement.conclusion_date).isAfter(moment(item.calc_date)),
+    moment(agreement.conclusion_date).isAfter(moment(item.dt)),
   );
   const sumBefore = calcsBefore
 
@@ -30,21 +30,21 @@ export function agreementCalculation(agreement: Agreement) {
     }, 0);
   const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
   dataValuesAgreement.sumBeforeAgr = sumBefore;
-  const sum = calcs
-    .filter((item) => item.is_cancel !== 1)
+  const sum = calcsInAgr
+    .filter((item) => [item.is_cancel !== 1])
     .map((item) => item.sum)
     .reduce((prev, curr) => {
       return prev + curr;
     }, 0);
   dataValuesAgreement.sumAfterAgr = sum;
 
-  if (calcs.length !== 0) {
-    const lp = calcs[calcs.length - 1];
+  if (calcsInAgr.length !== 0) {
+    const lp = calcsInAgr[calcsInAgr.length - 1];
     const sumLP = lp.sum;
     dataValuesAgreement.lastPayment = sumLP;
     const lpdate = lp.calc_date;
     dataValuesAgreement.lastPaymentDate = lpdate;
-    const fp = calcs[0];
+    const fp = calcsInAgr[0];
     const sumFP = fp.sum;
     dataValuesAgreement.firstPayment = sumFP;
     const fpdate = fp.calc_date;

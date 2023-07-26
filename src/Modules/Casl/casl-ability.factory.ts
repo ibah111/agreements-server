@@ -54,6 +54,7 @@ export class CaslAbilityFactory {
       can([Action.Read], DebtCalc);
       can([Action.Read], Portfolio);
     }
+    can(Action.Read, Portfolio);
     can(Action.Read, Agreement);
     return build({
       detectSubjectType: (item) =>
