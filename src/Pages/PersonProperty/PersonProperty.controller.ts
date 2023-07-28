@@ -23,6 +23,7 @@ export class PersonPropertyController {
   async getPersProp(@Param('person_id', ParseIntPipe) person_id: number) {
     return await this.service.getPersonProperties(person_id);
   }
+
   @Post()
   async createLinkPersonPropertyToAgreement(
     @Body() body: ActionLinkPersonPropertyInput,
@@ -35,5 +36,12 @@ export class PersonPropertyController {
     @Body() body: ActionLinkPersonPropertyInput,
   ) {
     return this.service.deleteLinkPersonProperties(body);
+  }
+
+  @Get('/getPropsInAgreement/:id_agreement')
+  async getAllLinked(
+    @Param('id_agreement', ParseIntPipe) id_agreement: number,
+  ) {
+    return await this.service.getLinkedPersonProperties(id_agreement);
   }
 }

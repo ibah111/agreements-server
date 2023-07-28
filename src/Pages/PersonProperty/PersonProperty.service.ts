@@ -28,13 +28,44 @@ export class PersonPropertyService {
     private readonly modelAgreementToPersonProperties: typeof AgreementToPersonProperties,
     private readonly serviceAbility: CaslAbilityFactory,
   ) {}
+  async getLinkedPersonProperties(id_agreement: number) {
+    const linkedProps = await this.modelAgreementToPersonProperties.findAll({
+      where: { id_agreement: id_agreement },
+    });
+    const person_props_ids = linkedProps.map(
+      (linkedProps) => linkedProps.id_person_property,
+    );
+    const all_props = await this.modelPersonProperties.findAll({
+      where: { id: { [Op.in]: person_props_ids } },
+      attributes: [
+        'id',
+        'r_person_id',
+        'sum',
+        'dsc',
+        'fio',
+        'r_debt_id',
+        'currency',
+      ],
+      include: [
+        {
+          association: 'StatusDict',
+          attributes: ['name'],
+        },
+        {
+          association: 'PersonPropertyParams',
+          attributes: ['r_property_typ_params_id', 'value'],
+        },
+      ],
+    });
+    return all_props;
+  }
   /**
    * @param person_id from agreementModel
    * @returns gets property params
    */
   async getPersonProperties(person_id: number) {
     const pp = await this.modelPersonProperties.findAll({
-      attributes: ['id', 'status'],
+      attributes: ['id', 'status', 'fio'],
       where: { r_person_id: person_id },
       include: [
         {
@@ -57,13 +88,16 @@ export class PersonPropertyService {
   async createLinkPersonPropertyToAgreement(
     data: ActionLinkPersonPropertyInput,
   ) {
-    // const ability = this.serviceAbility.createForUser(auth.userLocal);
+    /**
+     * 
+    const ability = this.serviceAbility.createForUser(auth.userLocal);
     const agreement = await this.modelAgreement.findByPk(data.id_agreement, {
       attributes: ['id', 'person_id'],
       rejectOnEmpty: new UnprocessableEntityException(
         `Соглашение ${data.id_agreement} не найденно`,
       ),
     });
+     */
 
     await this.modelPersonProperties.findByPk(data.id_person_property, {
       attributes: ['id'],
