@@ -1,9 +1,14 @@
-import { PersonProperty } from '@contact/models';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Person, PersonProperty } from '@contact/models';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { CreateLinkPersonPropertyInput } from './PersonProperty.input';
+import { ActionLinkPersonPropertyInput } from './PersonProperty.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import AgreementToPersonProperties from '../../Modules/Database/Local.Database/models/AgreementToPersonProperties';
+import { Op, WhereOptions } from '@sql-tools/sequelize';
 import {
   Action,
   CaslAbilityFactory,
@@ -15,12 +20,18 @@ export class PersonPropertyService {
   constructor(
     @InjectModel(PersonProperty, 'contact')
     private readonly modelPersonProperties: typeof PersonProperty,
+    @InjectModel(Person, 'contact')
+    private readonly modelPerson: typeof Person,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(AgreementToPersonProperties, 'local')
     private readonly modelAgreementToPersonProperties: typeof AgreementToPersonProperties,
     private readonly serviceAbility: CaslAbilityFactory,
   ) {}
+  /**
+   * @param person_id from agreementModel
+   * @returns gets property params
+   */
   async getPersonProperties(person_id: number) {
     const pp = await this.modelPersonProperties.findAll({
       attributes: ['id', 'status'],
@@ -38,21 +49,21 @@ export class PersonPropertyService {
     });
     return pp;
   }
-  async getAvailableProperties() {
-    return;
-  }
+  /**
+   * @param auth result of auth
+   * @param data default input class
+   * @returns creating/adding link from agr to pers_prop
+   */
   async createLinkPersonPropertyToAgreement(
-    auth: AuthResult,
-    data: CreateLinkPersonPropertyInput,
+    data: ActionLinkPersonPropertyInput,
   ) {
-    const ability = this.serviceAbility.createForUser(auth.userLocal);
+    // const ability = this.serviceAbility.createForUser(auth.userLocal);
     const agreement = await this.modelAgreement.findByPk(data.id_agreement, {
       attributes: ['id', 'person_id'],
       rejectOnEmpty: new UnprocessableEntityException(
         `Соглашение ${data.id_agreement} не найденно`,
       ),
     });
-    ability.can(Action.Link, agreement);
 
     await this.modelPersonProperties.findByPk(data.id_person_property, {
       attributes: ['id'],
@@ -76,10 +87,51 @@ export class PersonPropertyService {
         },
       });
     if (created) return agreementToPersonProperty;
-
-    return;
+    return console.log('not created');
   }
-  async deleteLinkPersonProperties() {
-    return;
+  /**
+   * @param data default input class
+   * @returns destroying link
+   */
+  async deleteLinkPersonProperties(data: ActionLinkPersonPropertyInput) {
+    return await this.modelAgreementToPersonProperties.destroy({
+      where: {
+        id_agreement: data.id_agreement,
+        id_person_property: data.id_person_property,
+      },
+    });
+  }
+  async getAvailableProperties(id_agreement: number) {
+    const agreement = await this.modelAgreement.findByPk(id_agreement, {
+      attributes: ['id', 'id_person'],
+      include: {
+        model: this.modelAgreementToPersonProperties,
+        attributes: ['id_person_property'],
+      },
+      rejectOnEmpty: new NotFoundException(
+        `Соглашение #${id_agreement} не найдено`,
+      ),
+    });
+    const linkedProperties = agreement.PersonPropertiesLinks?.map(
+      (link) => link.id_person_property,
+    );
+    const personProperty = await this.modelPerson.findByPk(
+      agreement.person_id,
+      {
+        include: {
+          required: false,
+          model: this.modelPersonProperties,
+          where: {
+            id: { [Op.in]: linkedProperties } as WhereOptions<PersonProperty>,
+          },
+        },
+        rejectOnEmpty: new NotFoundException(
+          `Не найден чел с id №${agreement.person_id}`,
+        ),
+      },
+    );
+    const personProperties =
+      personProperty.PersonProperties as PersonProperty[];
+    return personProperties;
   }
 }

@@ -6,12 +6,16 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { PersonPropertyService } from './PersonProperty.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateLinkPersonPropertyInput } from './PersonProperty.input';
-import { Auth, AuthResult } from '../../Modules/Guards/auth.guard';
+import { ActionLinkPersonPropertyInput } from './PersonProperty.input';
+import { Auth, AuthGuard, AuthResult } from '../../Modules/Guards/auth.guard';
+import { CanGuard } from '../../Modules/Casl/Can.guard';
 @ApiTags('PersonProperty')
+// @UseGuards(CanGuard)
+// @UseGuards(AuthGuard)
 @Controller('PersonProperty')
 export class PersonPropertyController {
   constructor(private readonly service: PersonPropertyService) {}
@@ -21,10 +25,9 @@ export class PersonPropertyController {
   }
   @Post()
   async createLinkPersonPropertyToAgreement(
-    @Auth() auth: AuthResult,
-    @Body() body: CreateLinkPersonPropertyInput,
+    @Body() body: ActionLinkPersonPropertyInput,
   ) {
-    return this.service.createLinkPersonPropertyToAgreement(auth, body);
+    return this.service.createLinkPersonPropertyToAgreement(body);
   }
 
   @Delete()

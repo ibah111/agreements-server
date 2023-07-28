@@ -18,7 +18,7 @@ import { Agreement } from './Agreement';
 import { PersonProperty } from '@contact/models';
 
 @Table({
-  tableName: 'AgreementPersonProperties',
+  tableName: 'AgreementToProperties',
   createdAt: false,
   deletedAt: false,
   updatedAt: false,
@@ -32,6 +32,7 @@ export default class AgreementToPersonProperties extends Model<
   @AllowNull(false)
   @Column(DataType.INTEGER)
   id_person_property: number;
+
   @PrimaryKey
   @AllowNull(false)
   @Column(DataType.INTEGER)

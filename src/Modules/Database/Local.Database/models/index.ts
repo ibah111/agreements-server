@@ -1,6 +1,7 @@
 import { ActionLog } from './ActionLog';
 import { Agreement } from './Agreement';
 import AgreementDebtsLink from './AgreementDebtLink';
+import AgreementToPersonProperties from './AgreementToPersonProperties';
 import { TypeAgreement } from './AgreementType';
 import { Comment } from './Comment';
 import { PurposeType } from './PurposeType';
@@ -22,4 +23,5 @@ export const models = [
   StatusAgreement,
   TypeAgreement,
   Comment,
+  AgreementToPersonProperties,
 ];

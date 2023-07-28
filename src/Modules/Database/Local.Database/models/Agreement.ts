@@ -34,6 +34,7 @@ import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { StatusAgreement } from './StatusAgreement';
 import { Comment } from './Comment';
+import AgreementToPersonProperties from './AgreementToPersonProperties';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
@@ -150,6 +151,9 @@ export class Agreement extends Model<
    */
   @HasMany(() => AgreementDebtsLink)
   DebtLinks?: NonAttribute<AgreementDebtsLink[]>;
+
+  @HasMany(() => AgreementToPersonProperties)
+  PersonPropertiesLinks?: NonAttribute<AgreementToPersonProperties[]>;
   /**
    * Комментарии
    */
