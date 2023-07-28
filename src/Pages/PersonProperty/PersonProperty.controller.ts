@@ -31,7 +31,9 @@ export class PersonPropertyController {
   }
 
   @Delete()
-  async deleteLinkPersonPropertiesToAgreements() {
-    return;
+  async deleteLinkPersonPropertiesToAgreements(
+    @Body() body: ActionLinkPersonPropertyInput,
+  ) {
+    return this.service.deleteLinkPersonProperties(body);
   }
 }
