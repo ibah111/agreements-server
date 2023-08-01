@@ -88,7 +88,7 @@ export class AgreementsService {
               {
                 association: 'LastCalcs',
                 attributes: [],
-                required: false,
+                required: true,
                 where: {
                   parent_id: {
                     [Op.in]: _.uniq(

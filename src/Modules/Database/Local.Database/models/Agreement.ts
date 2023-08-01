@@ -3,7 +3,6 @@
  * Таблица Данных не подцепляемых из контакта
  */
 import { Person, Portfolio } from '@contact/models';
-
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,

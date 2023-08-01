@@ -67,27 +67,17 @@ export default function getColumns(): GridColDefAddon[] {
       type: 'number',
     },
     {
-      ...generateDefault('court_sum'),
+      ...generateDefault('full_req'),
       editable: true,
       type: 'number',
     },
     {
-      ...generateDefault('debt_sum'),
+      ...generateDefault('discount'),
       editable: true,
       type: 'number',
     },
     {
-      ...generateDefault('recalculation_sum'),
-      editable: true,
-      type: 'number',
-    },
-    {
-      ...generateDefault('discount_sum'),
-      editable: true,
-      type: 'number',
-    },
-    {
-      ...generateDefault('total_dis_sum'),
+      ...generateDefault('sum'),
       type: 'number',
       filterable: false,
     },
