@@ -17,6 +17,7 @@ import {
   CaslAbilityFactory,
 } from 'src/Modules/Casl/casl-ability.factory';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
+import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewGenerator.service';
 
 @Injectable()
 export class AgreementToDebtSerivce {
@@ -31,6 +32,7 @@ export class AgreementToDebtSerivce {
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
     private readonly serviceAbility: CaslAbilityFactory,
+    private readonly previewGenerator: PreviewGeneratorService,
   ) {}
   async createAgreementToDebt(auth: AuthResult, data: AgreementToDebtInput) {
     const ability = this.serviceAbility.createForUser(auth.userLocal);
@@ -66,7 +68,8 @@ export class AgreementToDebtSerivce {
         where: { id_agreement: data.id_agreement, id_debt: data.id_debt },
         defaults: { id_agreement: data.id_agreement, id_debt: data.id_debt },
       });
-    if (created) return agreementToDebt;
+    const preview = await this.previewGenerator.generateDebtPreview(data);
+    if (created) return [agreementToDebt, preview];
     else return;
   }
 

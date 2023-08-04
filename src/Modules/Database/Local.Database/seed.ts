@@ -36,7 +36,7 @@ export class LocalDatabaseSeed {
       console.log(e);
       throw e;
     }
-    this.modelDebt.hasOne(this.modelLink, { foreignKey: 'id_agreement' });
+    this.modelDebt.hasMany(this.modelLink, { foreignKey: 'id_debt' });
     this.modelLink.belongsTo(this.modelDebt, { foreignKey: 'id_debt' });
     this.modelDebt.hasMany(this.modelDebtCalc, {
       foreignKey: 'parent_id',
@@ -53,7 +53,7 @@ export class LocalDatabaseSeed {
         is_confirmed: 1,
         is_cancel: 0,
         purpose: {
-          [Op.ne]: 7,
+          [Op.notIn]: [7],
         },
       },
     });

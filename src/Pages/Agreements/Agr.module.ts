@@ -15,15 +15,18 @@ import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/Agree
 import { AgreementsController } from './Agr.controller';
 import { AgreementsService } from './Agr.service';
 import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
+import { PreviewGeneratorModule } from '../../Modules/PreviewGenerator/PreviewGenerator.module';
+import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
 
 @Module({
   imports: [
+    PreviewGeneratorModule,
     SequelizeModule.forFeature(
       [LawAct, Person, Debt, PersonProperty, LawExec, Portfolio, UserContact],
       'contact',
     ),
     SequelizeModule.forFeature(
-      [Agreement, ActionLog, AgreementDebtsLink, Comment],
+      [Agreement, ActionLog, AgreementDebtsLink, Comment, PersonPreview],
       'local',
     ),
   ],

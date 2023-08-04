@@ -11,7 +11,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Attributes, Op, Sequelize } from '@sql-tools/sequelize';
+import { Attributes, Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
@@ -21,6 +21,8 @@ import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 import { agreementCalculation } from './Agr.functions/agreementCalculations';
 import _ from 'lodash';
 import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
+import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewGenerator.service';
+import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
 
 @Injectable()
 export class AgreementsService {
@@ -38,6 +40,9 @@ export class AgreementsService {
     private readonly modelPortfolio: typeof Portfolio,
     @InjectModel(Comment, 'local')
     private readonly modelComment: typeof Comment,
+    @InjectModel(PersonPreview, 'local')
+    private readonly modelPersonPreview: typeof PersonPreview,
+    private readonly previewGenerator: PreviewGeneratorService,
   ) {}
   getPortfolios() {
     return from(
@@ -59,58 +64,7 @@ export class AgreementsService {
       raw: true,
       where: filter('Agreement'),
     });
-    const filterPayable = body.filterModel.items.find(
-      (item) => item.field === 'payableStatus',
-    );
-    const persons_ids = (
-      await this.modelPerson.findAll({
-        raw: true,
-        attributes: ['id'],
-        where: {
-          [Op.and]: [
-            {
-              id: {
-                [Op.in]: _.uniq(
-                  agreements_ids.map((agreement) => agreement.person_id),
-                ),
-              },
-            },
-            filter('Person'),
-          ],
-        },
-        include: [
-          {
-            association: 'Debts',
-            where: filter('Debt'),
-            required: false,
-            attributes: [],
-            include: [
-              {
-                association: 'LastCalcs',
-                attributes: [],
-                required: true,
-                where: {
-                  parent_id: {
-                    [Op.in]: _.uniq(
-                      agreements_ids
-                        .filter((item) => item['DebtLinks.id_debt'] !== null)
-                        .map((item) => item['DebtLinks.id_debt']),
-                    ),
-                  },
-                },
-              },
-            ],
-          },
-        ],
-        group: ['Person.id'],
-        having: filterPayable?.value
-          ? Sequelize.where(
-              Sequelize.fn('COUNT', Sequelize.col('Debts.LastCalcs.id')),
-              filterPayable.value === 'true' ? { [Op.gt]: 0 } : { [Op.eq]: 0 },
-            )
-          : undefined,
-      })
-    ).map((person) => person.id);
+
     const agreements = (await this.modelAgreement.findAndCountAll({
       offset: body.paginationModel?.page * size,
       limit: size,
@@ -121,67 +75,20 @@ export class AgreementsService {
               [Op.in]: _.uniq(agreements_ids.map((agreement) => agreement.id)),
             },
           },
-          { person_id: { [Op.in]: _.uniq(persons_ids) } },
         ],
       },
       include: [
         { model: this.modelAgreementDebtsLink, separate: true },
         { model: this.modelComment, separate: true },
+        {
+          model: this.modelPersonPreview,
+          /**почитай про сепарейт
+           */
+        },
       ],
       order: sort('local'),
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
-    const personIdArray: number[] = [];
-    const debtIdArray: number[] = [];
-    for (const agreement of agreements.rows) {
-      personIdArray.push(agreement.person_id);
-      for (const debtLink of agreement.DebtLinks || []) {
-        debtIdArray.push(debtLink.id_debt);
-      }
-    }
-    const debts = (await this.modelDebt.findAll({
-      where: { id: { [Op.in]: debtIdArray } },
-      include: [
-        {
-          model: this.modelPortfolio,
-          attributes: ['id', 'name'],
-        },
-        {
-          association: 'DebtCalcs',
-        },
-        {
-          association: 'LastCalcs',
-          required: false,
-        },
-      ],
-    })) as Debt[];
-
-    const persons = await this.modelPerson.findAll({
-      where: { id: { [Op.in]: personIdArray } },
-      include: [
-        {
-          association: 'Debts',
-        },
-      ],
-      attributes: ['fio', 'id', 'f', 'i', 'o', 'birth_date'],
-    });
-    for (const agreement of agreements.rows) {
-      const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
-      const person = persons.find(
-        (person) => person.id === agreement.person_id,
-      );
-      if (person) {
-        dataValuesAgreement.Person = person as Person;
-      }
-      for (const debtLink of agreement.DebtLinks || []) {
-        const dataValuesLink = debtLink.dataValues as AgreementDebtsLink;
-        dataValuesLink.Debt = debts.find(
-          (debt) => debt.id === debtLink.id_debt,
-        );
-        debtLink.Debt = dataValuesLink.Debt;
-      }
-      agreementCalculation(agreement);
-    }
     return agreements;
   }
 
@@ -196,6 +103,9 @@ export class AgreementsService {
 
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     const Agreement = await this.modelAgreement.create(data);
+
+    await this.previewGenerator.generateAgreementPreview(Agreement.id);
+
     if (data.comment) {
       await this.modelComment.create({
         id_agreement: Agreement.id,

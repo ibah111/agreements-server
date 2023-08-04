@@ -33,5 +33,5 @@ export class RegDocType extends Model<
   @Column(DataType.STRING)
   title: string;
   @HasMany(() => Agreement)
-  Agreements?: HasManyAttribute<NonAttribute<Agreement[]>, 'new_reg_doc'>;
+  Agreements?: HasManyAttribute<NonAttribute<Agreement[]>, 'reg_doc'>;
 }

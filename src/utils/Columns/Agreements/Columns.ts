@@ -131,7 +131,8 @@ export default function getColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
-      ...generateDefault('collector'),
+      ...generateDefault('collector_id'),
+      type: 'number',
       editable: true,
     },
     {

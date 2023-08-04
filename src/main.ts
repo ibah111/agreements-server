@@ -10,6 +10,7 @@ import { LocalDatabaseSeed } from './Modules/Database/Local.Database/seed';
 import client from './utils/client';
 import https from './utils/https';
 import { getSwaggerOptions, getSwaggerOptionsCustom } from './utils/swagger';
+import { PreviewGeneratorService } from './Modules/PreviewGenerator/PreviewGenerator.service';
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
@@ -35,13 +36,19 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBasicAuth({ name: 'token', in: 'header', type: 'apiKey' })
     .build();
-
+  /**
+   * синхрон seed'ов
+   */
   await app.get(LocalDatabaseSeed).sync();
   const document = SwaggerModule.createDocument(
     app,
     config,
     getSwaggerOptions(),
   );
+  /**
+   * синхрон preview
+   */
+  app.get(PreviewGeneratorService).syncPreview();
   SwaggerModule.setup('docs', app, document, getSwaggerOptionsCustom());
   await app.listen(client('port'), '0.0.0.0');
   console.log(

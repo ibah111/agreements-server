@@ -20,7 +20,6 @@ import {
   BelongsTo,
   Column,
   DataType,
-  Default,
   ForeignKey,
   HasMany,
   Model,
@@ -34,6 +33,8 @@ import { RegDocType } from './RegDocType';
 import { StatusAgreement } from './StatusAgreement';
 import { Comment } from './Comment';
 import AgreementToPersonProperties from './AgreementToPersonProperties';
+import { PersonPreview } from './PersonPreview';
+import { Max } from 'class-validator';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
@@ -92,21 +93,15 @@ export class Agreement extends Model<
   /**
    * Число платежа каждого месяца
    */
+  @Max(31)
   @Column(DataType.INTEGER)
   month_pay_day: number | null;
   /**
-   * Наличие ИД
-   */
-  @AllowNull(false)
-  @Default(false)
-  @Column(DataType.BOOLEAN)
-  reg_doc: CreationOptional<boolean>;
-  /**
-   * новый ИД
+   * ИД
    */
   @ForeignKey(() => RegDocType)
   @Column(DataType.INTEGER)
-  new_reg_doc: FK<number> | null;
+  reg_doc: FK<number> | null;
   @BelongsTo(() => RegDocType)
   RegDocType?: BelongsToAttribute<NonAttribute<RegDocType>>;
   @Column(DataType.STRING)
@@ -133,8 +128,12 @@ export class Agreement extends Model<
    * Id персоны
    */
   @AllowNull(false)
+  @ForeignKey(() => PersonPreview)
   @Column(DataType.INTEGER)
   person_id: number;
+
+  @BelongsTo(() => PersonPreview)
+  PersonPreview?: NonAttribute<PersonPreview>;
   /**
    * Действия для получения листа
    */
@@ -155,9 +154,17 @@ export class Agreement extends Model<
   PersonPropertiesLinks?: NonAttribute<AgreementToPersonProperties[]>;
   /**
    * Комментарии
+   * @deprecated
    */
   @Column(DataType.STRING)
   comment: string | null;
+
+  /**
+   * ошибка
+   */
+  @Column(DataType.INTEGER)
+  error?: number | null;
+
   @HasMany(() => Comment)
   Comments?: NonAttribute<Comment[]>;
   /**
