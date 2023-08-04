@@ -15,7 +15,7 @@ export const runnedColumns: (Partial<Column> & { position: number })[] = [
   { key: 'sum', position: 15 },
   { key: 'discount', position: 16 },
   { key: 'month_pay_day', position: 20 },
-  { key: 'new_reg_doc', position: 25 },
+  { key: 'reg_doc', position: 25 },
   { key: 'registrator', position: 26 },
   { key: 'archive', position: 27 },
   { key: 'receipt_dt', position: 28 },
@@ -52,7 +52,7 @@ export const donedColumns: (Partial<Column> & { position: number })[] = [
   { key: 'lastPaymentSum', position: 22 }, // сумма последнего платежа
   { key: 'totalSumAgreement', position: 23 }, // Общая сумма платежей поступивших по соглашению
   { key: 'restOfDueAfterLastPayment', position: 24 }, // Остаток задолженности после поступления последнего платежа
-  { key: 'new_reg_doc', position: 25 }, // наличие ИД (новый рег док, потому что boolean (см. историю гита))
+  { key: 'reg_doc', position: 25 }, // наличие ИД (новый рег док, потому что boolean (см. историю гита))
   { key: 'registrator', position: 26 }, // регистратор
   { key: 'archive', position: 27 }, // наличие в архиве
   { key: 'receipt_dt', position: 28 }, // дата получения листа
@@ -97,7 +97,7 @@ export const outOfStrengthColumns: (Partial<Column> & { position: number })[] =
     { key: 'lastPaymentSum', position: 22 }, // сумма последнего платежа V
     { key: 'totalSumAgreement', position: 23 }, // Общая сумма платежей поступивших по соглашению W
     { key: 'restOfDueAfterLastPayment', position: 24 }, // Остаток задолженности после поступления последнего платежа X
-    { key: 'new_reg_doc', position: 25 }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
+    { key: 'reg_doc', position: 25 }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
     { key: 'registrator', position: 26 }, // регистратор Z
     { key: 'archive', position: 27 }, // наличие в архиве AA
     { key: 'receipt_dt', position: 28 }, // дата получения листа AB
@@ -141,7 +141,7 @@ export const agreementCompensationColumns: (Partial<Column> & {
   { key: 'lastPaymentSum', position: 21 }, // сумма последнего платежа V
   { key: 'totalSumAgreement', position: 22 }, // Общая сумма платежей поступивших по соглашению W
   { key: 'restOfDueAfterLastPayment', position: 23 }, // Остаток задолженности после поступления последнего платежа X
-  { key: 'new_reg_doc', position: 24 }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
+  { key: 'reg_doc', position: 24 }, // наличие ИД (новый рег док, потому что boolean (см. историю гита)) Y
   { key: 'registrator', position: 25 }, // наличие регистраторе Z
   { key: 'archive', position: 26 }, // наличие ИД в архиве AA
   { key: 'receipt_dt', position: 27 }, // дата получения листа AB

@@ -4,10 +4,10 @@ type ProcessFunc = (obj: ResultRow) => void;
 
 const newRegDoc: ProcessFunc = (obj) => {
   if (obj.registrator) {
-    obj['new_reg_doc'] = 2;
+    obj['reg_doc'] = 2;
   }
   if (obj.archive) {
-    obj['new_reg_doc'] = 3;
+    obj['reg_doc'] = 3;
   }
 };
 
