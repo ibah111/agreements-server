@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
-import { DebtService } from './AgreementDebt.service';
+import { DebtService } from './Debt.service';
 
 @ApiTags('Debt')
 @Controller('Debt')
