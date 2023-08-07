@@ -74,6 +74,7 @@ export class PreviewGeneratorService {
       include: [
         { association: 'LastCalcs' },
         {
+          required: false, // debt_calc может быть пустой, при связке может выдать error-500
           association: 'DebtCalcs',
           where: { is_confirmed: 1, is_cancel: 0 } as WhereOptions<DebtCalc>,
         },

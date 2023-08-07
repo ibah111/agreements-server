@@ -30,7 +30,7 @@ export class GetAgrementDebts {
   @ApiProperty()
   id_agreement: number;
 }
-export class GetAllowedDebtsInput {
+export class GetLinkedDebtsInput {
   @Expose()
   @IsNumber()
   @ApiProperty()

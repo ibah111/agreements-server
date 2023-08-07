@@ -80,22 +80,18 @@ export class AgreementToDebtSerivce {
     return number > 0;
   }
 
-  async getAgreementDebts(id: number) {
+  async getLinkedDebts(id_agreement: number) {
     const links = await this.modelAgreementDebtsLink.findAll({
-      where: { id_agreement: id },
+      where: { id_agreement: id_agreement },
     });
-    const debtIdArray = links.map((link) => link.id_debt);
-    const debts = await this.modelDebt.findAll({
-      include: ['StatusDict'],
-      where: { id: { [Op.in]: debtIdArray } },
-    });
-    return debts;
+    return links;
   }
-  async getAllowedDebts(id_agreement: number) {
-    const agreement = await this.modelAgreement.findByPk(id_agreement, {
+
+  async getAvailableDebts(id_person: number) {
+    const agreement = await this.modelAgreement.findByPk(id_person, {
       attributes: ['id', 'person_id'],
       rejectOnEmpty: new NotFoundException(
-        `Не найденно соглашение ${id_agreement}`,
+        `Не найденно соглашение ${id_person}`,
       ),
       include: { model: this.modelAgreementDebtsLink, attributes: ['id_debt'] },
     });

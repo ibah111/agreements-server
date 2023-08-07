@@ -164,20 +164,7 @@ export class AgreementsService {
         },
       ],
     })) as Debt[];
-    const person = await this.modelPerson.findOne({
-      where: { id: agreement?.person_id },
-      include: [
-        {
-          association: 'Debts',
-        },
-      ],
-      attributes: ['fio', 'id', 'f', 'i', 'o', 'birth_date'],
-    });
-    //Присоединяем Person
-    const dataValuesAgreement = agreement.dataValues as AgrGetAllDto;
-    if (person) {
-      dataValuesAgreement.Person = person as Person;
-    }
+
     //Присоединяем Debt
     for (const debtLink of agreement.DebtLinks || []) {
       const dataValuesLink = debtLink.dataValues as AgreementDebtsLink;
@@ -190,7 +177,7 @@ export class AgreementsService {
   async editAgreement(auth: AuthResult, id: number, data: EditAgreementInput) {
     return from(
       this.modelAgreement.findByPk(id, {
-        include: ['DebtLinks', 'Comments'],
+        include: ['DebtLinks', 'Comments', 'PersonPreview'],
         rejectOnEmpty: new NotFoundException('Запись не найдена'),
       }),
     ).pipe(

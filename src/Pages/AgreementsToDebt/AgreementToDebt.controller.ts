@@ -14,7 +14,7 @@ import { Auth, AuthGuard, AuthResult } from 'src/Modules/Guards/auth.guard';
 import {
   AgreementToDebtInput,
   DeleteAgrementToDebtInput,
-  GetAllowedDebtsInput,
+  GetLinkedDebtsInput,
 } from './AgreementToDebt.input';
 import { AgreementToDebtSerivce } from './AgreementToDebt.service';
 
@@ -37,13 +37,13 @@ export class AgreementToDebtController {
     return this.service.deleteAgreementToDebt(body);
   }
 
-  @Get(':id')
+  @Get('getLinkedDebts/:id')
   getAgreementToDebt(@Param('id', ParseIntPipe) id: number) {
-    return this.service.getAgreementDebts(id);
+    return this.service.getLinkedDebts(id);
   }
 
-  @Post('getAllowedDebts')
-  getAllowedDebts(@Body() body: GetAllowedDebtsInput) {
-    return this.service.getAllowedDebts(body.id_agreement);
+  @Post('getAvailableDebts')
+  getLinkedDebts(@Body() body: GetLinkedDebtsInput) {
+    return this.service.getAvailableDebts(body.id_agreement);
   }
 }
