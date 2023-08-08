@@ -101,6 +101,14 @@ export class AgreementsService {
     return Agreement;
   }
 
+  /**
+   * этот метод надо добавить в контроллер, и навесить на него крон
+   * @returns updated agreements
+   */
+  syncronize() {
+    const syncPreview = this.previewGenerator.syncPreview();
+    return syncPreview;
+  }
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     const Agreement = await this.modelAgreement.create(data);
 

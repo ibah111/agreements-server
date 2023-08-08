@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AgreementsModule } from './Agreements/Agr.module';
 import { AgreementToDebtModule } from './AgreementsToDebt/AgreementToDebt.module';
-import { DebtModule } from './AgreementDebt/AgreementDebt.module';
+import { DebtModule } from './Debt/Debt.module';
 import { LoginModule } from './Login/Login.module';
 import { PurposeModule } from './Purpose/Purpose.module';
 import { SearchModule } from './Search/Search.module';

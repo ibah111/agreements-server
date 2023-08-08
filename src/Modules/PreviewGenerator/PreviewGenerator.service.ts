@@ -37,8 +37,8 @@ export class PreviewGeneratorService {
         : await this.modelAgreement.findOne({
             where: { id: agreement_id },
           });
-    if (!agreement) return;
 
+    if (!agreement) return;
     const ContactPerson = await this.modelPerson.findOne({
       raw: true,
       attributes: ['birth_date', 'f', 'i', 'o'],
@@ -53,10 +53,10 @@ export class PreviewGeneratorService {
       },
     );
     if (created) return personPreview;
+    console.log(`обновлено с ${personPreview} на ${ContactPerson}`);
     return personPreview.update(ContactPerson);
   }
   /**
-   *
    * @param data
    * @returns превью debt'а
    */
@@ -109,7 +109,9 @@ export class PreviewGeneratorService {
         (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
       portfolio: debt.r_portfolio_id,
     };
-    console.log(data);
+    console.log(
+      `Связь соглашения #${link.id} c долгом ${debt} обновлена на ${data}`,
+    );
     return link.update(data);
   }
   syncDebts() {

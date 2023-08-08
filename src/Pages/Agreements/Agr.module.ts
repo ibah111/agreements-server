@@ -15,12 +15,11 @@ import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/Agree
 import { AgreementsController } from './Agr.controller';
 import { AgreementsService } from './Agr.service';
 import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
-import { PreviewGeneratorModule } from '../../Modules/PreviewGenerator/PreviewGenerator.module';
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
+import { PreviewGeneratorModule } from '../../Modules/PreviewGenerator/PreviewGenerator.module';
 
 @Module({
   imports: [
-    PreviewGeneratorModule,
     SequelizeModule.forFeature(
       [LawAct, Person, Debt, PersonProperty, LawExec, Portfolio, UserContact],
       'contact',
@@ -29,6 +28,7 @@ import { PersonPreview } from '../../Modules/Database/Local.Database/models/Pers
       [Agreement, ActionLog, AgreementDebtsLink, Comment, PersonPreview],
       'local',
     ),
+    PreviewGeneratorModule /** модуль содержащий PGService */,
   ],
   controllers: [AgreementsController],
   providers: [AgreementsService],
