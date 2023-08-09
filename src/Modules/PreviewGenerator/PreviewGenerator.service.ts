@@ -53,7 +53,6 @@ export class PreviewGeneratorService {
       },
     );
     if (created) return personPreview;
-    console.log(`обновлено с ${personPreview} на ${ContactPerson}`);
     return personPreview.update(ContactPerson);
   }
   /**
@@ -109,11 +108,111 @@ export class PreviewGeneratorService {
         (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
       portfolio: debt.r_portfolio_id,
     };
-    console.log(
-      `Связь соглашения #${link.id} c долгом ${debt} обновлена на ${data}`,
-    );
     return link.update(data);
   }
+
+  /**
+   *
+   * @param id_agreement соглас
+   * @param link_debts связанные долги
+   * @returns апдейт обновленных данных
+   */
+  async updateCurrentAgreement(id_agreement: number) {
+    /**
+     * @agrs
+     */
+    const agreement = await Agreement.findOne({
+      where: {
+        id: id_agreement,
+      },
+    });
+    if (!agreement) return;
+    const ContactPerson = await this.modelPerson.findOne({
+      raw: true,
+      attributes: ['birth_date', 'f', 'i', 'o'],
+      where: { id: agreement.person_id },
+      rejectOnEmpty: new NotFoundException(),
+    });
+    const [personPreview, created] = await this.modelPersonPreview.findOrCreate(
+      {
+        where: { person_id: agreement.person_id },
+        defaults: { person_id: agreement.person_id, ...ContactPerson },
+      },
+    );
+    if (created) return personPreview;
+    /**
+     * @LINKS
+     */
+    const link_debts = await this.modelAgreementDebtLink.findAll({
+      where: {
+        id_agreement: id_agreement,
+      },
+      include: {
+        required: true,
+        association: 'Agreement',
+        attributes: ['conclusion_date', 'finish_date'],
+      },
+    });
+    /**
+     * @if если у согласа есть долги => пробегаемся по ним
+     */
+    console.log(link_debts);
+    if (link_debts)
+      for (const link of link_debts) {
+        const debt = await link?.getDebt({
+          include: [
+            { association: 'LastCalcs' },
+            {
+              required: false, // debt_calc может быть пустой, при связке может выдать error-500
+              association: 'DebtCalcs',
+              where: {
+                is_confirmed: 1,
+                is_cancel: 0,
+              } as WhereOptions<DebtCalc>,
+            },
+          ],
+        });
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const calculations_in_agreements = debt.DebtCalcs!.filter(
+          (item) =>
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            moment(link.Agreement!.conclusion_date)
+              .startOf('day')
+              .isBefore(moment(item.calc_date)) &&
+            moment(link.Agreement?.finish_date || undefined)
+              .endOf('day')
+              .isAfter(moment(item.calc_date)),
+        );
+        const calcs_before_agreement = calculations_in_agreements.filter(
+          (item) =>
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            moment(link.Agreement!.conclusion_date).isAfter(moment(item.dt)),
+        );
+        const first_payment = _.minBy(calculations_in_agreements, 'calc_date');
+        const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
+        const data: PreviewDebt = {
+          contract: debt.contract,
+          before_agreement: _.sumBy(calcs_before_agreement, 'sum'), // 1 - переменная, 2 - по которому суммируем
+          first_payment: first_payment?.sum || null,
+          first_payment_date: first_payment?.calc_date || null,
+          last_payment: last_payment?.sum || null,
+          last_payment_date: last_payment?.calc_date || null,
+          sum_payments: _.sumBy(calculations_in_agreements, 'sum'),
+          payable_status:
+            (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
+          portfolio: debt.r_portfolio_id,
+        };
+        return link.update(data);
+      }
+    /**
+     * @returns
+     */
+    return personPreview.update(ContactPerson);
+  }
+
+  /**
+   * методы сделаны для крона
+   */
   syncDebts() {
     return from(this.modelAgreementDebtLink.findAll()).pipe(
       mergeMap((items) =>

@@ -109,6 +109,17 @@ export class AgreementsService {
     const syncPreview = this.previewGenerator.syncPreview();
     return syncPreview;
   }
+  singleSync(id_agreement: number) {
+    const singleSync =
+      this.previewGenerator.updateCurrentAgreement(id_agreement);
+    return singleSync;
+  }
+  /**
+   *
+   * @param auth
+   * @param data
+   * @returns
+   */
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     const Agreement = await this.modelAgreement.create(data);
 

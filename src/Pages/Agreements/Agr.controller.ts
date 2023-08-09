@@ -87,4 +87,11 @@ export class AgreementsController {
     const sync = this.service.syncronize();
     return sync;
   }
+
+  @CheckCan((ability) => ability.can(Action.Update, Agreement))
+  @Patch('syncOne/:id')
+  updateCurrentAgreement(@Param('id') id_agr: number) {
+    const single_sync = this.service.singleSync(id_agr);
+    return single_sync;
+  }
 }

@@ -34,7 +34,7 @@ export class CronService {
     );
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'TEst' })
   syncronize() {
     return this.sync.syncPreview();
   }
