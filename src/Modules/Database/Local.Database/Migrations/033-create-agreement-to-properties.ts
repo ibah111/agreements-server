@@ -16,5 +16,5 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
   });
 };
 export const down: MigrationFn<QueryInterface> = async ({ context }) => {
-  await context.dropTable('AgreementToPropertiesd');
+  await context.dropTable('AgreementToProperties');
 };

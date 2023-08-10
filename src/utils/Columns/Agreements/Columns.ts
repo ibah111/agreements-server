@@ -1,7 +1,9 @@
-import { Debt, Person } from '@contact/models';
 import { Sequelize } from '@sql-tools/sequelize';
 import { generateDefaults, GridColDefAddon } from '../addons';
 const generateDefault = generateDefaults('local', 'Agreement');
+const generateLink = generateDefaults('local', 'AgreementDebtsLink');
+const generatePreview = generateDefaults('local', 'PersonPreview');
+const generateComments = generateDefaults('local', 'Comments');
 export default function getColumns(): GridColDefAddon[] {
   return [
     {
@@ -19,12 +21,13 @@ export default function getColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
-      ...generateDefault('person_id'),
+      ...generatePreview('person_id'),
       type: 'number',
     },
     {
-      field: 'FIO',
-      base: 'contact',
+      ...generatePreview('FIO'),
+      type: 'string',
+      editable: false,
       col: Sequelize.fn(
         'concat',
         Sequelize.col('f'),
@@ -33,23 +36,20 @@ export default function getColumns(): GridColDefAddon[] {
         ' ',
         Sequelize.col('o'),
       ),
-      model: 'Person',
-      sortOrder: [Person],
     },
     {
-      field: 'KD',
-      base: 'contact',
-      model: 'Debt',
-      sortOrder: [Debt],
+      ...generatePreview('birth_date'),
+      type: 'date',
+      editable: false,
+    },
+    {
+      ...generateLink('contract'),
       type: 'string',
-      col: 'contract',
+      editable: false,
     },
     {
-      model: 'Debt',
-      col: 'r_portfolio_id',
-      base: 'contact',
-      type: 'number',
-      field: 'portfolio',
+      ...generateLink('portfolio'),
+      type: 'singleSelect',
     },
     {
       ...generateDefault('agreement_type'),
@@ -97,7 +97,7 @@ export default function getColumns(): GridColDefAddon[] {
       filterable: false,
     },
     {
-      ...generateDefault('first_payment_date'),
+      ...generatePreview('first_payment_date'),
       type: 'date',
       filterable: false,
     },
@@ -136,10 +136,9 @@ export default function getColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
-      ...generateDefault('comment'),
+      ...generateComments('comment'),
       editable: true,
     },
-
     {
       ...generateDefault('task_link'),
       editable: true,

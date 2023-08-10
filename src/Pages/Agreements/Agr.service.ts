@@ -60,7 +60,18 @@ export class AgreementsService {
     const sort = utils.generateSort(body.sortModel || []);
     const agreements_ids = await this.modelAgreement.findAll({
       attributes: ['id', 'person_id'],
-      include: [{ association: 'DebtLinks', attributes: ['id_debt'] }],
+      include: [
+        {
+          association: 'PersonPreview',
+          where: filter('PersonPreview'),
+        },
+        {
+          required: false,
+          association: 'DebtLinks',
+          attributes: ['id_debt'],
+          where: filter('AgreementDebtsLink'),
+        },
+      ],
       raw: true,
       where: filter('Agreement'),
     });
@@ -82,8 +93,6 @@ export class AgreementsService {
         { model: this.modelComment, separate: true },
         {
           model: this.modelPersonPreview,
-          /**почитай про сепарейт
-           */
         },
       ],
       order: sort('local'),
