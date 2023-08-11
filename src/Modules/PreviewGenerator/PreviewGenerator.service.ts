@@ -107,6 +107,7 @@ export class PreviewGeneratorService {
       payable_status:
         (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
       portfolio: debt.r_portfolio_id,
+      status: debt.status,
     };
     return link.update(data);
   }
@@ -201,6 +202,7 @@ export class PreviewGeneratorService {
           payable_status:
             (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
           portfolio: debt.r_portfolio_id,
+          status: debt.status,
         };
         return link.update(data);
       }

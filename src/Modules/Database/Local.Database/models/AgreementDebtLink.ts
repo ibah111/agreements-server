@@ -30,6 +30,7 @@ export interface PreviewDebt {
   last_payment_date: Date | null;
   sum_payments: number | null;
   portfolio: number | null;
+  status: number | null;
 }
 
 @Table({
@@ -72,6 +73,8 @@ export default class AgreementDebtsLink
   sum_payments: number | null;
   @Column(DataType.INTEGER)
   portfolio: number | null;
+  @Column(DataType.INTEGER)
+  status: number | null;
   @Column(DataType.INTEGER)
   error: number | null;
   @BelongsTo(() => Agreement)
