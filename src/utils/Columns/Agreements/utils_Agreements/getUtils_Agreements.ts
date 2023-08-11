@@ -1,19 +1,10 @@
-import {
-  GridColDef,
-  GridFilterModel,
-  GridSortModel,
-} from '@mui/x-data-grid-premium';
+import { GridFilterModel, GridSortModel } from '@mui/x-data-grid-premium';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import Filter from 'src/utils/Filter';
 import Sort from 'src/utils/Sort';
-import { AddonData } from '../../addons';
 import { getAttributes } from '../../getAttributes';
 import getAgreementColumns from '../AgreementColumns';
-export interface ResultColumn<T> extends AddonData {
-  field: T;
-  editable: boolean;
-  type: GridColDef['type'];
-}
+import { ResultColumn } from '../../addons';
 
 export function getAgreementUtils() {
   const columns = getAgreementColumns();

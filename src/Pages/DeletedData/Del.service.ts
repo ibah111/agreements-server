@@ -9,6 +9,7 @@ export class DelService {
     @InjectModel(Agreement, 'local')
     private readonly modelDeletedAgreement: typeof Agreement,
   ) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getAllDeleted(body: AgrDelInput) {
     this.modelDeletedAgreement.findAll({});
   }
