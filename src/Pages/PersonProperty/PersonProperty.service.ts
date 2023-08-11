@@ -1,19 +1,11 @@
 import { Person, PersonProperty } from '@contact/models';
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { ActionLinkPersonPropertyInput } from './PersonProperty.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import AgreementToPersonProperties from '../../Modules/Database/Local.Database/models/AgreementToPersonProperties';
 import { Op, WhereOptions } from '@sql-tools/sequelize';
-import {
-  Action,
-  CaslAbilityFactory,
-} from '../../Modules/Casl/casl-ability.factory';
-import { AuthResult } from '../../Modules/Guards/auth.guard';
+import { CaslAbilityFactory } from '../../Modules/Casl/casl-ability.factory';
 
 @Injectable()
 export class PersonPropertyService {
@@ -121,7 +113,6 @@ export class PersonPropertyService {
         },
       });
     if (created) return agreementToPersonProperty;
-    return console.log('not created');
   }
   /**
    * @param data default input class

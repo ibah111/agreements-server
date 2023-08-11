@@ -157,7 +157,7 @@ export class PreviewGeneratorService {
     /**
      * @if если у согласа есть долги => пробегаемся по ним
      */
-    console.log(link_debts);
+
     if (link_debts)
       for (const link of link_debts) {
         const debt = await link?.getDebt({

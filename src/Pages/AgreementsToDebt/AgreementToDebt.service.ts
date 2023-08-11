@@ -91,6 +91,7 @@ export class AgreementToDebtSerivce {
     const links = await this.modelAgreementDebtsLink.findAll({
       where: { id_agreement: id_agreement },
     });
+
     return links;
   }
 

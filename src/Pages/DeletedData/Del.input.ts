@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IsNumberOrStringOrBoolean } from 'src/utils/validators/IsNumberOrStringOrBoolean';
-import { PaginationValidator } from '../Agreements/Agr.input';
+import { PaginationValidator } from '../DataGridClass/DataGridClass';
 
 export class AgrDelInput {
   @ValidateNested()

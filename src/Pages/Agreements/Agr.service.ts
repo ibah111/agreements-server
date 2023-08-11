@@ -1,11 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Debt, Person, Portfolio } from '@contact/models';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
-import {
-  AgreementsAll,
-  CreateAgreementInput,
-  EditAgreementInput,
-} from './Agr.input';
+import { CreateAgreementInput, EditAgreementInput } from './Agr.input';
 import {
   ActionLog,
   Actions,
@@ -16,13 +12,16 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
 import getSize from 'src/utils/getSize';
-import { getUtils } from 'src/utils/Columns/Agreements/utils/getUtils';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 import { agreementCalculation } from './Agr.functions/agreementCalculations';
 import _ from 'lodash';
 import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
 import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewGenerator.service';
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
+import { DataGridClass } from '../DataGridClass/DataGridClass';
+import { getAgreementUtils } from '../../utils/Columns/Agreements/utils_Agreements/getUtils_Agreements';
+import { getAgreementToDebtLinksUtils } from '../../utils/Columns/AgreementToDebtLink/utils_AgreementToDebtLink/getUtils_AgreementToDebtLink';
+import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils_PersonPreview/getUtils_PersonPreview';
 
 @Injectable()
 export class AgreementsService {
@@ -53,27 +52,40 @@ export class AgreementsService {
       }),
     );
   }
-  async getAll(body: AgreementsAll) {
+  async getAll(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
-    const utils = getUtils();
-    const filter = utils.generateFilter(body.filterModel);
-    const sort = utils.generateSort(body.sortModel || []);
+    /**
+     * agr
+     */
+    const utils_agr = getAgreementUtils();
+    const filter_agr = utils_agr.generateFilter(body.filterModel);
+    /**
+     * agr-debt
+     */
+    const utils_agr_debt = getAgreementToDebtLinksUtils();
+    const filter_agr_debt = utils_agr_debt.generateFilter(body.filterModel);
+    /**
+     * pers-prev
+     */
+    const utils_pers_prev = getPersonPreviewUtils();
+    const filter_pers_prev = utils_pers_prev.generateFilter(body.filterModel);
+
+    const sort = utils_agr.generateSort(body.sortModel || []);
     const agreements_ids = await this.modelAgreement.findAll({
       attributes: ['id', 'person_id'],
       include: [
         {
           association: 'PersonPreview',
-          where: filter('PersonPreview'),
+          where: filter_pers_prev('PersonPreview'),
         },
         {
           required: false,
           association: 'DebtLinks',
-          attributes: ['id_debt'],
-          where: filter('AgreementDebtsLink'),
+          where: filter_agr_debt('AgreementDebtsLink'),
         },
       ],
       raw: true,
-      where: filter('Agreement'),
+      where: filter_agr('Agreement'),
     });
 
     const agreements = (await this.modelAgreement.findAndCountAll({
@@ -89,7 +101,10 @@ export class AgreementsService {
         ],
       },
       include: [
-        { model: this.modelAgreementDebtsLink, separate: true },
+        {
+          model: this.modelAgreementDebtsLink,
+          separate: true,
+        },
         { model: this.modelComment, separate: true },
         {
           model: this.modelPersonPreview,

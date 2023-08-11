@@ -79,5 +79,6 @@ export default class AgreementDebtsLink
   error: number | null;
   @BelongsTo(() => Agreement)
   Agreement?: NonAttribute<Agreement>;
+
   Debt?: BelongsToAttribute<NonAttribute<Debt>>;
 }

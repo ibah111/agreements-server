@@ -1,5 +1,5 @@
 import { FindAttributeOptions } from '@sql-tools/sequelize';
-import { GridColDefAddon } from '../../addons';
+import { GridColDefAddon } from './addons';
 export function getAttributes(columns: GridColDefAddon[]) {
   const result: string[] = [];
   for (const column of columns) {

@@ -1,10 +1,7 @@
-import { Sequelize } from '@sql-tools/sequelize';
 import { generateDefaults, GridColDefAddon } from '../addons';
 const generateDefault = generateDefaults('local', 'Agreement');
-const generateLink = generateDefaults('local', 'AgreementDebtsLink');
 const generatePreview = generateDefaults('local', 'PersonPreview');
-const generateComments = generateDefaults('local', 'Comments');
-export default function getColumns(): GridColDefAddon[] {
+export default function getAgreementColumns(): GridColDefAddon[] {
   return [
     {
       ...generateDefault('id'),
@@ -19,37 +16,6 @@ export default function getColumns(): GridColDefAddon[] {
       ...generateDefault('finish_date'),
       type: 'date',
       editable: true,
-    },
-    {
-      ...generatePreview('person_id'),
-      type: 'number',
-    },
-    {
-      ...generatePreview('FIO'),
-      type: 'string',
-      editable: false,
-      col: Sequelize.fn(
-        'concat',
-        Sequelize.col('f'),
-        ' ',
-        Sequelize.col('i'),
-        ' ',
-        Sequelize.col('o'),
-      ),
-    },
-    {
-      ...generatePreview('birth_date'),
-      type: 'date',
-      editable: false,
-    },
-    {
-      ...generateLink('contract'),
-      type: 'string',
-      editable: false,
-    },
-    {
-      ...generateLink('portfolio'),
-      type: 'singleSelect',
     },
     {
       ...generateDefault('agreement_type'),
@@ -133,10 +99,6 @@ export default function getColumns(): GridColDefAddon[] {
     {
       ...generateDefault('collector_id'),
       type: 'number',
-      editable: true,
-    },
-    {
-      ...generateComments('comment'),
       editable: true,
     },
     {

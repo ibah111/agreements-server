@@ -27,14 +27,11 @@ export class CronService {
    */
   @Cron(CronExpression.EVERY_10_MINUTES)
   handleCron() {
-    const job = this.reg.getCronJob('TEst');
-    console.log(job.nextDates(1));
-    this.logger.debug(
-      'Cron is launched. Data syncronize happes everyday at midnight',
-    );
+    const job = this.reg.getCronJob('midnight_update');
+    job.start;
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'TEst' })
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'midnight_update' })
   syncronize() {
     return this.sync.syncPreview();
   }

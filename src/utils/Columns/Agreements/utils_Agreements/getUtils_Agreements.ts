@@ -7,16 +7,16 @@ import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement'
 import Filter from 'src/utils/Filter';
 import Sort from 'src/utils/Sort';
 import { AddonData } from '../../addons';
-import getColumns from '../Columns';
-import { getAttributes } from './getAttributes';
+import { getAttributes } from '../../getAttributes';
+import getAgreementColumns from '../AgreementColumns';
 export interface ResultColumn<T> extends AddonData {
   field: T;
   editable: boolean;
   type: GridColDef['type'];
 }
 
-export function getUtils() {
-  const columns = getColumns();
+export function getAgreementUtils() {
+  const columns = getAgreementColumns();
   const utils = {
     generateFilter: (filter: GridFilterModel) => (model: string) =>
       Filter(

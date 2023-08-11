@@ -10,17 +10,14 @@ import { Body, Delete, Post } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { Action } from 'src/Modules/Casl/casl-ability.factory';
-import {
-  AgreementsAll,
-  CreateAgreementInput,
-  DeleteSelectedAgreements,
-} from './Agr.input';
+import { CreateAgreementInput, DeleteSelectedAgreements } from './Agr.input';
 import { AgreementsService } from './Agr.service';
 import { Auth, AuthResult } from 'src/Modules/Guards/auth.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 import { Agreement } from 'src/Modules/Database/Local.Database/models/Agreement';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
 import { Portfolio } from '@contact/models';
+import { DataGridClass } from '../DataGridClass/DataGridClass';
 @ApiTags('Agreements')
 @UseGuards(CanGuard)
 @UseGuards(AuthGuard)
@@ -46,7 +43,7 @@ export class AgreementsController {
 
   @CheckCan((ability) => ability.can(Action.Read, Agreement))
   @Post('/all')
-  getAll(@Body() body: AgreementsAll) {
+  getAll(@Body() body: DataGridClass) {
     return this.service.getAll(body);
   }
 
