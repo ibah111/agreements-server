@@ -109,7 +109,7 @@ export class PreviewGeneratorService {
       portfolio: debt.r_portfolio_id,
       status: debt.status,
     };
-    return link.update(data);
+    link.update(data);
   }
 
   /**
@@ -159,6 +159,9 @@ export class PreviewGeneratorService {
      */
 
     if (link_debts)
+      /**
+       * Апдейт по долгу
+       */
       for (const link of link_debts) {
         const debt = await link?.getDebt({
           include: [
@@ -204,8 +207,22 @@ export class PreviewGeneratorService {
           portfolio: debt.r_portfolio_id,
           status: debt.status,
         };
-        return link.update(data);
+        console.log('data updated');
+        link.update(data);
       }
+
+    if (link_debts.some((item) => item.payable_status === true)) {
+      console.log('payable_status true');
+      console.log(
+        `agreement №${agreement.id}: ${agreement.payable_status}`,
+        '\n',
+        `link_debts: ${link_debts.map((item) => item.payable_status)}`,
+      );
+      agreement.update({ payable_status: true });
+    } else {
+      console.log('payable_status false');
+      agreement.update({ payable_status: false });
+    }
     /**
      * @returns
      */

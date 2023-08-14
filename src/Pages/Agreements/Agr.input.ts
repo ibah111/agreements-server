@@ -3,6 +3,7 @@ import { CreationAttributes } from '@sql-tools/sequelize';
 import { Expose, Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsNumber,
@@ -140,6 +141,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
   collector_id: number | null;
+
+  @Expose()
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Boolean })
+  payable_status: boolean | null;
 }
 
 export class DeleteSelectedAgreements {

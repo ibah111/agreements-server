@@ -45,7 +45,6 @@ export class AgreementToDebtSerivce {
     ability.can(Action.Link, agreement);
 
     await this.modelDebt.findByPk(data.id_debt, {
-      logging: console.log,
       /**
        * могут быть приколы
        */

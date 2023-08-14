@@ -154,10 +154,16 @@ export class Agreement extends Model<
   PersonPropertiesLinks?: NonAttribute<AgreementToPersonProperties[]>;
   /**
    * Комментарии
-   * @deprecated
+   *
    */
   @Column(DataType.STRING)
   comment: string | null;
+
+  /**
+   * Платежный статус
+   */
+  @Column(DataType.BOOLEAN)
+  payable_status: boolean | null;
 
   /**
    * ошибка
