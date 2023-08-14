@@ -23,6 +23,10 @@ export default function getAgreementColumns(): GridColDefAddon[] {
       editable: true,
     },
     {
+      ...generateDefault('payable_status'),
+      type: 'boolean',
+    },
+    {
       ...generateDefault('purpose'),
       editable: true,
       type: 'number',

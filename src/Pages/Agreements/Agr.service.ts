@@ -19,9 +19,9 @@ import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
 import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewGenerator.service';
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
 import { DataGridClass } from '../DataGridClass/DataGridClass';
-import { getAgreementUtils } from '../../utils/Columns/Agreements/utils_Agreements/getUtils_Agreements';
-import { getAgreementToDebtLinksUtils } from '../../utils/Columns/AgreementToDebtLink/utils_AgreementToDebtLink/getUtils_AgreementToDebtLink';
-import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils_PersonPreview/getUtils_PersonPreview';
+import { getAgreementUtils } from '../../utils/Columns/Agreements/utils.Agreements/getUtils.Agreements';
+import { getAgreementToDebtLinksUtils } from '../../utils/Columns/AgreementToDebtLink/utils.AgreementToDebtLink/getUtils.AgreementToDebtLink';
+import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils.PersonPreview/getUtils.PersonPreview';
 
 @Injectable()
 export class AgreementsService {
@@ -69,6 +69,8 @@ export class AgreementsService {
     const filter_pers_prev = utils_pers_prev.generateFilter(body.filterModel);
 
     const sort = utils_agr.generateSort(body.sortModel || []);
+    const agrDebtFilter = filter_agr_debt('AgreementToDebtLinks');
+    const keys = Reflect.ownKeys(agrDebtFilter);
     const agreements_ids = await this.modelAgreement.findAll({
       attributes: ['id', 'person_id'],
       include: [
@@ -77,9 +79,9 @@ export class AgreementsService {
           where: filter_pers_prev('PersonPreview'),
         },
         {
-          required: false,
+          required: keys.length === 0 ? false : true,
           association: 'DebtLinks',
-          where: filter_agr_debt('AgreementDebtsLink'),
+          where: filter_agr_debt('AgreementToDebtLinks'),
         },
       ],
       raw: true,
@@ -143,7 +145,11 @@ export class AgreementsService {
    * @returns
    */
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
-    const Agreement = await this.modelAgreement.create(data);
+    const Agreement = await this.modelAgreement.create({
+      ...data,
+      payable_status: false,
+    });
+    console.log(Agreement);
 
     await this.previewGenerator.generateAgreementPreview(Agreement.id);
 
