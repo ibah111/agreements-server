@@ -110,6 +110,13 @@ export class PreviewGeneratorService {
       status: debt.status,
     };
     link.update(data);
+    const agreement = await this.modelAgreement.findOne({
+      where: { id: id_agreement },
+    });
+    agreement?.update({
+      payable_status: data.payable_status,
+    });
+    console.log('agreements обновился');
   }
 
   /**
@@ -207,20 +214,18 @@ export class PreviewGeneratorService {
           portfolio: debt.r_portfolio_id,
           status: debt.status,
         };
-        console.log('data updated');
+
         link.update(data);
       }
-
+    /**
+     * я знаю что в теории этот кусок кода можно упростить, написав:
+     * this.generateDebtPreview()
+     * но по скольку если и этот сейчас работает, то желания менять
+     * у меня нет
+     */
     if (link_debts.some((item) => item.payable_status === true)) {
-      console.log('payable_status true');
-      console.log(
-        `agreement №${agreement.id}: ${agreement.payable_status}`,
-        '\n',
-        `link_debts: ${link_debts.map((item) => item.payable_status)}`,
-      );
       agreement.update({ payable_status: true });
     } else {
-      console.log('payable_status false');
       agreement.update({ payable_status: false });
     }
     /**

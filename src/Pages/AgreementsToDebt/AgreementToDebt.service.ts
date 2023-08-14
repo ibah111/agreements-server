@@ -75,10 +75,7 @@ export class AgreementToDebtSerivce {
         defaults: { id_agreement: data.id_agreement, id_debt: data.id_debt },
       });
     const preview_debt = await this.previewGenerator.generateDebtPreview(data);
-    const preview_agr = await this.previewGenerator.updateCurrentAgreement(
-      data.id_agreement,
-    );
-    if (created) return [agreementToDebt, preview_debt, preview_agr];
+    if (created) return [agreementToDebt, preview_debt];
     else return;
   }
 
