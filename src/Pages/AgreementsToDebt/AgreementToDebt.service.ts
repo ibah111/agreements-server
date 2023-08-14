@@ -74,8 +74,11 @@ export class AgreementToDebtSerivce {
         where: { id_agreement: data.id_agreement, id_debt: data.id_debt },
         defaults: { id_agreement: data.id_agreement, id_debt: data.id_debt },
       });
-    const preview = await this.previewGenerator.generateDebtPreview(data);
-    if (created) return [agreementToDebt, preview];
+    const preview_debt = await this.previewGenerator.generateDebtPreview(data);
+    const preview_agr = await this.previewGenerator.updateCurrentAgreement(
+      data.id_agreement,
+    );
+    if (created) return [agreementToDebt, preview_debt, preview_agr];
     else return;
   }
 
