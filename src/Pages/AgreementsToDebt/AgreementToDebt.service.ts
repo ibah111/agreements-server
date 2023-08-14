@@ -86,6 +86,7 @@ export class AgreementToDebtSerivce {
     const number = await this.modelAgreementDebtsLink.destroy({
       where: { id_agreement: data.id_agreement, id_debt: data.id_debt },
     });
+    await this.previewGenerator.updateCurrentAgreement(data.id_agreement);
     return number > 0;
   }
 
