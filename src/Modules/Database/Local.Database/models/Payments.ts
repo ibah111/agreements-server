@@ -24,6 +24,9 @@ import {
 import { User } from './User.model';
 @Table({
   tableName: 'Payments',
+  createdAt: false,
+  updatedAt: false,
+  timestamps: false,
 })
 export class Payments extends Model<
   InferAttributes<Payments>,

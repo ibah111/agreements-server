@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Injectable } from '@nestjs/common';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
@@ -18,14 +19,14 @@ export class PaymentsService {
       },
     });
   }
-  async createPaymentsSchedule(data: PaymentsInput, user: AuthResult) {
+  async createPaymentsSchedule(data: PaymentsInput) {
     const [payments, created] = await this.modelPayments.findOrCreate({
       where: {
         id_agreement: data.id_agreement,
       },
       defaults: {
         ...data,
-        user: user.userLocal.id,
+        user: 1,
       },
       logging: console.log,
     });

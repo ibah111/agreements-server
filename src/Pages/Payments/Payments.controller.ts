@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -13,15 +14,15 @@ import { PaymentsInput } from './Payments.input';
 import { CanGuard } from '../../Modules/Casl/Can.guard';
 import { Auth, AuthGuard, AuthResult } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
-@UseGuards(CanGuard)
-@UseGuards(AuthGuard)
+// @UseGuards(CanGuard)
+// @UseGuards(AuthGuard)
 @Controller('Payments')
-@ApiBasicAuth()
+// @ApiBasicAuth()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
   @Post()
-  createPaymentSchedule(@Body() body: PaymentsInput, @Auth() auth: AuthResult) {
-    return this.paymentsService.createPaymentsSchedule(body, auth);
+  createPaymentSchedule(@Body() body: PaymentsInput) {
+    return this.paymentsService.createPaymentsSchedule(body);
   }
 
   @Get(':/id')

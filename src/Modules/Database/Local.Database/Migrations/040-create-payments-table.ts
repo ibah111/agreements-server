@@ -25,9 +25,6 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
           allowNull: false,
         },
         user: { type: DataTypes.INTEGER, allowNull: false },
-        createdAt: { type: DataTypes.DATE, allowNull: false },
-        updatedAt: { type: DataTypes.DATE, allowNull: false },
-        deletedAt: { type: DataTypes.DATE, allowNull: false },
       }),
       await context.addConstraint('Payments', {
         name: 'payments_id_agreement_fk',
@@ -36,12 +33,12 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
         references: {
-          field: 'id_agreement',
+          field: 'id',
           table: 'Agreements',
         },
         transaction: t,
       }),
-      await context.addConstraint('comments', {
+      await context.addConstraint('Payments', {
         name: 'comments_id_Users_fk',
         fields: ['user'],
         type: 'foreign key',
