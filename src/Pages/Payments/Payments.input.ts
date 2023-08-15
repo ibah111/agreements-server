@@ -25,3 +25,14 @@ export class PaymentsInput {
   @Expose()
   status: boolean;
 }
+
+export class updateStatusInput {
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  id_payment: number;
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  id_agreement: number;
+}

@@ -6,12 +6,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { PaymentsService } from './Payments.service';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
-import { PaymentsInput } from './Payments.input';
+import { PaymentsInput, updateStatusInput } from './Payments.input';
 import { CanGuard } from '../../Modules/Casl/Can.guard';
 import { Auth, AuthGuard, AuthResult } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
@@ -34,5 +35,10 @@ export class PaymentsController {
   @Delete(':id')
   deletePayment(@Param('id', ParseIntPipe) id: number) {
     return this.paymentsService.deletePayment(id);
+  }
+
+  @Post('updateStatus')
+  updateStatus(@Body() body: updateStatusInput) {
+    return this.paymentsService.statusUpdate(body);
   }
 }
