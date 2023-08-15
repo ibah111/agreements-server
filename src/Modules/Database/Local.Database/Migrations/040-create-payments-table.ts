@@ -2,31 +2,34 @@ import { DataTypes, QueryInterface } from '@sql-tools/sequelize';
 import { MigrationFn } from 'umzug';
 
 export const up: MigrationFn<QueryInterface> = async ({ context }) =>
-  context.sequelize.transaction((t) =>
+  await context.sequelize.transaction(async (t) =>
     Promise.all([
-      context.createTable('Payments', {
+      await context.createTable('Payments', {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
         id_agreement: {
           type: DataTypes.INTEGER,
           allowNull: false,
-          primaryKey: true,
         },
         pay_day: {
           type: DataTypes.DATE,
-          allowNull: false,
         },
         sum_owe: {
-          type: DataTypes.MONEY,
-          allowNull: false,
-        },
-        sum_payed: {
           type: DataTypes.MONEY,
         },
         status: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
         },
+        user: { type: DataTypes.INTEGER, allowNull: false },
+        createdAt: { type: DataTypes.DATE, allowNull: false },
+        updatedAt: { type: DataTypes.DATE, allowNull: false },
+        deletedAt: { type: DataTypes.DATE, allowNull: false },
       }),
-      context.addConstraint('Payments', {
+      await context.addConstraint('Payments', {
         name: 'payments_id_agreement_fk',
         fields: ['id_agreement'],
         type: 'foreign key',
@@ -38,12 +41,21 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
         },
         transaction: t,
       }),
+      await context.addConstraint('comments', {
+        name: 'comments_id_Users_fk',
+        fields: ['user'],
+        type: 'foreign key',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+        references: { field: 'id', table: 'Users' },
+        transaction: t,
+      }),
     ]),
   );
 export const down: MigrationFn<QueryInterface> = async ({ context }) =>
-  context.sequelize.transaction((t) =>
+  await context.sequelize.transaction(async (t) =>
     Promise.all([
-      context.dropTable('Payments', { transaction: t }),
-      context.removeConstraint('Payments', 'payments_id_agreement_fk'),
+      await context.dropTable('Payments', { transaction: t }),
+      await context.removeConstraint('Payments', 'payments_id_agreement_fk'),
     ]),
   );
