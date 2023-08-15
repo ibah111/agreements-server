@@ -55,3 +55,12 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
     throw e;
   }
 };
+
+export const down: MigrationFn<QueryInterface> = async ({ context }) =>
+  await context.sequelize.transaction(async (t) =>
+    Promise.all([
+      await context.removeConstraint('comments', 'comments_id_Agreements_fk'),
+      await context.removeConstraint('comments', 'comments_id_Users_fk'),
+      await context.dropTable('comments', { transaction: t }),
+    ]),
+  );
