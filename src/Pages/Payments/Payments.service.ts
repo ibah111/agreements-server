@@ -84,14 +84,22 @@ export class PaymentsService {
     const p_month = moment(payment?.pay_day).month();
     if (!p_month) return;
 
-    const date_arr = calcs
+    const payment_month = calcs
       .map((debt) => ({ debt, calc_date: debt.calc_date }))
-      .map((item) => ({
-        item,
-        calc_year: moment(item.calc_date).year() === p_year,
-        calc_month: moment(item.calc_date).month() === p_month,
-      }))
-      .reduce((prev, curr) => prev + curr.item.debt.sum, 0);
-    console.log('c_in_curr_year: ', date_arr);
+      .filter((item) => moment(item.calc_date).year() === p_year)
+      .filter((item) => moment(item.calc_date).month() === p_month)
+      .reduce((prev, curr) => prev + curr.debt.sum, 0);
+    // .map((debt) => ({ debt, calc_date: debt.calc_date }))
+    // .map((item) => ({
+    //   item,
+    //   calc_year: moment(item.calc_date).year() === p_year,
+    //   calc_month: moment(item.calc_date).month() === p_month,
+    // }))
+    // .reduce((prev, curr) => prev + curr.item.debt.sum, 0);
+    console.log('c_in_curr_month: ', payment_month);
+    if (!payment?.sum_owe) return;
+    if (payment?.sum_owe <= payment_month) {
+      payment?.update({ status: true });
+    }
   }
 }
