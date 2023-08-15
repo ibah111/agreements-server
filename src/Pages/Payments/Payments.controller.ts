@@ -2,6 +2,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -25,8 +26,13 @@ export class PaymentsController {
     return this.paymentsService.createPaymentsSchedule(body);
   }
 
-  @Get(':/id')
+  @Get(':id')
   getSchedulePayments(@Param('id', ParseIntPipe) id_agreement: number) {
     return this.paymentsService.getSchedule(id_agreement);
+  }
+
+  @Delete(':id')
+  deletePayment(@Param('id', ParseIntPipe) id: number) {
+    return this.paymentsService.deletePayment(id);
   }
 }

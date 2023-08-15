@@ -4,12 +4,15 @@ import { Injectable } from '@nestjs/common';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
 import { PaymentsInput } from './Payments.input';
 import { AuthResult } from '../../Modules/Guards/auth.guard';
+import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     @InjectModel(Payments, 'local')
     private readonly modelPayments: typeof Payments,
+    @InjectModel(Agreement, 'local')
+    private readonly modelAgreement: typeof Agreement,
   ) {}
 
   async getSchedule(id_agreement: number) {
@@ -31,5 +34,13 @@ export class PaymentsService {
       logging: console.log,
     });
     if (created) return payments;
+  }
+  async deletePayment(id: number) {
+    return await this.modelPayments.destroy({
+      where: {
+        id: id,
+        // id_agreement: id_agreement,
+      },
+    });
   }
 }
