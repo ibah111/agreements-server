@@ -149,7 +149,6 @@ export class AgreementsService {
       ...data,
       payable_status: false,
     });
-    console.log(Agreement);
 
     await this.previewGenerator.generateAgreementPreview(Agreement.id);
 

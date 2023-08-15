@@ -5,7 +5,6 @@ import { Op } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { join } from 'path';
 import createUmzug from '../umzug';
-import { Agreement } from './models/Agreement';
 import AgreementDebtsLink from './models/AgreementDebtLink';
 @Injectable()
 export class LocalDatabaseSeed {
@@ -15,8 +14,6 @@ export class LocalDatabaseSeed {
     @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
     @InjectModel(DebtCalc, 'contact')
     private readonly modelDebtCalc: typeof DebtCalc,
-    @InjectModel(Agreement, 'local')
-    private readonly modelAgreement: typeof Agreement,
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelLink: typeof AgreementDebtsLink,
   ) {}
