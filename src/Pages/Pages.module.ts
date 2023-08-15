@@ -15,6 +15,7 @@ import { HealthModule } from './Health/Health.module';
 import { CollectorModule } from './Collector/Collector.module';
 import { PersonPropertiesModule } from './PersonProperty/PersonProperty.module';
 import { CommentModule } from './Comments/Comment.module';
+import { PaymentsModule } from './Payments/Payments.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CommentModule } from './Comments/Comment.module';
     CollectorModule,
     PersonPropertiesModule,
     CommentModule,
+    PaymentsModule,
   ],
 })
 export class PagesModule {}

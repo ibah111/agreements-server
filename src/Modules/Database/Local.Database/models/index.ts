@@ -4,6 +4,7 @@ import AgreementDebtsLink from './AgreementDebtLink';
 import AgreementToPersonProperties from './AgreementToPersonProperties';
 import { TypeAgreement } from './AgreementType';
 import { Comment } from './Comment';
+import { Payments } from './Payments';
 import { PersonPreview } from './PersonPreview';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
@@ -26,4 +27,5 @@ export const models = [
   Comment,
   AgreementToPersonProperties,
   PersonPreview,
+  Payments,
 ];
