@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
 import { PaymentsInput, updateStatusInput } from './Payments.input';
 import { AuthResult } from '../../Modules/Guards/auth.guard';
@@ -30,27 +30,28 @@ export class PaymentsService {
     });
   }
   async createPaymentsSchedule(data: PaymentsInput) {
-    const [payments, created] = await this.modelPayments.findOrCreate({
+    const agreement = await this.modelAgreement.findOne({
       where: {
-        id_agreement: data.id_agreement,
+        id: data.id_agreement,
       },
-      defaults: {
-        ...data,
-        status: false,
-        /**
-         * @TODO
-         */
-        user: 1,
-      },
-      logging: console.log,
+      rejectOnEmpty: new NotFoundException(
+        'Соглашения не найдено. Возможно оно не существует',
+      ),
     });
-    if (created) return payments;
+    if (agreement) {
+      const payment = await this.modelPayments.create({
+        ...data,
+        id_agreement: agreement.id,
+        user: 1,
+      });
+
+      return payment;
+    }
   }
   async deletePayment(id: number) {
     return await this.modelPayments.destroy({
       where: {
         id: id,
-        // id_agreement: id_agreement,
       },
     });
   }
