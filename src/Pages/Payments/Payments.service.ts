@@ -25,7 +25,7 @@ export class PaymentsService {
   async getSchedule(id_agreement: number) {
     return await this.modelPayments.findAll({
       where: {
-        id: id_agreement,
+        id_agreement: id_agreement,
       },
     });
   }
@@ -37,6 +37,9 @@ export class PaymentsService {
       defaults: {
         ...data,
         status: false,
+        /**
+         * @TODO
+         */
         user: 1,
       },
       logging: console.log,
@@ -51,6 +54,23 @@ export class PaymentsService {
       },
     });
   }
+
+  /**
+   * Get req.
+   * @TODO
+   * @returns
+   */
+  async getParallelsCalcs() {
+    return;
+  }
+  /**
+   * Метод по изменению статуса в зависимости от внесенных платежей
+   * @param body accepting id_payment and id_agreement
+   * changing status depending exciting payments from DebtCalcs
+   * comparising Year and month
+   * @returns updated or not updated status
+   * @TODO переделать под связанные долги
+   */
   async statusUpdate(body: updateStatusInput) {
     const payment = await this.modelPayments.findOne({
       where: { id: body.id_payment },
@@ -89,17 +109,12 @@ export class PaymentsService {
       .filter((item) => moment(item.calc_date).year() === p_year)
       .filter((item) => moment(item.calc_date).month() === p_month)
       .reduce((prev, curr) => prev + curr.debt.sum, 0);
-    // .map((debt) => ({ debt, calc_date: debt.calc_date }))
-    // .map((item) => ({
-    //   item,
-    //   calc_year: moment(item.calc_date).year() === p_year,
-    //   calc_month: moment(item.calc_date).month() === p_month,
-    // }))
-    // .reduce((prev, curr) => prev + curr.item.debt.sum, 0);
+
     console.log('c_in_curr_month: ', payment_month);
     if (!payment?.sum_owe) return;
     if (payment?.sum_owe <= payment_month) {
       payment?.update({ status: true });
+      console.log('status updated');
     }
   }
 }
