@@ -41,4 +41,9 @@ export class PaymentsController {
   updateStatus(@Body() body: updateStatusInput) {
     return this.paymentsService.statusUpdate(body);
   }
+
+  @Get('getCalcsInMonth/:id')
+  getCalcsInMonth(@Param('id', ParseIntPipe) id_payment: number) {
+    return this.paymentsService.getCalcsInMonth(id_payment);
+  }
 }

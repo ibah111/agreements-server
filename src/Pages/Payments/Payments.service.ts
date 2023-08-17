@@ -57,14 +57,6 @@ export class PaymentsService {
   }
 
   /**
-   * Get req.
-   * @TODO
-   * @returns
-   */
-  async getParallelsCalcs() {
-    return;
-  }
-  /**
    * Метод по изменению статуса в зависимости от внесенных платежей
    * @param body accepting id_payment and id_agreement
    * changing status depending exciting payments from DebtCalcs
@@ -76,11 +68,11 @@ export class PaymentsService {
     const payment = await this.modelPayments.findOne({
       where: { id: body.id_payment },
     });
-    if (payment) console.log('payment finded');
+
     const agreement = await this.modelAgreement.findOne({
       where: { id: body.id_agreement },
     });
-    if (agreement) console.log('agreement finded');
+
     const debts = await this.modelDebt.findAll({
       where: {
         parent_id: agreement?.person_id,
@@ -93,8 +85,58 @@ export class PaymentsService {
         parent_id: {
           [Op.in]: debts_ids,
         },
-        purpose: {
-          [Op.notIn]: [7] /** требует массивчик */,
+        // purpose: {
+        //   [Op.notIn]: [7] /** требует массивчик */,
+        // },
+      },
+      attributes: ['sum', 'calc_date', 'purpose', 'dt'],
+    });
+
+    const p_year = moment(payment?.pay_day).year();
+    if (!p_year) return;
+    const p_month = moment(payment?.pay_day).month();
+    if (!p_month) return;
+
+    const sum_payments_month = calcs
+      .map((debt) => ({ debt, calc_date: debt.calc_date }))
+      .filter((item) => moment(item.calc_date).year() === p_year)
+      .filter((item) => moment(item.calc_date).month() === p_month)
+      .reduce((prev, curr) => prev + curr.debt.sum, 0);
+
+    console.log('c_in_curr_month: ', sum_payments_month);
+    if (!payment?.sum_owe) return;
+    if (payment?.sum_owe <= sum_payments_month) {
+      payment?.update({ status: true });
+      console.log('status updated');
+    }
+  }
+
+  /**
+   * Get req.
+   * @TODO
+   * @returns all payments from DebtCalc that comarison with month and year
+   */
+  async getCalcsInMonth(id_payment: number) {
+    const payment = await this.modelPayments.findOne({
+      where: { id: id_payment },
+    });
+
+    if (!payment) return;
+    const agreement = await this.modelAgreement.findOne({
+      where: { id: payment.id_agreement },
+    });
+
+    const debts = await this.modelDebt.findAll({
+      where: {
+        parent_id: agreement?.person_id,
+      },
+    });
+    const debts_ids = debts.map((item) => item.id);
+
+    const calcs = await this.modelDebtCalc.findAll({
+      where: {
+        parent_id: {
+          [Op.in]: debts_ids,
         },
       },
       attributes: ['sum', 'calc_date', 'purpose', 'dt'],
@@ -105,17 +147,11 @@ export class PaymentsService {
     const p_month = moment(payment?.pay_day).month();
     if (!p_month) return;
 
-    const payment_month = calcs
+    const all_payments_month = calcs
       .map((debt) => ({ debt, calc_date: debt.calc_date }))
       .filter((item) => moment(item.calc_date).year() === p_year)
-      .filter((item) => moment(item.calc_date).month() === p_month)
-      .reduce((prev, curr) => prev + curr.debt.sum, 0);
+      .filter((item) => moment(item.calc_date).month() === p_month);
 
-    console.log('c_in_curr_month: ', payment_month);
-    if (!payment?.sum_owe) return;
-    if (payment?.sum_owe <= payment_month) {
-      payment?.update({ status: true });
-      console.log('status updated');
-    }
+    return all_payments_month;
   }
 }
