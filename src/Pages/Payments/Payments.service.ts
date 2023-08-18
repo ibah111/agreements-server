@@ -139,7 +139,7 @@ export class PaymentsService {
           [Op.in]: debts_ids,
         },
       },
-      attributes: ['sum', 'calc_date', 'purpose', 'dt'],
+      attributes: ['id', 'parent_id', 'sum', 'calc_date', 'purpose', 'dt'],
     });
 
     const p_year = moment(payment?.pay_day).year();
@@ -152,6 +152,6 @@ export class PaymentsService {
       .filter((item) => moment(item.calc_date).year() === p_year)
       .filter((item) => moment(item.calc_date).month() === p_month);
 
-    return all_payments_month;
+    return all_payments_month.map((item) => item.debt);
   }
 }
