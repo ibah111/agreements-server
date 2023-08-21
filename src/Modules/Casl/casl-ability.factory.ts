@@ -11,6 +11,8 @@ import { Agreement } from '../Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../Database/Local.Database/models/AgreementDebtLink';
 import { User } from '../Database/Local.Database/models/User.model';
 import { User_Role } from '../Database/Local.Database/models/User_Role.model';
+import { PersonPreview } from '../Database/Local.Database/models/PersonPreview';
+import { Payments } from '../Database/Local.Database/models/Payments';
 export enum Action {
   Manage = 'manage',
   Create = 'create',
@@ -28,6 +30,8 @@ type Subjects =
       | typeof DebtCalc
       | typeof Portfolio
       | typeof Debt
+      | typeof PersonPreview
+      | typeof Payments
     >
   | 'all';
 export type AppAbility = PureAbility<[Action, Subjects]>;
@@ -44,6 +48,8 @@ export class CaslAbilityFactory {
       can([Action.Create, Action.Delete, Action.Read], AgreementDebtsLink);
       can([Action.Read], DebtCalc);
       can([Action.Read], Portfolio);
+      can([Action.Read], PersonPreview);
+      can([Action.Read], Payments);
     }
     if (roles.includes('worker')) {
       can([Action.Create, Action.Read], Agreement);
