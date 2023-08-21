@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -6,7 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -14,12 +12,12 @@ import { PaymentsService } from './Payments.service';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { PaymentsInput, updateStatusInput } from './Payments.input';
 import { CanGuard } from '../../Modules/Casl/Can.guard';
-import { Auth, AuthGuard, AuthResult } from '../../Modules/Guards/auth.guard';
+import { AuthGuard } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
-// @UseGuards(CanGuard)
-// @UseGuards(AuthGuard)
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
 @Controller('Payments')
-// @ApiBasicAuth()
+@ApiBasicAuth()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
   @Post()

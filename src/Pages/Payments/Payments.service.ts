@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
 import { PaymentsInput, updateStatusInput } from './Payments.input';
-import { AuthResult } from '../../Modules/Guards/auth.guard';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { Debt, DebtCalc } from '@contact/models';
 import { Op } from '@sql-tools/sequelize';
