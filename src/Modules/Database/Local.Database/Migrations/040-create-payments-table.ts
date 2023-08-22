@@ -24,7 +24,6 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
           type: DataTypes.BOOLEAN,
           allowNull: false,
         },
-        user: { type: DataTypes.INTEGER, allowNull: false },
       }),
       await context.addConstraint('Payments', {
         name: 'payments_id_agreement_fk',
@@ -36,15 +35,6 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
           field: 'id',
           table: 'Agreements',
         },
-        transaction: t,
-      }),
-      await context.addConstraint('Payments', {
-        name: 'users_id_Users_fk',
-        fields: ['user'],
-        type: 'foreign key',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-        references: { field: 'id', table: 'Users' },
         transaction: t,
       }),
     ]),

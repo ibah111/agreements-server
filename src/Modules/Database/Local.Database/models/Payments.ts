@@ -21,7 +21,7 @@ import {
   BelongsToAttribute,
   CreateLiteralAssociation,
 } from '@sql-tools/association-literal';
-import { User } from './User.model';
+
 @Table({
   tableName: 'Payments',
   createdAt: false,
@@ -54,12 +54,4 @@ export class Payments extends Model<
 
   @Column(DataType.BOOLEAN)
   status: boolean;
-
-  @ForeignKey(() => User)
-  @AllowNull(false)
-  @Column(DataType.INTEGER)
-  user: number;
-
-  @BelongsTo(() => User)
-  User?: BelongsToAttribute<NonAttribute<User>>;
 }

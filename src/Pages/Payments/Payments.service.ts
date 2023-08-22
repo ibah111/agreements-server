@@ -6,6 +6,7 @@ import { Agreement } from '../../Modules/Database/Local.Database/models/Agreemen
 import { Debt, DebtCalc } from '@contact/models';
 import { Op } from '@sql-tools/sequelize';
 import moment from 'moment';
+import { AuthResult } from '../../Modules/Guards/auth.guard';
 
 @Injectable()
 export class PaymentsService {
@@ -40,7 +41,6 @@ export class PaymentsService {
       const payment = await this.modelPayments.create({
         ...data,
         id_agreement: agreement.id,
-        user: 1,
       });
 
       return payment;
