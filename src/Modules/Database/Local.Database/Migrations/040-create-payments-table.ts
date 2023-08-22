@@ -39,7 +39,7 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
         transaction: t,
       }),
       await context.addConstraint('Payments', {
-        name: 'comments_id_Users_fk',
+        name: 'users_id_Users_fk',
         fields: ['user'],
         type: 'foreign key',
         onDelete: 'CASCADE',
