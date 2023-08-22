@@ -16,6 +16,7 @@ import { CollectorModule } from './Collector/Collector.module';
 import { PersonPropertiesModule } from './PersonProperty/PersonProperty.module';
 import { CommentModule } from './Comments/Comment.module';
 import { PaymentsModule } from './Payments/Payments.module';
+import { AdditionalGridModule } from './AdditionalGrids/AG.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PaymentsModule } from './Payments/Payments.module';
     PersonPropertiesModule,
     CommentModule,
     PaymentsModule,
+    AdditionalGridModule,
   ],
 })
 export class PagesModule {}
