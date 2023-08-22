@@ -3,6 +3,9 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { ActionLog } from '../../Modules/Database/Local.Database/models/ActionLog';
 import { Op } from '@sql-tools/sequelize';
+import { User_Role } from '../../Modules/Database/Local.Database/models/User_Role.model';
+import { User } from '../../Modules/Database/Local.Database/models/User.model';
+import { Role } from '../../Modules/Database/Local.Database/models/Role.model';
 
 @Injectable()
 export class AdditionalGridService {
@@ -11,6 +14,12 @@ export class AdditionalGridService {
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(ActionLog, 'local')
     private readonly modelActionLog: typeof ActionLog,
+    @InjectModel(User_Role, 'local')
+    private readonly modelUserRole: typeof User_Role,
+    @InjectModel(User, 'local')
+    private readonly modelUser: typeof User,
+    @InjectModel(Role, 'local')
+    private readonly modelRole: typeof Role,
   ) {}
 
   async getLogs() {
@@ -30,6 +39,9 @@ export class AdditionalGridService {
     return del;
   }
 
+  /**
+   * restore soft-deleted content
+   */
   async restoreDeleted(id_agreement: number) {
     const del_agr = await this.modelAgreement.findOne({
       where: {
@@ -41,6 +53,31 @@ export class AdditionalGridService {
       paranoid: false,
     });
     if (del_agr) return del_agr?.restore();
-    else console.log('Ошибка');
+  }
+  /**
+   * forcefull delete of soft-deleted content
+   */
+  async forceDelete(id_agreement: number) {
+    const del_agr = await this.modelAgreement.findOne({
+      where: {
+        id: id_agreement,
+      },
+      rejectOnEmpty: new NotFoundException(
+        'Удаленное соглашение не найдено. Возможно оно не удалено.',
+      ),
+      paranoid: false,
+    });
+    if (del_agr) return del_agr?.destroy({ force: true });
+  }
+
+  async getAllUsers() {
+    return await this.modelUser.findAll({
+      include: [
+        {
+          model: this.modelRole,
+          attributes: ['id', 'title', 'name'],
+        },
+      ],
+    });
   }
 }
