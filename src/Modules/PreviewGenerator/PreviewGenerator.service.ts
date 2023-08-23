@@ -116,7 +116,6 @@ export class PreviewGeneratorService {
     agreement?.update({
       payable_status: data.payable_status,
     });
-    console.log('agreements обновился');
   }
 
   /**

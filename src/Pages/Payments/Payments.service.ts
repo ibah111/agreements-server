@@ -100,11 +100,9 @@ export class PaymentsService {
       .filter((item) => moment(item.calc_date).month() === p_month)
       .reduce((prev, curr) => prev + curr.debt.sum, 0);
 
-    console.log('c_in_curr_month: ', sum_payments_month);
     if (!payment?.sum_owe) return;
     if (payment?.sum_owe <= sum_payments_month) {
       payment?.update({ status: true });
-      console.log('status updated');
     }
   }
 
