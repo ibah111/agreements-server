@@ -3,17 +3,20 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { CaslAbilityFactory } from 'src/Modules/Casl/casl-ability.factory';
 import { User } from 'src/Modules/Database/Local.Database/models/User.model';
 import { RoleInput, AddUserInput, RemoveUserInput } from './User.input';
+import { Role } from '../../Modules/Database/Local.Database/models/Role.model';
 
 export class UserService {
   constructor(
     @InjectModel(User, 'local') private readonly modelUser: typeof User,
     private readonly ability: CaslAbilityFactory,
+    @InjectModel(Role, 'local') private readonly modelRole: typeof Role,
   ) {}
 
   async createUser(data: AddUserInput) {
     const User = await this.modelUser.create({
       login: data.login,
     });
+    console.log(User);
     return User;
   }
   async destroyUser(body: RemoveUserInput) {
@@ -39,5 +42,9 @@ export class UserService {
   async getAllUsers() {
     const users = await this.modelUser.findAll({});
     return [users, { result: 'success' }];
+  }
+  async getAllRoles() {
+    const roles = await this.modelRole.findAll({});
+    return roles;
   }
 }

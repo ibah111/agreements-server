@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { CheckCan } from 'src/Modules/Casl/Can.decorators';
 import { CanGuard } from 'src/Modules/Casl/Can.guard';
@@ -37,5 +37,10 @@ export class UserController {
   @Delete('role')
   removeRole(@Body() body: RoleInput) {
     return this.service.removeRole(body);
+  }
+
+  @Get('getAllRoles')
+  getAllROles() {
+    return this.service.getAllRoles();
   }
 }
