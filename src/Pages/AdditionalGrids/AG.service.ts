@@ -27,7 +27,6 @@ export class AdditionalGridService {
   async getLogs(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
     const logs = await this.modelActionLog.findAll({});
-    return logs;
   }
   /**
    * @TODO Сделать пагинацию (лимиты и оффсеты)

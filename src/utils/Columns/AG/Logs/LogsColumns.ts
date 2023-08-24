@@ -1,7 +1,7 @@
-import { generateDefaults } from '../../addons';
+import { GridColDefAddon, generateDefaults } from '../../addons';
 
 const generateLogs = generateDefaults('local', 'ActionLog');
-export default function logCols() {
+export default function logCols(): GridColDefAddon[] {
   return [
     {
       ...generateLogs('id'),

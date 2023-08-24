@@ -1,8 +1,6 @@
-import { GridColDef } from '@mui/x-data-grid-premium';
-import { generateDefaults } from '../../addons';
+import { GridColDefAddon, generateDefaults } from '../../addons';
 const generateUsers = generateDefaults('local', 'User');
-
-export default function usersCols(): GridColDef[] {
+export default function usersCols(): GridColDefAddon[] {
   return [
     {
       ...generateUsers('login'),
