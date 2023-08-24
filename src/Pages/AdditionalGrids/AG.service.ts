@@ -61,7 +61,9 @@ export class AdditionalGridService {
     const del_utils = getDeletedUtils();
     const del_filter = del_utils.generateFilter(body.filterModel);
     const del_sort = del_utils.generateSort(body.sortModel || []);
+
     const del_ids = await this.modelAgreement.findAll({
+      paranoid: false,
       where: del_filter('local'),
     });
     const del = await this.modelAgreement.findAndCountAll({
