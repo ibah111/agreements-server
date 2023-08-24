@@ -1,27 +1,29 @@
 import {
+  Body,
   Controller,
   Delete,
-  Get,
   Param,
   ParseIntPipe,
   Patch,
+  Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdditionalGridService } from './AG.service';
+import { DataGridClass } from '../DataGridClass/DataGridClass';
 
 @ApiTags('AG')
 @Controller('AG')
 export class AdditionalGridController {
   constructor(private readonly service: AdditionalGridService) {}
 
-  @Get('getLogs')
-  getLogs() {
-    return this.service.getLogs();
+  @Post('getLogs')
+  getLogs(@Body() body: DataGridClass) {
+    return this.service.getLogs(body);
   }
 
-  @Get('getDeleted')
-  getDeleted() {
-    return this.service.getDeleted();
+  @Post('getDeleted')
+  getDeleted(@Body() body: DataGridClass) {
+    return this.service.getDeleted(body);
   }
 
   @Patch('restoreDeleted/:id')
@@ -34,8 +36,8 @@ export class AdditionalGridController {
     return this.service.forceDelete(id_agreement);
   }
 
-  @Get('getAllUsers')
-  getAllUserRole() {
-    return this.service.getAllUsers();
+  @Post('getAllUsers')
+  getAllUserRole(@Body() body: DataGridClass) {
+    return this.service.getAllUsers(body);
   }
 }

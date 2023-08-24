@@ -6,6 +6,8 @@ import { Op } from '@sql-tools/sequelize';
 import { User_Role } from '../../Modules/Database/Local.Database/models/User_Role.model';
 import { User } from '../../Modules/Database/Local.Database/models/User.model';
 import { Role } from '../../Modules/Database/Local.Database/models/Role.model';
+import { DataGridClass } from '../DataGridClass/DataGridClass';
+import getSize from '../../utils/getSize';
 
 @Injectable()
 export class AdditionalGridService {
@@ -21,13 +23,18 @@ export class AdditionalGridService {
     @InjectModel(Role, 'local')
     private readonly modelRole: typeof Role,
   ) {}
-
-  async getLogs() {
+  /** Логи */
+  async getLogs(body: DataGridClass) {
+    const size = getSize(body.paginationModel.pageSize);
     const logs = await this.modelActionLog.findAll({});
     return logs;
   }
-
-  async getDeleted() {
+  /**
+   * @TODO Сделать пагинацию (лимиты и оффсеты)
+   * @returns all deleted data (pararanoid - false => showing all soft-deleted data's)
+   */
+  async getDeleted(body: DataGridClass) {
+    const size = getSize(body.paginationModel.pageSize);
     const del = await this.modelAgreement.findAll({
       where: {
         deletedAt: {
@@ -36,7 +43,6 @@ export class AdditionalGridService {
       },
       paranoid: false,
     });
-    return del;
   }
 
   /**
@@ -70,8 +76,9 @@ export class AdditionalGridService {
     if (del_agr) return del_agr?.destroy({ force: true });
   }
 
-  async getAllUsers() {
-    return await this.modelUser.findAll({
+  async getAllUsers(body: DataGridClass) {
+    const size = getSize(body.paginationModel.pageSize);
+    const users = await this.modelUser.findAll({
       include: [
         {
           model: this.modelRole,
