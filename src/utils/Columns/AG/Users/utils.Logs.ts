@@ -6,7 +6,7 @@ import { ResultColumn } from '../../addons';
 import usersCols from './UsersColumns';
 import { User } from '../../../../Modules/Database/Local.Database/models/User.model';
 
-export function getAgreementUtils() {
+export function getUserUtils() {
   const columns = usersCols();
   const utils = {
     generateFilter: (filter: GridFilterModel) => (model: string) =>

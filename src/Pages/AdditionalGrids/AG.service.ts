@@ -10,6 +10,8 @@ import { DataGridClass } from '../DataGridClass/DataGridClass';
 import getSize from '../../utils/getSize';
 import { getLogsUtils } from '../../utils/Columns/AG/Logs/utils.Logs';
 import _ from 'lodash';
+import { getDeletedUtils } from '../../utils/Columns/AG/Deleted/utils.Deleted';
+import { getUserUtils } from '../../utils/Columns/AG/Users/utils.Logs';
 
 @Injectable()
 export class AdditionalGridService {
@@ -56,14 +58,31 @@ export class AdditionalGridService {
    */
   async getDeleted(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
-    const del = await this.modelAgreement.findAll({
-      where: {
-        deletedAt: {
-          [Op.not]: null,
-        },
-      },
-      paranoid: false,
+    const del_utils = getDeletedUtils();
+    const del_filter = del_utils.generateFilter(body.filterModel);
+    const del_sort = del_utils.generateSort(body.sortModel || []);
+    const del_ids = await this.modelAgreement.findAll({
+      where: del_filter('local'),
     });
+    const del = await this.modelAgreement.findAndCountAll({
+      paranoid: false,
+      offset: body.paginationModel.page * size,
+      limit: size,
+      where: {
+        [Op.and]: [
+          {
+            id: {
+              [Op.in]: _.uniq(del_ids.map((item) => item.id)),
+            },
+            deletedAt: {
+              [Op.not]: null,
+            },
+          },
+        ],
+      },
+      order: del_sort('local'),
+    });
+    return del;
   }
 
   /**
@@ -99,7 +118,25 @@ export class AdditionalGridService {
 
   async getAllUsers(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
-    const users = await this.modelUser.findAll({
+    const user_utils = getUserUtils();
+    const user_filter = user_utils.generateFilter(body.filterModel);
+    const user_sort = user_utils.generateSort(body.sortModel || []);
+    const users_ids = await this.modelUser.findAll({
+      where: user_filter('local'),
+    });
+    const users = await this.modelUser.findAndCountAll({
+      limit: size,
+      offset: body.paginationModel.page * size,
+      where: {
+        [Op.and]: [
+          {
+            id: {
+              [Op.in]: _.uniq(users_ids.map((item) => item.id)),
+            },
+          },
+        ],
+      },
+      order: user_sort('local'),
       include: [
         {
           model: this.modelRole,
@@ -107,5 +144,6 @@ export class AdditionalGridService {
         },
       ],
     });
+    return users;
   }
 }
