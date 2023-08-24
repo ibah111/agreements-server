@@ -8,6 +8,8 @@ import { User } from '../../Modules/Database/Local.Database/models/User.model';
 import { Role } from '../../Modules/Database/Local.Database/models/Role.model';
 import { DataGridClass } from '../DataGridClass/DataGridClass';
 import getSize from '../../utils/getSize';
+import { getLogsUtils } from '../../utils/Columns/AG/Logs/utils.Logs';
+import _ from 'lodash';
 
 @Injectable()
 export class AdditionalGridService {
@@ -26,7 +28,27 @@ export class AdditionalGridService {
   /** Логи */
   async getLogs(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
-    const logs = await this.modelActionLog.findAll({});
+    const logs_utils = getLogsUtils();
+    const logs_filter = logs_utils.generateFilter(body.filterModel);
+    const logs_sort = logs_utils.generateSort(body.sortModel || []);
+    const logs_ids = await this.modelActionLog.findAll({
+      where: logs_filter('ActionLog'),
+    });
+    const logs = await this.modelActionLog.findAndCountAll({
+      offset: body.paginationModel.page * size,
+      limit: size,
+      where: {
+        [Op.and]: [
+          {
+            id: {
+              [Op.in]: _.uniq(logs_ids.map((item) => item.id)),
+            },
+          },
+        ],
+      },
+      order: logs_sort('local'),
+    });
+    return logs;
   }
   /**
    * @TODO Сделать пагинацию (лимиты и оффсеты)
