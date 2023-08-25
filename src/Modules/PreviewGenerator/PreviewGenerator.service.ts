@@ -37,8 +37,8 @@ export class PreviewGeneratorService {
         : await this.modelAgreement.findOne({
             where: { id: agreement_id },
           });
-
     if (!agreement) return;
+
     const ContactPerson = await this.modelPerson.findOne({
       raw: true,
       attributes: ['birth_date', 'f', 'i', 'o'],
@@ -160,10 +160,12 @@ export class PreviewGeneratorService {
         attributes: ['conclusion_date', 'finish_date'],
       },
     });
+    agreement.update({
+      debt_count: link_debts.length,
+    });
     /**
      * @if если у согласа есть долги => пробегаемся по ним
      */
-
     if (link_debts)
       /**
        * Апдейт по долгу
@@ -268,7 +270,27 @@ export class PreviewGeneratorService {
     data.error = 1;
     await data.save();
   }
-  syncPreview() {
+  async syncPreview() {
+    const agreements = await this.modelAgreement.findAll();
+    for (const agreement of agreements) {
+      const count = await this.modelAgreementDebtLink.findAll({
+        where: {
+          id_agreement: agreement.id,
+        },
+      });
+
+      agreement.update({
+        debt_count: count.length,
+      });
+      // .then((agreement) => {
+      //   console.log(
+      //     'id: ',
+      //     agreement.id,
+      //     'debt_count: ',
+      //     agreement.debt_count,
+      //   );
+      // });
+    }
     return this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
   }
 }

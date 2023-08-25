@@ -147,6 +147,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiPropertyOptional({ type: Boolean })
   payable_status: boolean | null;
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Boolean })
+  debt_count: number;
 }
 
 export class DeleteSelectedAgreements {

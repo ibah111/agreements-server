@@ -33,7 +33,7 @@ export class CommentService {
     }
   }
   async getAll(id_agreement: number) {
-    return await this.modelComment.findAll({
+    const comment = await this.modelComment.findAll({
       where: {
         id_agreement: id_agreement,
       },
@@ -42,5 +42,6 @@ export class CommentService {
         attributes: ['id', 'login'],
       },
     });
+    return comment;
   }
 }

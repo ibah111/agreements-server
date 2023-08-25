@@ -131,6 +131,7 @@ export class AgreementsService {
    */
   syncronize() {
     const syncPreview = this.previewGenerator.syncPreview();
+
     return syncPreview;
   }
   singleSync(id_agreement: number) {
@@ -138,6 +139,7 @@ export class AgreementsService {
       this.previewGenerator.updateCurrentAgreement(id_agreement);
     return singleSync;
   }
+
   /**
    *
    * @param auth
@@ -148,6 +150,7 @@ export class AgreementsService {
     const Agreement = await this.modelAgreement.create({
       ...data,
       payable_status: false,
+      debt_count: 0,
     });
 
     await this.previewGenerator.generateAgreementPreview(Agreement.id);

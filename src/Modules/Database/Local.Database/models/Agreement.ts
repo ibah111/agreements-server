@@ -188,4 +188,7 @@ export class Agreement extends Model<
 
   Person?: NonAttribute<Person>;
   Portfolio?: NonAttribute<Portfolio>;
+
+  @Column(DataType.INTEGER)
+  debt_count: number;
 }
