@@ -25,11 +25,11 @@ export class CronService {
   /**
    * @returns в дальнейшем данный метод должен будет перезаписывать соглашения согласно данным контакта
    */
-  @Cron(CronExpression.EVERY_10_MINUTES)
-  handleCron() {
-    const job = this.reg.getCronJob('midnight_update');
-    job.start;
-  }
+  // @Cron(CronExpression.EVERY_10_MINUTES)
+  // handleCron() {
+  //   const job = this.reg.getCronJob('midnight_update');
+  //   job.start;
+  // }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'midnight_update' })
   syncronize() {
