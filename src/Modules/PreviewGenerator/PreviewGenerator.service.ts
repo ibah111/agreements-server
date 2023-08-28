@@ -10,6 +10,8 @@ import { MIS, WhereOptions } from '@sql-tools/sequelize';
 import moment from 'moment';
 import _ from 'lodash';
 import { catchError, from, last, mergeMap, of } from 'rxjs';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import * as a from 'colors';
 interface InputPreview {
   id_debt: number;
   id_agreement: number;
@@ -278,19 +280,21 @@ export class PreviewGeneratorService {
           id_agreement: agreement.id,
         },
       });
-
       agreement.update({
         debt_count: count.length,
       });
-      // .then((agreement) => {
-      //   console.log(
-      //     'id: ',
-      //     agreement.id,
-      //     'debt_count: ',
-      //     agreement.debt_count,
-      //   );
-      // });
     }
-    return this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
+    const sync = this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
+    return sync;
+  }
+  async rjakaMethod() {
+    const personPreviewList: PersonPreview[] = [];
+    const agreements = await this.modelAgreement.findAll();
+    for (const agreement of agreements) {
+      const rjaka = await this.updateCurrentAgreement(agreement.id);
+      if (rjaka) personPreviewList.push(rjaka);
+      console.log('Executing RJAKA METHOD'.red, '\n', rjaka);
+    }
+    return personPreviewList;
   }
 }
