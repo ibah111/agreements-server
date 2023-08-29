@@ -13,10 +13,7 @@ import { catchError, from, last, mergeMap, of } from 'rxjs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as a from 'colors';
 import { round } from '../../utils/round';
-interface InputPreview {
-  id_debt: number;
-  id_agreement: number;
-}
+
 @Injectable()
 export class PreviewGeneratorService {
   constructor(
@@ -56,87 +53,15 @@ export class PreviewGeneratorService {
       },
     );
     if (created) return personPreview;
-    return personPreview.update(ContactPerson);
-  }
-  /**
-   * @param data
-   * @returns превью debt'а
-   */
-  async generateDebtPreview({ id_debt, id_agreement }: InputPreview) {
-    const link = await this.modelAgreementDebtLink.findOne({
-      where: { id_debt, id_agreement },
-      include: {
-        required: true,
-        association: 'Agreement',
-        attributes: ['conclusion_date', 'finish_date'],
-      },
-      rejectOnEmpty: new NotFoundException(),
-    });
-    const debt = await link?.getDebt({
-      include: [
-        { association: 'LastCalcs' },
-        {
-          required: false, // debt_calc может быть пустой, при связке может выдать error-500
-          association: 'DebtCalcs',
-          where: { is_confirmed: 1, is_cancel: 0 } as WhereOptions<DebtCalc>,
-        },
-      ],
-    });
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const calculations_in_agreements = debt.DebtCalcs!.filter(
-      (item) =>
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        moment(link.Agreement!.conclusion_date)
-          .startOf('day')
-          .isBefore(moment(item.calc_date)) &&
-        moment(link.Agreement?.finish_date || undefined)
-          .endOf('day')
-          .isAfter(moment(item.calc_date)),
-    );
-    const calcs_before_agreement = calculations_in_agreements.filter((item) =>
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      moment(link.Agreement!.conclusion_date).isAfter(moment(item.dt)),
-    );
-    const first_payment = _.minBy(calculations_in_agreements, 'calc_date');
-    const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
-    const data: PreviewDebt = {
-      contract: debt.contract,
-      before_agreement: round(_.sumBy(calcs_before_agreement, 'sum')), // 1 - переменная, 2 - по которому суммируем
-      first_payment: first_payment?.sum || null,
-      first_payment_date: first_payment?.calc_date || null,
-      last_payment: last_payment?.sum || null,
-      last_payment_date: last_payment?.calc_date || null,
-      sum_payments: round(_.sumBy(calculations_in_agreements, 'sum')),
-      payable_status:
-        (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
-      portfolio: debt.r_portfolio_id,
-      status: debt.status,
-    };
-    try {
-      await link.update(data);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-
-    const agreement = await this.modelAgreement.findOne({
-      where: { id: id_agreement },
-    });
-    await agreement?.update({
-      payable_status: data.payable_status,
-    });
+    return await personPreview.update(ContactPerson);
   }
 
   /**
-   *
    * @param id_agreement соглас
    * @param link_debts связанные долги
    * @returns апдейт обновленных данных
    */
   async updateCurrentAgreement(id_agreement: number) {
-    /**
-     * @agrs
-     */
     const agreement = await Agreement.findOne({
       where: {
         id: id_agreement,
@@ -156,9 +81,7 @@ export class PreviewGeneratorService {
       },
     );
     if (created) return personPreview;
-    /**
-     * @LINKS
-     */
+
     const link_debts = await this.modelAgreementDebtLink.findAll({
       where: {
         id_agreement: id_agreement,
@@ -169,19 +92,14 @@ export class PreviewGeneratorService {
         attributes: ['conclusion_date', 'finish_date'],
       },
     });
-    /**
-     * @if если у согласа есть долги => пробегаемся по ним
-     */
+
     if (link_debts)
-      /**
-       * Апдейт по долгу
-       */
       for (const link of link_debts) {
         const debt = await link?.getDebt({
           include: [
             { association: 'LastCalcs' },
             {
-              required: false, // debt_calc может быть пустой, при связке может выдать error-500
+              required: false,
               association: 'DebtCalcs',
               where: {
                 is_confirmed: 1,
@@ -222,39 +140,39 @@ export class PreviewGeneratorService {
           status: debt.status,
         };
         try {
+          await link.update(data);
           await agreement.update({
             debt_count: link_debts.length,
           });
-          await link.update(data);
+          if (link_debts.some((item) => item.payable_status === true)) {
+            await agreement.update({ payable_status: true });
+          } else {
+            await agreement.update({ payable_status: false });
+          }
+
+          console.log(
+            'ID AGREEMENT'.green,
+            agreement.id,
+            ', debt_count: '.green,
+            agreement.debt_count,
+            '\n',
+            '\n',
+            'DEBT'.green,
+            data,
+          );
         } catch (error) {
-          console.log(error);
+          console.log(`Error: ${error}`.red);
+          throw error;
         }
       }
-    /**
-     * я знаю что в теории этот кусок кода можно упростить, написав:
-     * this.generateDebtPreview()
-     * но по скольку если и этот сейчас работает, то желания менять
-     * у меня нет
-     */
-    if (link_debts.some((item) => item.payable_status === true)) {
-      await agreement.update({ payable_status: true });
-    } else {
-      await agreement.update({ payable_status: false });
-    }
-    /**
-     * @returns
-     */
   }
 
-  /**
-   * методы сделаны для крона
-   */
   syncDebts() {
     return from(this.modelAgreementDebtLink.findAll()).pipe(
       mergeMap((items) =>
         of(...items).pipe(
           mergeMap((item) =>
-            from(this.generateDebtPreview(item)).pipe(
+            from(this.updateCurrentAgreement(item.id_agreement)).pipe(
               catchError(() => this.writeError(item)),
             ),
           ),
@@ -282,44 +200,7 @@ export class PreviewGeneratorService {
     await data.save();
   }
   async syncPreview() {
-    const agreements = await this.modelAgreement.findAll();
-    for (const agreement of agreements) {
-      const count = await this.modelAgreementDebtLink.findAll({
-        where: {
-          id_agreement: agreement.id,
-        },
-      });
-      agreement.update({
-        debt_count: count.length,
-      });
-    }
     const sync = this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
     return sync;
-  }
-  async rjakaMethod() {
-    console.log('Executing RJAKA METHOD'.red);
-    const personPreviewList: PersonPreview[] = [];
-    const agreements = await this.modelAgreement.findAll();
-    /**
-     * @todo
-     * Соглашения 266(565), 733(134-136), 773(426), 870(506, 669) - проблемные запросы
-     */
-    for (const agreement of agreements) {
-      await this.updateCurrentAgreement(agreement.id);
-      const links = await this.modelAgreementDebtLink.findAll({
-        where: {
-          id_agreement: agreement.id,
-        },
-      });
-      if (links.length > 0) {
-        for (const link of links) {
-          this.generateDebtPreview({
-            id_agreement: link.id_agreement,
-            id_debt: link.id_debt,
-          });
-        }
-      }
-    }
-    return personPreviewList;
   }
 }

@@ -138,10 +138,6 @@ export class AgreementsService {
       this.previewGenerator.updateCurrentAgreement(id_agreement);
     return singleSync;
   }
-  syncRjaka() {
-    const rjaka = this.previewGenerator.rjakaMethod();
-    return rjaka;
-  }
 
   /**
    *
