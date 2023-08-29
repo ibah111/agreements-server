@@ -131,7 +131,6 @@ export class AgreementsService {
    */
   syncronize() {
     const syncPreview = this.previewGenerator.syncPreview();
-
     return syncPreview;
   }
   singleSync(id_agreement: number) {

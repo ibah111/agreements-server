@@ -74,7 +74,7 @@ export class AgreementToDebtSerivce {
         where: { id_agreement: data.id_agreement, id_debt: data.id_debt },
         defaults: { id_agreement: data.id_agreement, id_debt: data.id_debt },
       });
-    const preview_debt = await this.previewGenerator.generateDebtPreview(data);
+    const preview_debt = this.previewGenerator.generateDebtPreview(data);
     if (created) return [agreementToDebt, preview_debt];
     else return;
   }
@@ -82,8 +82,9 @@ export class AgreementToDebtSerivce {
   async deleteAgreementToDebt(data: DeleteAgrementToDebtInput) {
     const number = await this.modelAgreementDebtsLink.destroy({
       where: { id_agreement: data.id_agreement, id_debt: data.id_debt },
+      logging: console.log,
     });
-    await this.previewGenerator.updateCurrentAgreement(data.id_agreement);
+    this.previewGenerator.updateCurrentAgreement(data.id_agreement);
     return number > 0;
   }
 
