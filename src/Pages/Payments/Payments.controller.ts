@@ -22,7 +22,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
   @Post()
   createPaymentSchedule(@Body() body: PaymentsInput) {
-    return this.paymentsService.createPaymentsSchedule(body);
+    return this.paymentsService.createPaymentsSchedule(body, body.x);
   }
 
   @Get(':id')

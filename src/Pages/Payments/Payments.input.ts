@@ -24,6 +24,11 @@ export class PaymentsInput {
   @IsBoolean()
   @Expose()
   status: boolean;
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  x: number;
 }
 
 export class updateStatusInput {
