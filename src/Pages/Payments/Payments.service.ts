@@ -55,16 +55,22 @@ export class PaymentsService {
         'Соглашения не найдено. Возможно оно не существует',
       ),
     });
+    await this.modelPayments.create({
+      ...data,
+      pay_day: data.pay_day,
+      id_agreement: agreement.id,
+    });
     const date = data.pay_day;
     if (agreement)
-      for (let index = 0; index < x; index++) {
-        const new_date = this.addMonths(date, 1);
-        await this.modelPayments.create({
-          ...data,
-          id_agreement: agreement.id,
-          pay_day: new_date,
-        });
-      }
+      if (x > 1)
+        for (let index = 0; index < x - 1; index++) {
+          const new_date = this.addMonths(date, 1);
+          await this.modelPayments.create({
+            ...data,
+            id_agreement: agreement.id,
+            pay_day: new_date,
+          });
+        }
   }
 
   async deletePayment(id: number) {
