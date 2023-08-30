@@ -5,12 +5,17 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { PaymentsService } from './Payments.service';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
-import { PaymentsInput, updateStatusInput } from './Payments.input';
+import {
+  InputPaymentsUpdate,
+  PaymentsInput,
+  updateStatusInput,
+} from './Payments.input';
 import { CanGuard } from '../../Modules/Casl/Can.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
@@ -43,5 +48,14 @@ export class PaymentsController {
   @Get('getCalcsInMonth/:id')
   getCalcsInMonth(@Param('id', ParseIntPipe) id_payment: number) {
     return this.paymentsService.getCalcsInMonth(id_payment);
+  }
+
+  @Patch('updateCalc/:id')
+  updateCalc(
+    @Param('id', ParseIntPipe) id_payment: number,
+    @Body() body: InputPaymentsUpdate,
+  ) {
+    body.id = id_payment;
+    return this.paymentsService.updateCalc(body);
   }
 }

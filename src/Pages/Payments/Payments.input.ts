@@ -41,3 +41,18 @@ export class updateStatusInput {
   @IsNumber()
   id_agreement: number;
 }
+
+export class InputPaymentsUpdate {
+  id: number;
+
+  @Expose()
+  @IsDate()
+  @Type(() => Date)
+  @ApiProperty({ type: Date, required: true, nullable: false })
+  pay_day: Date;
+
+  @Expose()
+  @IsNumber()
+  @ApiProperty({ type: Number, required: true, nullable: false })
+  sum_owe: number;
+}

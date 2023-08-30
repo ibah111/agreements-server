@@ -1,7 +1,11 @@
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
-import { PaymentsInput, updateStatusInput } from './Payments.input';
+import {
+  InputPaymentsUpdate,
+  PaymentsInput,
+  updateStatusInput,
+} from './Payments.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { Debt, DebtCalc } from '@contact/models';
 import { Op } from '@sql-tools/sequelize';
@@ -157,5 +161,12 @@ export class PaymentsService {
       .filter((item) => moment(item.calc_date).month() === p_month);
 
     return all_payments_month.map((item) => item.debt);
+  }
+
+  async updateCalc(body: InputPaymentsUpdate) {
+    const [updateNumber] = await this.modelPayments.update(body, {
+      where: { id: body.id },
+    });
+    return updateNumber > 0;
   }
 }
