@@ -134,7 +134,6 @@ export class PaymentsService {
       payment?.update({ status: true });
     }
   }
-
   /**
    * Get req.
    * @TODO
@@ -184,5 +183,22 @@ export class PaymentsService {
       where: { id: body.id },
     });
     return updateNumber > 0;
+  }
+
+  async updateAllCalcsStatuses() {
+    const agreements = await this.modelAgreement.findAll();
+    for (const agr of agreements) {
+      const payments = await this.modelPayments.findAll({
+        where: {
+          id_agreement: agr.id,
+        },
+      });
+      for (const payment of payments) {
+        this.statusUpdate({
+          id_payment: payment.id,
+          id_agreement: payment.id_agreement,
+        });
+      }
+    }
   }
 }

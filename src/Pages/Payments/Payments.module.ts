@@ -13,5 +13,6 @@ import { Debt, DebtCalc } from '@contact/models';
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}

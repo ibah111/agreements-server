@@ -149,17 +149,6 @@ export class PreviewGeneratorService {
           } else {
             await agreement.update({ payable_status: false });
           }
-
-          console.log(
-            'ID AGREEMENT'.green,
-            agreement.id,
-            ', debt_count: '.green,
-            agreement.debt_count,
-            '\n',
-            '\n',
-            'DEBT'.green,
-            data,
-          );
         } catch (error) {
           console.log(`Error: ${error}`.red);
           throw error;
@@ -201,6 +190,7 @@ export class PreviewGeneratorService {
   }
   async syncPreview() {
     const sync = this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
+
     return sync;
   }
 }

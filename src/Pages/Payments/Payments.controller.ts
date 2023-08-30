@@ -63,4 +63,9 @@ export class PaymentsController {
     body.id = id_payment;
     return this.paymentsService.updateCalc(body);
   }
+
+  @Post('updateAllCalcsStatuses')
+  updateAllCalcsStatuses() {
+    return this.paymentsService.updateAllCalcsStatuses();
+  }
 }
