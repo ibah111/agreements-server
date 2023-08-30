@@ -40,6 +40,16 @@ export class PaymentsService {
       },
     });
   }
+
+  async getPayment(id: number) {
+    const payment = await this.modelPayments.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return payment;
+  }
+
   /**
    *
    * @param data model input

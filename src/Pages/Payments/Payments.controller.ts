@@ -35,7 +35,12 @@ export class PaymentsController {
     return this.paymentsService.getSchedule(id_agreement);
   }
 
-  @Delete(':id')
+  @Get('Payment/:id')
+  getPayment(@Param('id', ParseIntPipe) id: number) {
+    return this.paymentsService.getPayment(id);
+  }
+
+  @Delete('Payment/:id')
   deletePayment(@Param('id', ParseIntPipe) id: number) {
     return this.paymentsService.deletePayment(id);
   }
