@@ -176,7 +176,10 @@ export class PaymentsService {
       .map((debt) => ({ debt, calc_date: debt.calc_date }))
       .filter((item) => moment(item.calc_date).year() === p_year)
       .filter((item) => moment(item.calc_date).month() === p_month);
-
+    const all_pays = all_payments_month.map((item) => item.debt.sum);
+    payment.update({
+      sum_payed: all_pays.reduce((prev, curr) => prev + curr, 0),
+    });
     return all_payments_month.map((item) => item.debt);
   }
 
@@ -251,12 +254,16 @@ export class PaymentsService {
       },
       attributes: ['parent_id', 'id', 'sum', 'calc_date'],
     });
-    const debtCalcs = debt.map((item) =>
-      item.DebtCalcs?.map((item) => item.sum),
-    );
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const totalDC = debtCalcs.flat().reduce((p, c) => p! + c!, 0);
-    const total = calcs.reduce((prev, curr) => prev + curr, 0);
+    const debtCalcs = debt
+      .map((item) => item.DebtCalcs?.map((item) => item.sum))
+      .flat();
+    /**
+     * while (condition) { do this }
+     * @return До тех пор, пока есть хотя бы один не исполненный месячный платёж
+     * цикл будет исполняться
+     */
+    payments.some((item) => item.status === false);
+
     return [payments, dc];
   }
 }

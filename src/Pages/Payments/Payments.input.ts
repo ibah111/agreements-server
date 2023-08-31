@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsBoolean, IsDate, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+} from 'class-validator';
 
 export class PaymentsInput {
   @ApiProperty()
@@ -19,6 +25,12 @@ export class PaymentsInput {
   @Expose()
   @IsNumber()
   sum_owe: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsOptional()
+  @IsNumber()
+  sum_payed: number;
 
   @ApiProperty()
   @IsBoolean()
