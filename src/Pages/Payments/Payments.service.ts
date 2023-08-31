@@ -132,6 +132,8 @@ export class PaymentsService {
     if (!payment?.sum_owe) return;
     if (payment?.sum_owe <= sum_payments_month) {
       payment?.update({ status: true });
+    } else {
+      payment?.update({ status: false });
     }
   }
   /**
@@ -202,5 +204,59 @@ export class PaymentsService {
         });
       }
     }
+  }
+
+  async newPaymentLogic(id_agreement: number) {
+    /**
+     * All payments in agreement.
+     */
+    const payments = await this.modelPayments.findAll({
+      where: {
+        id_agreement: id_agreement,
+      },
+    });
+    /**
+     * Sum_owe array
+     */
+    const calcs = payments.map((item) => item.sum_owe);
+    /**
+     * Total owe
+     * @returns условные 30к в agreement = 1
+     */
+    /**
+     * Find Agrs
+     */
+    const agr = await this.modelAgreement.findOne({
+      where: {
+        id: id_agreement,
+      },
+    });
+    if (!agr) return;
+    /**
+     *  debts
+     */
+    const debt = await this.modelDebt.findAll({
+      where: {
+        parent_id: agr.person_id,
+      },
+    });
+    const dc = await this.modelDebtCalc.findAll({
+      where: {
+        parent_id: {
+          [Op.in]: debt.map((item) => item.id),
+        },
+        calc_date: {
+          [Op.gte]: agr.conclusion_date,
+        },
+      },
+      attributes: ['parent_id', 'id', 'sum', 'calc_date'],
+    });
+    const debtCalcs = debt.map((item) =>
+      item.DebtCalcs?.map((item) => item.sum),
+    );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const totalDC = debtCalcs.flat().reduce((p, c) => p! + c!, 0);
+    const total = calcs.reduce((prev, curr) => prev + curr, 0);
+    return [payments, dc];
   }
 }

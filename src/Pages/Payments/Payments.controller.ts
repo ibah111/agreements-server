@@ -19,10 +19,10 @@ import {
 import { CanGuard } from '../../Modules/Casl/Can.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
-@UseGuards(CanGuard)
-@UseGuards(AuthGuard)
+// @UseGuards(CanGuard)
+// @UseGuards(AuthGuard)
 @Controller('Payments')
-@ApiBasicAuth()
+// @ApiBasicAuth()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
   @Post()
@@ -67,5 +67,10 @@ export class PaymentsController {
   @Post('updateAllCalcsStatuses')
   updateAllCalcsStatuses() {
     return this.paymentsService.updateAllCalcsStatuses();
+  }
+
+  @Get('getTotalCalcs/:id')
+  getTotalCalcs(@Param('id', ParseIntPipe) id_agreement: number) {
+    return this.paymentsService.newPaymentLogic(id_agreement);
   }
 }
