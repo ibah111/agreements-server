@@ -57,6 +57,7 @@ export class PreviewGeneratorService {
   }
 
   /**
+   * Обновление согласа целиком
    * @param id_agreement соглас
    * @param link_debts связанные долги
    * @returns апдейт обновленных данных

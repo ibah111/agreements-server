@@ -26,12 +26,12 @@ export class CronService {
   private readonly logger = new Logger(CronService.name);
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'midnight_update' })
-  syncronize() {
-    return this.sync.syncPreview();
-  }
-
-  @Cron(CronExpression.EVERY_12_HOURS, { name: 'midnight_status_update' })
-  syncronizeStatuses() {
-    return this.pays.updateAllCalcsStatuses();
+  async syncronize() {
+    await this.sync
+      .syncPreview()
+      .then(() => console.log('Sync preview done'.green));
+    await this.pays
+      .updateAllCalcsStatuses()
+      .then(() => console.log('update statuses done'.green));
   }
 }

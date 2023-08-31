@@ -187,12 +187,14 @@ export class PaymentsService {
 
   async updateAllCalcsStatuses() {
     const agreements = await this.modelAgreement.findAll();
+
     for (const agr of agreements) {
       const payments = await this.modelPayments.findAll({
         where: {
           id_agreement: agr.id,
         },
       });
+      console.log(agr.id, payments);
       for (const payment of payments) {
         this.statusUpdate({
           id_payment: payment.id,
