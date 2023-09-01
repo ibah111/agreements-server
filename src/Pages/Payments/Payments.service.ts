@@ -8,8 +8,10 @@ import {
 } from './Payments.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { Debt, DebtCalc } from '@contact/models';
-import { Op } from '@sql-tools/sequelize';
+import { Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
+import _ from 'lodash';
+import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 
 @Injectable()
 export class PaymentsService {
@@ -135,6 +137,15 @@ export class PaymentsService {
     } else {
       payment?.update({ status: false });
     }
+    if (payment.sum_owe <= payment.sum_payed) {
+      payment.update({
+        status: true,
+      });
+    } else {
+      payment.update({
+        status: false,
+      });
+    }
   }
   /**
    * Get req.
@@ -163,24 +174,17 @@ export class PaymentsService {
         parent_id: {
           [Op.in]: debts_ids,
         },
+        calc_date: {
+          [Op.between]: [
+            moment(payment?.pay_day).startOf('month'),
+            moment(payment?.pay_day).endOf('month'),
+          ],
+        },
       },
       attributes: ['id', 'parent_id', 'sum', 'calc_date', 'purpose', 'dt'],
     });
 
-    const p_year = moment(payment?.pay_day).year();
-    if (!p_year) return;
-    const p_month = moment(payment?.pay_day).month();
-    if (!p_month) return;
-
-    const all_payments_month = calcs
-      .map((debt) => ({ debt, calc_date: debt.calc_date }))
-      .filter((item) => moment(item.calc_date).year() === p_year)
-      .filter((item) => moment(item.calc_date).month() === p_month);
-    const all_pays = all_payments_month.map((item) => item.debt.sum);
-    payment.update({
-      sum_payed: all_pays.reduce((prev, curr) => prev + curr, 0),
-    });
-    return all_payments_month.map((item) => item.debt);
+    return calcs;
   }
 
   async updateCalc(body: InputPaymentsUpdate) {
@@ -190,22 +194,101 @@ export class PaymentsService {
     return updateNumber > 0;
   }
 
-  async updateAllCalcsStatuses() {
-    const agreements = await this.modelAgreement.findAll();
-
-    for (const agr of agreements) {
-      const payments = await this.modelPayments.findAll({
-        where: {
-          id_agreement: agr.id,
+  async updateSchedule(id_agreement: number) {
+    const agr = await this.modelAgreement.findOne({
+      where: {
+        id: id_agreement,
+      },
+    });
+    const debts = await this.modelDebt.findAll({
+      where: {
+        parent_id: agr?.person_id,
+      },
+    });
+    const debts_ids = debts.map((item) => item.id);
+    const calcs = await this.modelDebtCalc.findAll({
+      where: {
+        parent_id: {
+          [Op.in]: debts_ids,
         },
-      });
-      console.log(agr.id, payments);
-      for (const payment of payments) {
-        this.statusUpdate({
-          id_payment: payment.id,
-          id_agreement: payment.id_agreement,
-        });
+      },
+      attributes: ['id', 'parent_id', 'sum', 'calc_date', 'purpose', 'dt'],
+    });
+    const pays = await this.modelPayments.findAll({
+      where: {
+        id_agreement: id_agreement,
+      },
+    });
+    for (const pay of pays) {
+      //compare yaer
+      const p_year = moment(pay?.pay_day).year();
+      if (!p_year) return;
+      //compare month
+      const p_month = moment(pay?.pay_day).month();
+      if (!p_month) return;
+      const all_payments_month = calcs
+        .map((debt) => ({ debt, calc_date: debt.calc_date }))
+        .filter((item) => moment(item.calc_date).year() === p_year)
+        .filter((item) => moment(item.calc_date).month() === p_month);
+      //summ all payments in DC
+      await pay
+        .update({
+          sum_payed: _.sumBy(all_payments_month, (item) => item.debt?.sum || 0),
+        })
+        .then(() =>
+          pay.update({
+            sum_left: pay.sum_owe - pay.sum_payed,
+          }),
+        );
+    }
+  }
+  /**
+   * Нетрогай, должно работать))))
+   * @param calcs
+   * @param payments
+   */
+  async LogicByAlex(calcs: DebtCalc[], payments: Payments[]) {
+    let current_calc = 0;
+    let current_pay = 0;
+    const last_calc = calcs.length - 1;
+    const last_pay = payments.length - 1;
+    let wallet = 0;
+    while (true) {
+      wallet += calcs[current_calc].sum;
+      while (true) {
+        if (wallet === 0) break;
+        const pay = payments[current_pay];
+        if (!pay) break;
+        const sum_left = pay.sum_left - wallet;
+        if (sum_left < 0) {
+          wallet -= pay.sum_left;
+          pay.sum_left = 0;
+        } else {
+          pay.sum_left = sum_left;
+          wallet = 0;
+        }
+        /**
+         * Надо написать связь многое ко многим
+         * <----  Здесь
+         * pay.calcs.push(calcs[current_calc].id);
+         * <----  Здесь
+         */
+        if (pay.sum_left === 0) {
+          pay.status = true;
+          await pay.save();
+          current_pay++;
+        }
+        if (wallet === 0 || (pay.sum_left > 0 && last_pay === current_pay))
+          break;
       }
+      if (
+        last_calc === current_calc ||
+        (wallet > 0 && last_pay === current_pay)
+      ) {
+        await payments[current_pay].save();
+        break;
+      }
+      current_calc++;
     }
   }
 
@@ -213,57 +296,53 @@ export class PaymentsService {
     /**
      * All payments in agreement.
      */
-    const payments = await this.modelPayments.findAll({
+    const pays = await this.modelPayments.findAll({
       where: {
         id_agreement: id_agreement,
       },
     });
-    /**
-     * Sum_owe array
-     */
-    const calcs = payments.map((item) => item.sum_owe);
-    /**
-     * Total owe
-     * @returns условные 30к в agreement = 1
-     */
-    /**
-     * Find Agrs
-     */
-    const agr = await this.modelAgreement.findOne({
-      where: {
-        id: id_agreement,
-      },
-    });
-    if (!agr) return;
-    /**
-     *  debts
-     */
-    const debt = await this.modelDebt.findAll({
-      where: {
-        parent_id: agr.person_id,
-      },
-    });
-    const dc = await this.modelDebtCalc.findAll({
-      where: {
-        parent_id: {
-          [Op.in]: debt.map((item) => item.id),
-        },
-        calc_date: {
-          [Op.gte]: agr.conclusion_date,
-        },
-      },
-      attributes: ['parent_id', 'id', 'sum', 'calc_date'],
-    });
-    const debtCalcs = debt
-      .map((item) => item.DebtCalcs?.map((item) => item.sum))
-      .flat();
-    /**
-     * while (condition) { do this }
-     * @return До тех пор, пока есть хотя бы один не исполненный месячный платёж
-     * цикл будет исполняться
-     */
-    payments.some((item) => item.status === false);
+    const plus = pays.map((i) => i.sum_left).filter((i) => i > 0);
+    console.log(plus);
+    const minus = pays.map((i) => i.sum_left).filter((i) => i < 0);
+    if (!minus) return;
+    if (!plus) return;
+    console.log('minus.length ', minus.length);
+    for (let index = minus.length; index == 0; index--) {
+      /**
+       * main expression that takes first element of plus.array and minus array
+       * after that plusing over payed (sum_left that minus) value to sum_left value
+       */
 
-    return [payments, dc];
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const expr = _.head(minus)! + _.head(plus)!;
+      console.log(_.head(minus), ' + ', _.head(plus), ' = ', expr);
+      if (expr === 0) {
+        minus.slice(0);
+      }
+      /**
+       * main action
+       */
+      if (expr < 0) {
+        pays[0]
+          .update({
+            sum_left: 0,
+            sum_payed: _.head(plus),
+          })
+          .then((pays) => {
+            console.log('pays: ', pays[0]);
+            plus.slice(0);
+          });
+        pays
+          .filter((i) => i.sum_left < 0)[0]
+          .update({
+            sum_left: expr,
+          })
+          .then(() => console.log(`Sum Left was changed to ${expr}`));
+
+        console.log('plus arr: ', plus);
+      }
+    }
+
+    return [minus, plus];
   }
 }
