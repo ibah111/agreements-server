@@ -7,9 +7,6 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
       await context.removeColumn('AgreementToDebtLink', 'debt_sum', {
         transaction: t,
       }),
-      await context.removeColumn('AgreementToDebtLink', 'name', {
-        transaction: t,
-      }),
     ]),
   );
 export const down: MigrationFn<QueryInterface> = async ({ context }) =>
@@ -22,16 +19,6 @@ export const down: MigrationFn<QueryInterface> = async ({ context }) =>
           type: DataTypes.MONEY,
         },
         { transaction: t },
-      ),
-      await context.addColumn(
-        'AgreementToDebtLink',
-        'name',
-        {
-          type: DataTypes.STRING,
-        },
-        {
-          transaction: t,
-        },
       ),
     ]),
   );

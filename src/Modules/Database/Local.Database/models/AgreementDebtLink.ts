@@ -75,6 +75,8 @@ export default class AgreementDebtsLink
   portfolio: number | null;
   @Column(DataType.INTEGER)
   status: number | null;
+  @Column(DataType.STRING)
+  name: string | null;
   @Column(DataType.INTEGER)
   error: number | null;
   @BelongsTo(() => Agreement)
