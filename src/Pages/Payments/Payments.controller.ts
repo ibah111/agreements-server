@@ -64,13 +64,13 @@ export class PaymentsController {
     return this.paymentsService.updateCalc(body);
   }
 
-  @Post('updateAllCalcsStatuses')
-  updateAllCalcsStatuses() {
-    return this.paymentsService.updateAllCalcsStatuses();
-  }
-
   @Get('getTotalCalcs/:id')
   getTotalCalcs(@Param('id', ParseIntPipe) id_agreement: number) {
+    return this.paymentsService.newPaymentLogic(id_agreement);
+  }
+
+  @Post('NPL/:id')
+  newPaymentLogic(@Param('id', ParseIntPipe) id_agreement: number) {
     return this.paymentsService.newPaymentLogic(id_agreement);
   }
 }

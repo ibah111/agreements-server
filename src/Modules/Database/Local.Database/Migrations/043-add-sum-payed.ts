@@ -12,6 +12,14 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
         },
         { transaction: t },
       ),
+      await context.addColumn(
+        'Payments',
+        'sum_left',
+        {
+          type: DataTypes.MONEY,
+        },
+        { transaction: t },
+      ),
     ]),
   );
 
@@ -19,5 +27,6 @@ export const down: MigrationFn<QueryInterface> = async ({ context }) =>
   await context.sequelize.transaction(async (t) =>
     Promise.all([
       await context.removeColumn('Payments', 'sum_payed', { transaction: t }),
+      await context.removeColumn('Payments', 'sum_left', { transaction: t }),
     ]),
   );

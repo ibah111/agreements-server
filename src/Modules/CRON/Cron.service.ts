@@ -30,8 +30,6 @@ export class CronService {
     await this.sync
       .syncPreview()
       .then(() => console.log('Sync preview done'.green));
-    await this.pays
-      .updateAllCalcsStatuses()
-      .then(() => console.log('update statuses done'.green));
+    /**@TODO needs new method that updates all statuses */
   }
 }

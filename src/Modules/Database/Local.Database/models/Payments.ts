@@ -55,6 +55,9 @@ export class Payments extends Model<
   @Column(DataType.NUMBER)
   sum_payed: number;
 
+  @Column(DataType.NUMBER)
+  sum_left: number;
+
   @Column(DataType.BOOLEAN)
   status: boolean;
 }
