@@ -156,32 +156,16 @@ export class PaymentsService {
    * @returns all payments from DebtCalc that comarison with month and year
    */
   async getCalcsInMonth(id_payment: number) {
-    const payment = await this.modelPayments.findOne({
-      where: { id: id_payment },
-    });
-
-    if (!payment) return;
-    const agreement = await this.modelAgreement.findOne({
-      where: { id: payment.id_agreement },
-    });
-
-    const debts = await this.modelDebt.findAll({
+    const debts_ids = await this.modelPaymentToCalc.findAll({
       where: {
-        parent_id: agreement?.person_id,
+        id_payment,
       },
     });
-    const debts_ids = debts.map((item) => item.id);
 
     const calcs = await this.modelDebtCalc.findAll({
       where: {
-        parent_id: {
-          [Op.in]: debts_ids,
-        },
-        calc_date: {
-          [Op.between]: [
-            moment(payment?.pay_day).startOf('month'),
-            moment(payment?.pay_day).endOf('month'),
-          ],
+        id: {
+          [Op.in]: debts_ids.map((i) => i.id_debt_calc),
         },
       },
       attributes: ['id', 'parent_id', 'sum', 'calc_date', 'purpose', 'dt'],

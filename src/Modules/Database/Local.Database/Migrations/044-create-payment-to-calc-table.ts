@@ -22,6 +22,9 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
           transaction: t,
         },
       ),
+      await context.removeColumn('Payments', 'sum_payed', {
+        transaction: t,
+      }),
     ]),
   );
 
@@ -31,5 +34,13 @@ export const down: MigrationFn<QueryInterface> = async ({ context }) =>
       await context.dropTable('PaymentsToCalc', {
         transaction: t,
       }),
+      await context.addColumn(
+        'Payments',
+        'sum_payed',
+        {
+          type: DataTypes.MONEY,
+        },
+        { transaction: t },
+      ),
     ]),
   );
