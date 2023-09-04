@@ -8,10 +8,10 @@ import {
 } from './Payments.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { Debt, DebtCalc } from '@contact/models';
-import { Op, Sequelize } from '@sql-tools/sequelize';
+import { MIS, Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
 import _ from 'lodash';
-import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
+import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 
 @Injectable()
 export class PaymentsService {
@@ -24,6 +24,9 @@ export class PaymentsService {
     private readonly modelDebt: typeof Debt,
     @InjectModel(DebtCalc, 'contact')
     private readonly modelDebtCalc: typeof DebtCalc,
+
+    @InjectModel(PaymentToCalc, 'local')
+    private readonly modelPaymentToCalc: typeof PaymentToCalc,
   ) {}
 
   addMonths(date: Date, x: number) {
@@ -247,7 +250,7 @@ export class PaymentsService {
    * @param calcs
    * @param payments
    */
-  async LogicByAlex(calcs: DebtCalc[], payments: Payments[]) {
+  async createPaymentsToCalc(calcs: DebtCalc[], payments: MIS<Payments>[]) {
     let current_calc = 0;
     let current_pay = 0;
     const last_calc = calcs.length - 1;
@@ -260,6 +263,7 @@ export class PaymentsService {
         const pay = payments[current_pay];
         if (!pay) break;
         const sum_left = pay.sum_left - wallet;
+
         if (sum_left < 0) {
           wallet -= pay.sum_left;
           pay.sum_left = 0;
@@ -267,6 +271,7 @@ export class PaymentsService {
           pay.sum_left = sum_left;
           wallet = 0;
         }
+        await pay.createCalc({ id_debt_calc: calcs[current_calc].id });
         /**
          * Надо написать связь многое ко многим
          * <----  Здесь
@@ -285,64 +290,62 @@ export class PaymentsService {
         last_calc === current_calc ||
         (wallet > 0 && last_pay === current_pay)
       ) {
-        await payments[current_pay].save();
+        if (payments[current_pay]) await payments[current_pay].save();
         break;
       }
       current_calc++;
     }
+    return wallet;
   }
-
-  async newPaymentLogic(id_agreement: number) {
-    /**
-     * All payments in agreement.
-     */
-    const pays = await this.modelPayments.findAll({
+  /**
+   * Реализует л
+   * @param id_agreement
+   * @returns
+   */
+  async createCalculationToCalcs(id_agreement: number) {
+    const agr = await this.modelAgreement.findOne({
       where: {
-        id_agreement: id_agreement,
+        id: id_agreement,
+      },
+      include: {
+        association: 'DebtLinks',
+        attributes: ['id_debt'],
       },
     });
-    const plus = pays.map((i) => i.sum_left).filter((i) => i > 0);
-    console.log(plus);
-    const minus = pays.map((i) => i.sum_left).filter((i) => i < 0);
-    if (!minus) return;
-    if (!plus) return;
-    console.log('minus.length ', minus.length);
-    for (let index = minus.length; index == 0; index--) {
-      /**
-       * main expression that takes first element of plus.array and minus array
-       * after that plusing over payed (sum_left that minus) value to sum_left value
-       */
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const expr = _.head(minus)! + _.head(plus)!;
-      console.log(_.head(minus), ' + ', _.head(plus), ' = ', expr);
-      if (expr === 0) {
-        minus.slice(0);
-      }
-      /**
-       * main action
-       */
-      if (expr < 0) {
-        pays[0]
-          .update({
-            sum_left: 0,
-            sum_payed: _.head(plus),
-          })
-          .then((pays) => {
-            console.log('pays: ', pays[0]);
-            plus.slice(0);
-          });
-        pays
-          .filter((i) => i.sum_left < 0)[0]
-          .update({
-            sum_left: expr,
-          })
-          .then(() => console.log(`Sum Left was changed to ${expr}`));
-
-        console.log('plus arr: ', plus);
-      }
-    }
-
-    return [minus, plus];
+    const collection = agr?.DebtLinks?.map((i) => i.id_debt) || [0];
+    console.log(collection);
+    await this.modelPayments.update(
+      {
+        sum_left: Sequelize.col('sum_owe'),
+        status: false,
+      },
+      {
+        where: {
+          id_agreement,
+        },
+      },
+    );
+    const payments = await this.modelPayments.findAll({
+      where: {
+        id_agreement,
+      },
+    });
+    await this.modelPaymentToCalc.destroy({
+      where: { id_payment: payments.map((item) => item.id) },
+    });
+    const calcs = await this.modelDebtCalc.findAll({
+      raw: true,
+      where: {
+        parent_id: collection,
+        calc_date: {
+          [Op.between]: [
+            moment(agr?.conclusion_date).toDate(),
+            moment(agr?.finish_date || undefined).toDate(),
+          ],
+        },
+      },
+    });
+    return this.createPaymentsToCalc(calcs, payments);
   }
 }

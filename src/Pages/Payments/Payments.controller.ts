@@ -64,13 +64,8 @@ export class PaymentsController {
     return this.paymentsService.updateCalc(body);
   }
 
-  @Get('getTotalCalcs/:id')
-  getTotalCalcs(@Param('id', ParseIntPipe) id_agreement: number) {
-    return this.paymentsService.newPaymentLogic(id_agreement);
-  }
-
-  @Post('NPL/:id')
-  newPaymentLogic(@Param('id', ParseIntPipe) id_agreement: number) {
-    return this.paymentsService.newPaymentLogic(id_agreement);
+  @Post('aboba/:id')
+  createCalculationToCalcs(@Param('id', ParseIntPipe) id_agreement: number) {
+    return this.paymentsService.createCalculationToCalcs(id_agreement);
   }
 }
