@@ -5,6 +5,7 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -20,7 +21,9 @@ import { Agreement } from './Agreement';
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
+  HasManyAttribute,
 } from '@sql-tools/association-literal';
+import { PaymentToCalc } from './PaymentToCalc';
 
 @Table({
   tableName: 'Payments',
@@ -60,4 +63,7 @@ export class Payments extends Model<
 
   @Column(DataType.BOOLEAN)
   status: boolean;
+
+  @HasMany(() => PaymentToCalc)
+  Calcs?: NonAttribute<HasManyAttribute<PaymentToCalc[], 'id_payment'>>;
 }
