@@ -43,6 +43,9 @@ export class PaymentsService {
       where: {
         id_agreement: id_agreement,
       },
+      include: {
+        model: this.modelPaymentToCalc,
+      },
     });
   }
 
