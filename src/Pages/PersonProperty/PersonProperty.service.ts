@@ -55,10 +55,22 @@ export class PersonPropertyService {
    * @param person_id from agreementModel
    * @returns gets property params
    */
-  async getPersonProperties(person_id: number) {
+  async getPersonProperties(id_agreement: number) {
+    const agreement = await this.modelAgreement.findOne({
+      where: { id: id_agreement },
+      include: {
+        model: this.modelAgreementToPersonProperties,
+      },
+    });
+    const linkedProperties =
+      agreement?.PersonPropertiesLinks?.map((i) => i.id_person_property) || [];
+
     const pp = await this.modelPersonProperties.findAll({
       attributes: ['id', 'status', 'fio'],
-      where: { r_person_id: person_id },
+      where: {
+        r_person_id: agreement?.person_id,
+        id: { [Op.notIn]: linkedProperties },
+      },
       include: [
         {
           association: 'StatusDict',
@@ -80,17 +92,6 @@ export class PersonPropertyService {
   async createLinkPersonPropertyToAgreement(
     data: ActionLinkPersonPropertyInput,
   ) {
-    /**
-     * 
-    const ability = this.serviceAbility.createForUser(auth.userLocal);
-    const agreement = await this.modelAgreement.findByPk(data.id_agreement, {
-      attributes: ['id', 'person_id'],
-      rejectOnEmpty: new UnprocessableEntityException(
-        `Соглашение ${data.id_agreement} не найденно`,
-      ),
-    });
-     */
-
     await this.modelPersonProperties.findByPk(data.id_person_property, {
       attributes: ['id'],
       include: [
