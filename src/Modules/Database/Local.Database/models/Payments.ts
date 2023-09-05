@@ -56,9 +56,6 @@ export class Payments extends Model<
   sum_owe: number;
 
   @Column(DataType.NUMBER)
-  sum_payed: number;
-
-  @Column(DataType.NUMBER)
   sum_left: number;
 
   @Column(DataType.BOOLEAN)

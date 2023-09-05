@@ -10,7 +10,6 @@ import { Agreement } from '../../Modules/Database/Local.Database/models/Agreemen
 import { Debt, DebtCalc } from '@contact/models';
 import { MIS, Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
-import _ from 'lodash';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 
 @Injectable()
@@ -143,15 +142,6 @@ export class PaymentsService {
     } else {
       payment?.update({ status: false });
     }
-    if (payment.sum_owe <= payment.sum_payed) {
-      payment.update({
-        status: true,
-      });
-    } else {
-      payment.update({
-        status: false,
-      });
-    }
   }
   /**
    * Get req.
@@ -184,54 +174,6 @@ export class PaymentsService {
     return updateNumber > 0;
   }
 
-  async updateSchedule(id_agreement: number) {
-    const agr = await this.modelAgreement.findOne({
-      where: {
-        id: id_agreement,
-      },
-    });
-    const debts = await this.modelDebt.findAll({
-      where: {
-        parent_id: agr?.person_id,
-      },
-    });
-    const debts_ids = debts.map((item) => item.id);
-    const calcs = await this.modelDebtCalc.findAll({
-      where: {
-        parent_id: {
-          [Op.in]: debts_ids,
-        },
-      },
-      attributes: ['id', 'parent_id', 'sum', 'calc_date', 'purpose', 'dt'],
-    });
-    const pays = await this.modelPayments.findAll({
-      where: {
-        id_agreement: id_agreement,
-      },
-    });
-    for (const pay of pays) {
-      //compare yaer
-      const p_year = moment(pay?.pay_day).year();
-      if (!p_year) return;
-      //compare month
-      const p_month = moment(pay?.pay_day).month();
-      if (!p_month) return;
-      const all_payments_month = calcs
-        .map((debt) => ({ debt, calc_date: debt.calc_date }))
-        .filter((item) => moment(item.calc_date).year() === p_year)
-        .filter((item) => moment(item.calc_date).month() === p_month);
-      //summ all payments in DC
-      await pay
-        .update({
-          sum_payed: _.sumBy(all_payments_month, (item) => item.debt?.sum || 0),
-        })
-        .then(() =>
-          pay.update({
-            sum_left: pay.sum_owe - pay.sum_payed,
-          }),
-        );
-    }
-  }
   /**
    * Нетрогай, должно работать))))
    * @param calcs

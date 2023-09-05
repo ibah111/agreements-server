@@ -30,12 +30,6 @@ export class PaymentsInput {
   @Expose()
   @IsOptional()
   @IsNumber()
-  sum_payed: number;
-
-  @ApiProperty()
-  @Expose()
-  @IsOptional()
-  @IsNumber()
   sum_left: number;
 
   @ApiProperty()
