@@ -139,6 +139,7 @@ export class PreviewGeneratorService {
             (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
           portfolio: debt.r_portfolio_id,
           status: debt.status,
+          name: debt.name,
         };
         try {
           await link.update(data);

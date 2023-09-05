@@ -31,6 +31,7 @@ export interface PreviewDebt {
   sum_payments: number | null;
   portfolio: number | null;
   status: number | null;
+  name: string | null;
 }
 
 @Table({
