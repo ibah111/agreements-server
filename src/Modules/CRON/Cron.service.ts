@@ -25,11 +25,11 @@ export class CronService {
   ) {}
   private readonly logger = new Logger(CronService.name);
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'midnight_update' })
+  @Cron(CronExpression.EVERY_DAY_AT_11AM, { name: 'midnight_update' })
   async syncronize() {
     await this.sync
       .syncPreview()
-      .then(() => console.log('Sync preview done'.green));
-    /**@TODO needs new method that updates all statuses */
+      .then(() => console.log('Sync preview done'.green))
+      .then(() => this.pays.updateAllPayments());
   }
 }

@@ -335,4 +335,14 @@ export class PaymentsService {
     });
     return this.createPaymentsToCalc(calcs, payments);
   }
+  async updateAllPayments() {
+    const agreements = await this.modelAgreement.findAll();
+    for (const agreement of agreements) {
+      this.createCalculationToCalcs(agreement.id).then(() => {
+        console.log(
+          `Agreement ${agreement.id} and it's payments must be updated`.green,
+        );
+      });
+    }
+  }
 }
