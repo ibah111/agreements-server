@@ -13,6 +13,7 @@ import { User } from '../Database/Local.Database/models/User.model';
 import { User_Role } from '../Database/Local.Database/models/User_Role.model';
 import { PersonPreview } from '../Database/Local.Database/models/PersonPreview';
 import { Payments } from '../Database/Local.Database/models/Payments';
+import { Comment } from '../Database/Local.Database/models/Comment';
 export enum Action {
   Manage = 'manage',
   Create = 'create',
@@ -32,6 +33,7 @@ type Subjects =
       | typeof Debt
       | typeof PersonPreview
       | typeof Payments
+      | typeof Comment
     >
   | 'all';
 export type AppAbility = PureAbility<[Action, Subjects]>;
@@ -50,6 +52,7 @@ export class CaslAbilityFactory {
       can([Action.Read], Portfolio);
       can([Action.Read], PersonPreview);
       can([Action.Read], Payments);
+      can([Action.Create, Action.Delete, Action.Read], Comment);
     }
     if (roles.includes('worker')) {
       can([Action.Create, Action.Read], Agreement);
