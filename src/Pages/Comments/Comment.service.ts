@@ -1,6 +1,6 @@
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { ForeignKeyConstraintError } from '@sql-tools/sequelize';
-import { CreateCommentInput } from './Comment.input';
+import { CommentInput } from './Comment.input';
 import { Comment } from 'src/Modules/Database/Local.Database/models/Comment';
 import { Body, Injectable, NotFoundException } from '@nestjs/common';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
@@ -20,7 +20,7 @@ export class CommentService {
     @InjectModel(User, 'local')
     private readonly modelUser: typeof User,
   ) {}
-  async addComment(@Body() body: CreateCommentInput, auth: AuthResult) {
+  async addComment(@Body() body: CommentInput, auth: AuthResult) {
     try {
       return await this.modelComment.create({
         ...body,
@@ -43,5 +43,25 @@ export class CommentService {
       },
     });
     return comment;
+  }
+
+  async deleteComment(id_comment: number) {
+    return await this.modelComment.destroy({
+      where: {
+        id: id_comment,
+      },
+    });
+  }
+
+  async patchComment(id_comment: number, editData: CommentInput) {
+    const comment = await this.modelComment.findOne({
+      where: {
+        id: id_comment,
+      },
+    });
+    comment?.update({
+      comment: editData.comment,
+      id_agreement: comment.id_agreement /** должно остаться не изменным */,
+    });
   }
 }

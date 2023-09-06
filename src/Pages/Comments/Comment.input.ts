@@ -2,7 +2,7 @@ import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCommentInput {
+export class CommentInput {
   @ApiProperty({
     description: 'комментарий',
   })
