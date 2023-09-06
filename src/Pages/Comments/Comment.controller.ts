@@ -46,4 +46,9 @@ export class CommentController {
   ) {
     return this.service.patchComment(id_comment, body);
   }
+
+  @Get('/:id_comment')
+  getComment(@Param('id_comment', ParseIntPipe) id_comment: number) {
+    return this.service.getComment(id_comment);
+  }
 }

@@ -64,4 +64,12 @@ export class CommentService {
       id_agreement: comment.id_agreement /** должно остаться не изменным */,
     });
   }
+
+  async getComment(id_comment: number) {
+    return await this.modelComment.findOne({
+      where: {
+        id: id_comment,
+      },
+    });
+  }
 }
