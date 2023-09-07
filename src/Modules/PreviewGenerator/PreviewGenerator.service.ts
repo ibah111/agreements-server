@@ -190,9 +190,8 @@ export class PreviewGeneratorService {
     data.error = 1;
     await data.save();
   }
-  async syncPreview() {
+  syncPreview() {
     const sync = this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
-
     return sync;
   }
 }

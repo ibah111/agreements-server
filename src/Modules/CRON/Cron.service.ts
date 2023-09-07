@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { PreviewGeneratorService } from '../PreviewGenerator/PreviewGenerator.service';
 import { PaymentsService } from '../../Pages/Payments/Payments.service';
+import { lastValueFrom } from 'rxjs';
 
 /**
  * @description По скольку я не знаю как работать с кроном
@@ -27,9 +28,10 @@ export class CronService {
 
   @Cron(CronExpression.EVERY_DAY_AT_11AM, { name: 'midnight_update' })
   async syncronize() {
-    await this.sync
-      .syncPreview()
-      .then(() => console.log('Sync preview done'.green))
+    await lastValueFrom(this.sync.syncPreview())
+      .then(() => {
+        console.log('Finish');
+      })
       .then(() => this.pays.updateAllPayments());
   }
 }
