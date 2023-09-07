@@ -59,10 +59,7 @@ export class CommentService {
         id: id_comment,
       },
     });
-    comment?.update({
-      comment: editData.comment,
-      id_agreement: comment.id_agreement /** должно остаться не изменным */,
-    });
+    await comment?.update({ comment: editData.comment });
   }
 
   async getComment(id_comment: number) {
