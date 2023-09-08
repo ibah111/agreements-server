@@ -61,6 +61,11 @@ export default function deletedColumns(): GridColDefAddon[] {
       filterable: false,
     },
     {
+      ...generateDels('reg_doc'),
+      type: 'number',
+      editable: true,
+    },
+    {
       ...generateDels('first_payment'),
       type: 'number',
       filterable: false,
@@ -84,11 +89,6 @@ export default function deletedColumns(): GridColDefAddon[] {
       ...generateDels('sum_after_agreement'),
       type: 'number',
       filterable: false,
-    },
-    {
-      ...generateDels('new_reg_doc'),
-      type: 'number',
-      editable: true,
     },
     {
       ...generateDels('receipt_dt'),

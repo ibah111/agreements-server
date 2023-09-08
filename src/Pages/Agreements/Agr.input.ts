@@ -88,12 +88,6 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   month_pay_day?: number | null;
 
   @Expose()
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  new_reg_doc: number;
-
-  @Expose()
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({ type: String })
@@ -123,6 +117,12 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiProperty()
   registrator: string | null;
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  reg_doc: number | null;
 
   @Expose()
   @IsString()

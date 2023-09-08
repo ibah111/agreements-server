@@ -92,7 +92,7 @@ export default function getAgreementColumns(): GridColDefAddon[] {
       filterable: false,
     },
     {
-      ...generateDefault('new_reg_doc'),
+      ...generateDefault('reg_doc'),
       type: 'number',
       editable: true,
     },

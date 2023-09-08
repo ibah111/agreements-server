@@ -84,7 +84,7 @@ export function convert(value: CellValue, name: string) {
           return 5;
       }
     }
-    case 'new_reg_doc':
+    case 'reg_doc':
       if (value === 'да') return 1;
       return null;
     case 'registrator':
