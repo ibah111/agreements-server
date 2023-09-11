@@ -263,4 +263,13 @@ export class AgreementsService {
       }),
     );
   }
+
+  async findAllByPersonId(person_id: number) {
+    return await this.modelAgreement.findAll({
+      where: {
+        person_id: person_id,
+      },
+      attributes: ['id'],
+    });
+  }
 }

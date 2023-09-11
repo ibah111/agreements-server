@@ -90,4 +90,9 @@ export class AgreementsController {
     const single_sync = this.service.singleSync(id_agr);
     return single_sync;
   }
+
+  @Get('findAllByPersonId/:person_id')
+  findAllByPersonId(@Param('person_id') person_id: number) {
+    return this.service.findAllByPersonId(person_id);
+  }
 }
