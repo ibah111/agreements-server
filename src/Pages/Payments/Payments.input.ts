@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsNotEmpty,
@@ -67,4 +68,13 @@ export class InputPaymentsUpdate {
   @IsNumber()
   @ApiProperty({ type: Number, required: true, nullable: false })
   sum_owe: number;
+}
+
+export class DeletePaymentList {
+  @Expose()
+  @IsArray()
+  @IsNumber({ maxDecimalPlaces: 0 }, { each: true })
+  @IsNotEmpty()
+  @ApiProperty({ type: [Number] })
+  list: number[];
 }

@@ -278,4 +278,14 @@ export class PaymentsService {
       });
     }
   }
+
+  async deleteListOfPayments(list: number[]) {
+    return await this.modelPayments.destroy({
+      where: {
+        id: {
+          [Op.in]: list,
+        },
+      },
+    });
+  }
 }

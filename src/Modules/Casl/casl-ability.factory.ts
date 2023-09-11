@@ -19,6 +19,7 @@ export enum Action {
   Create = 'create',
   Read = 'read',
   Update = 'update',
+  UpdateAll = 'updateAll',
   Delete = 'delete',
   Link = 'link',
 }

@@ -12,6 +12,7 @@ import {
 import { PaymentsService } from './Payments.service';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import {
+  DeletePaymentList,
   InputPaymentsUpdate,
   PaymentsInput,
   updateStatusInput,
@@ -67,5 +68,10 @@ export class PaymentsController {
   @Post('updatePayments/:id')
   createCalculationToCalcs(@Param('id', ParseIntPipe) id_agreement: number) {
     return this.paymentsService.createCalculationToCalcs(id_agreement);
+  }
+
+  @Delete('Payments/deleteList')
+  deleteListPayments(@Body() body: DeletePaymentList) {
+    return this.paymentsService.deleteListOfPayments(body.list);
   }
 }

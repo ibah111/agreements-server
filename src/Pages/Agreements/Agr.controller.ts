@@ -78,7 +78,7 @@ export class AgreementsController {
     return this.service.editAgreement(auth, id, data);
   }
 
-  @CheckCan((ability) => ability.can(Action.Update, Agreement))
+  @CheckCan((ability) => ability.can(Action.UpdateAll, Agreement))
   @Post('syncAll')
   syncContactData() {
     return this.service.syncronize();

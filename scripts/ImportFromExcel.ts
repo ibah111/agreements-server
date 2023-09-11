@@ -59,10 +59,7 @@ async function main() {
     agreementCompensationColumns,
     workbook.worksheets[3],
   );
-  /**
-   * Действующие
-   */
-  //TODO ДЕЙСТВУЮЩИЕ STATUS
+
   const mapper = (rows: ResultRow[]) =>
     rows.map((item) => item.DebtLinks?.[0].id_debt);
   const debt_ids = _.concat(
