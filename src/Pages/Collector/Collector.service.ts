@@ -15,13 +15,15 @@ export class CollectorService {
   ) {}
   async getAllCollectors() {
     return await this.ModelUserContact.findAll({
+      logging: console.log,
       where: {
         /**
          * adding collectors
          */
-        [Op.or]: [{ r_department_id: [2, 50] }, { id: [581, 8101] }],
+        [Op.or]: [{ r_department_id: [2, 50] }, { id: [8109, 581] }],
         block_flag: 0,
       },
+      attributes: ['id', 'login', 'f', 'i', 'o', 'block_flag'],
     });
   }
 }
