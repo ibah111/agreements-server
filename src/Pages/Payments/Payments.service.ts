@@ -220,7 +220,7 @@ export class PaymentsService {
    * @returns
    */
   async createCalculationToCalcs(id_schedule: number) {
-    const agr = await this.modelAgreement.findOne({
+    const schedule = await this.modelScheduleLinks.findOne({
       where: {
         id: id_schedule,
       },
@@ -230,7 +230,6 @@ export class PaymentsService {
       },
     });
 
-    const collection = agr?.DebtLinks?.map((i) => i.id_debt) || [0];
     await this.modelPayments.update(
       {
         sum_left: Sequelize.col('sum_owe'),
@@ -253,10 +252,13 @@ export class PaymentsService {
     const calcs = await this.modelDebtCalc.findAll({
       raw: true,
       where: {
+        //@ts-ignore
         parent_id: collection,
         calc_date: {
           [Op.between]: [
+            //@ts-ignore
             moment(agr?.conclusion_date).toDate(),
+            //@ts-ignore
             moment(agr?.finish_date || undefined).toDate(),
           ],
         },

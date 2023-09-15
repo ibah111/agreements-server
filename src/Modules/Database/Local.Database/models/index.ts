@@ -10,6 +10,7 @@ import { PersonPreview } from './PersonPreview';
 import { PurposeType } from './PurposeType';
 import { RegDocType } from './RegDocType';
 import { Role } from './Role.model';
+import { ScheduleType } from './ScheduleType';
 import { ScheduleLinks } from './SchedulesLinks';
 import { StatusAgreement } from './StatusAgreement';
 import { User } from './User.model';
@@ -32,4 +33,5 @@ export const models = [
   Payments,
   PaymentToCalc,
   ScheduleLinks,
+  ScheduleType,
 ];

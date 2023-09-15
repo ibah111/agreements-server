@@ -35,7 +35,6 @@ import { Comment } from './Comment';
 import AgreementToPersonProperties from './AgreementToPersonProperties';
 import { PersonPreview } from './PersonPreview';
 import { Max } from 'class-validator';
-import { Payments } from './Payments';
 import { ScheduleLinks } from './SchedulesLinks';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<

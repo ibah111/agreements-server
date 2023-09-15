@@ -1,28 +1,24 @@
-import { DataTypes, QueryInterface } from '@sql-tools/sequelize';
+import { QueryInterface, DataTypes } from '@sql-tools/sequelize';
 import { MigrationFn } from 'umzug';
 
 export const up: MigrationFn<QueryInterface> = async ({ context }) =>
   await context.sequelize.transaction(async (t) =>
     Promise.all([
       await context.createTable(
-        'ScheduleLinks',
+        'ScheduleType',
         {
           id: {
             type: DataTypes.INTEGER,
+            autoIncrement: true,
             allowNull: false,
             primaryKey: true,
           },
-          id_agreement: {
-            type: DataTypes.INTEGER,
+          title: {
+            type: DataTypes.STRING,
             allowNull: false,
-            primaryKey: true,
           },
-          schedule_type: {
-            type: DataTypes.INTEGER,
-          },
-          id_debt: {
-            type: DataTypes.INTEGER,
-          },
+          createdAt: { type: DataTypes.DATE, allowNull: false },
+          updatedAt: { type: DataTypes.DATE, allowNull: false },
         },
         { transaction: t },
       ),
@@ -30,5 +26,5 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
   );
 export const down: MigrationFn<QueryInterface> = async ({ context }) =>
   await context.sequelize.transaction(async (t) =>
-    Promise.all([context.dropTable('ScheduleLinks', { transaction: t })]),
+    Promise.all([await context.dropTable('ScheduleType', { transaction: t })]),
   );

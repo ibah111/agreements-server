@@ -19,6 +19,7 @@ import {
   Table,
 } from '@sql-tools/sequelize-typescript';
 import { Agreement } from './Agreement';
+import { ScheduleType } from './ScheduleType';
 
 @Table({
   tableName: 'ScheduleLinks',
@@ -38,6 +39,7 @@ export class ScheduleLinks extends Model<
   @ForeignKey(() => Agreement)
   id_agreement: number;
   @Column(DataType.INTEGER)
+  @ForeignKey(() => ScheduleType)
   schedule_type: number;
   @Column(DataType.INTEGER)
   id_debt: number;
