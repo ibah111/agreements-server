@@ -114,5 +114,9 @@ export default function getAgreementColumns(): GridColDefAddon[] {
       ...generateDefault('task_link'),
       editable: true,
     },
+    {
+      ...generateDefault('sum_remains'),
+      editable: true,
+    },
   ];
 }

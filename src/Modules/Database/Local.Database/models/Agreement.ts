@@ -36,6 +36,7 @@ import AgreementToPersonProperties from './AgreementToPersonProperties';
 import { PersonPreview } from './PersonPreview';
 import { Max } from 'class-validator';
 import { Payments } from './Payments';
+import { ScheduleLinks } from './SchedulesLinks';
 @Table({ tableName: 'Agreements', paranoid: true })
 export class Agreement extends Model<
   InferAttributes<Agreement>,
@@ -183,8 +184,8 @@ export class Agreement extends Model<
   @BelongsTo(() => StatusAgreement)
   StatusAgreement?: BelongsToAttribute<NonAttribute<StatusAgreement>>;
 
-  @HasMany(() => Payments)
-  Payments?: NonAttribute<Payments[]>;
+  @HasMany(() => ScheduleLinks)
+  ScheduleLinks?: NonAttribute<ScheduleLinks[]>;
 
   Person?: NonAttribute<Person>;
   Portfolio?: NonAttribute<Portfolio>;

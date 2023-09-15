@@ -11,6 +11,7 @@ import { Debt, DebtCalc } from '@contact/models';
 import { MIS, Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
+import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 
 @Injectable()
 export class PaymentsService {
@@ -25,6 +26,8 @@ export class PaymentsService {
     private readonly modelDebtCalc: typeof DebtCalc,
     @InjectModel(PaymentToCalc, 'local')
     private readonly modelPaymentToCalc: typeof PaymentToCalc,
+    @InjectModel(ScheduleLinks, 'local')
+    private readonly modelScheduleLinks: typeof ScheduleLinks,
   ) {}
 
   addMonths(date: Date, x: number) {
@@ -36,10 +39,10 @@ export class PaymentsService {
     return date;
   }
 
-  async getSchedule(id_agreement: number) {
+  async getSchedule(id_schedule: number) {
     return await this.modelPayments.findAll({
       where: {
-        id_agreement: id_agreement,
+        id_schedule: id_schedule,
       },
       include: {
         model: this.modelPaymentToCalc,
@@ -63,20 +66,13 @@ export class PaymentsService {
    * @returns possibly array, or one
    */
   async createPaymentsSchedule(data: PaymentsInput, x: number) {
-    const agreement = await this.modelAgreement.findOne({
-      where: {
-        id: data.id_agreement,
-      },
-      rejectOnEmpty: new NotFoundException(
-        'Соглашения не найдено. Возможно оно не существует',
-      ),
-    });
-    if (agreement)
+    const schedule = await this.modelScheduleLinks.findOne({});
+    if (schedule)
       for (let index = 0; index < x; index++) {
         const new_date = moment(data.pay_day).add(index, 'months').toDate();
         await this.modelPayments.create({
           ...data,
-          id_agreement: agreement.id,
+          id_schedule: schedule.id,
           pay_day: new_date,
         });
       }
@@ -223,10 +219,10 @@ export class PaymentsService {
    * @param id_agreement
    * @returns
    */
-  async createCalculationToCalcs(id_agreement: number) {
+  async createCalculationToCalcs(id_schedule: number) {
     const agr = await this.modelAgreement.findOne({
       where: {
-        id: id_agreement,
+        id: id_schedule,
       },
       include: {
         association: 'DebtLinks',
@@ -242,13 +238,13 @@ export class PaymentsService {
       },
       {
         where: {
-          id_agreement,
+          id_schedule,
         },
       },
     );
     const payments = await this.modelPayments.findAll({
       where: {
-        id_agreement,
+        id_schedule,
       },
     });
     await this.modelPaymentToCalc.destroy({

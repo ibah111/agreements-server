@@ -17,13 +17,13 @@ import {
   ForeignKey as FK,
   InferCreationAttributes,
 } from '@sql-tools/sequelize';
-import { Agreement } from './Agreement';
 import {
   BelongsToAttribute,
   CreateLiteralAssociation,
   HasManyAttribute,
 } from '@sql-tools/association-literal';
 import { PaymentToCalc } from './PaymentToCalc';
+import { ScheduleLinks } from './SchedulesLinks';
 
 @Table({
   tableName: 'Payments',
@@ -42,12 +42,12 @@ export class Payments extends Model<
   id: CreationOptional<number>;
 
   @AllowNull(false)
-  @ForeignKey(() => Agreement)
+  @ForeignKey(() => ScheduleLinks)
   @Column(DataType.INTEGER)
-  id_agreement: FK<number>;
+  id_schedule: FK<number>;
 
-  @BelongsTo(() => Agreement)
-  Agreement?: BelongsToAttribute<NonAttribute<Agreement>>;
+  @BelongsTo(() => ScheduleLinks)
+  ScheduleLinks: BelongsToAttribute<NonAttribute<ScheduleLinks>>;
 
   @Column(DataType.DATE)
   pay_day: Date | null;

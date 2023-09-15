@@ -153,6 +153,23 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiPropertyOptional({ type: Boolean })
   debt_count: number;
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
+  sum_remains: number | null;
+
+  @CallbackValidate<CreateAgreementInput, number>(
+    (obj) => obj.agreement_type,
+    (val) => val === 3,
+    { message: 'Абоба' },
+  )
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  car: string | null;
 }
 
 export class DeleteSelectedAgreements {

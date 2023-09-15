@@ -6,10 +6,14 @@ import { PaymentsService } from './Payments.service';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
 import { Debt, DebtCalc } from '@contact/models';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
+import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Agreement, Payments, PaymentToCalc], 'local'),
+    SequelizeModule.forFeature(
+      [Agreement, Payments, PaymentToCalc, ScheduleLinks],
+      'local',
+    ),
     SequelizeModule.forFeature([Debt, DebtCalc], 'contact'),
   ],
   controllers: [PaymentsController],
