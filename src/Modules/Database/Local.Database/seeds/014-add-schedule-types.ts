@@ -7,11 +7,9 @@ export const up: MigrationFn<QueryInterface> = ({ context }) =>
       context.sequelize.models.ScheduleType.bulkCreate(
         [
           {
-            id: 1,
             title: 'Общий',
           },
           {
-            id: 2,
             title: 'Индивидуальный (по кд)',
           },
         ],
