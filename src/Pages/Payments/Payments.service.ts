@@ -1,7 +1,8 @@
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
 import {
+  CreateScheduleLink,
   InputPaymentsUpdate,
   PaymentsInput,
   updateStatusInput,
@@ -12,6 +13,7 @@ import { MIS, Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
+import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
 
 @Injectable()
 export class PaymentsService {
@@ -28,21 +30,17 @@ export class PaymentsService {
     private readonly modelPaymentToCalc: typeof PaymentToCalc,
     @InjectModel(ScheduleLinks, 'local')
     private readonly modelScheduleLinks: typeof ScheduleLinks,
+    @InjectModel(ScheduleType, 'local')
+    private readonly modelScheduleType: typeof ScheduleType,
   ) {}
 
-  addMonths(date: Date, x: number) {
-    const d = date.getDate();
-    date.setMonth(date.getMonth() + +x);
-    if (date.getDate() != d) {
-      date.setDate(0);
-    }
-    return date;
-  }
-
+  /**
+   * Не изменять
+   */
   async getSchedule(id_schedule: number) {
     return await this.modelPayments.findAll({
       where: {
-        id_schedule: id_schedule,
+        id_schedule,
       },
       include: {
         model: this.modelPaymentToCalc,
@@ -214,6 +212,7 @@ export class PaymentsService {
     }
     return wallet;
   }
+
   /**
    * Реализует л
    * @param id_agreement
@@ -224,48 +223,84 @@ export class PaymentsService {
       where: {
         id: id_schedule,
       },
-      include: {
-        association: 'DebtLinks',
-        attributes: ['id_debt'],
-      },
     });
-
-    await this.modelPayments.update(
-      {
-        sum_left: Sequelize.col('sum_owe'),
-        status: false,
-      },
-      {
+    /**
+     * Общий, создаем collection
+     */
+    if (schedule?.schedule_type === 1) {
+      const collection = schedule.Agreement?.DebtLinks?.map((i) => i.id_debt);
+      await this.modelPayments.update(
+        {
+          sum_left: Sequelize.col('sum_owe'),
+          status: false,
+        },
+        {
+          where: {
+            id_schedule,
+          },
+        },
+      );
+      const payments = await this.modelPayments.findAll({
         where: {
           id_schedule,
         },
-      },
-    );
-    const payments = await this.modelPayments.findAll({
-      where: {
-        id_schedule,
-      },
-    });
-    await this.modelPaymentToCalc.destroy({
-      where: { id_payment: payments.map((item) => item.id) },
-    });
-    const calcs = await this.modelDebtCalc.findAll({
-      raw: true,
-      where: {
-        //@ts-ignore
-        parent_id: collection,
-        calc_date: {
-          [Op.between]: [
-            //@ts-ignore
-            moment(agr?.conclusion_date).toDate(),
-            //@ts-ignore
-            moment(agr?.finish_date || undefined).toDate(),
-          ],
+      });
+      await this.modelPaymentToCalc.destroy({
+        where: { id_payment: payments.map((item) => item.id) },
+      });
+      const calcs = await this.modelDebtCalc.findAll({
+        raw: true,
+        where: {
+          parent_id: collection,
+          calc_date: {
+            [Op.between]: [
+              moment(schedule.Agreement?.conclusion_date).toDate(),
+              moment(schedule.Agreement?.finish_date || undefined).toDate(),
+            ],
+          },
         },
-      },
-    });
-    return this.createPaymentsToCalc(calcs, payments);
+      });
+      return this.createPaymentsToCalc(calcs, payments);
+    } else if (schedule?.schedule_type === 2) {
+      /**
+       * Индивидуальный, по конкретному долгу
+       */
+      const single_debt = schedule.id_debt;
+      await this.modelPayments.update(
+        {
+          sum_left: Sequelize.col('sum_owe'),
+          status: false,
+        },
+        {
+          where: {
+            id_schedule,
+          },
+        },
+      );
+      const payments = await this.modelPayments.findAll({
+        where: {
+          id_schedule,
+        },
+      });
+      await this.modelPaymentToCalc.destroy({
+        where: { id_payment: payments.map((item) => item.id) },
+      });
+      const calcs = await this.modelDebtCalc.findAll({
+        raw: true,
+        where: {
+          parent_id: single_debt,
+          calc_date: {
+            [Op.between]: [
+              moment(schedule.Agreement?.conclusion_date).toDate(),
+              moment(schedule.Agreement?.finish_date || undefined).toDate(),
+            ],
+          },
+        },
+      });
+      return this.createPaymentsToCalc(calcs, payments);
+    }
   }
+
   async updateAllPayments() {
     const agreements = await this.modelAgreement.findAll();
     for (const agreement of agreements) {
@@ -285,5 +320,53 @@ export class PaymentsService {
         },
       },
     });
+  }
+  /**
+   * @returns типы графика
+   */
+  async getAllScheduleTypes() {
+    return this.modelScheduleType.findAll({
+      attributes: ['id', 'title'],
+    });
+  }
+  /**
+   * @advice Use NOT.IN operator
+   * @param id_agreement
+   * @returns
+   */
+  async getAvailableDebtForSchedule(id_agreement: number) {
+    const agreement = await this.modelAgreement.findOne({
+      where: {
+        id: id_agreement,
+      },
+    });
+    if (agreement) {
+      const linked_ids = agreement.ScheduleLinks?.map((i) => i.id_debt) || [];
+      const find_debts = await this.modelDebt.findAll({
+        where: {
+          parent_id: agreement?.person_id,
+          id: {
+            [Op.notIn]: linked_ids,
+          },
+        },
+        attributes: ['id', 'parent_id', 'contract', 'name', 'status'],
+      });
+      return find_debts;
+    }
+  }
+
+  async getAllSchedulesByAgreement(id_agreement: number) {
+    return await this.modelScheduleLinks.findAll({
+      where: {
+        id_agreement,
+      },
+    });
+  }
+
+  async createScheduleLink(body: CreateScheduleLink) {
+    const scheduleLink = await this.modelScheduleLinks.create({
+      ...body,
+    });
+    return scheduleLink;
   }
 }

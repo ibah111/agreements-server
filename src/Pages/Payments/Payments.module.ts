@@ -7,11 +7,12 @@ import { Payments } from '../../Modules/Database/Local.Database/models/Payments'
 import { Debt, DebtCalc } from '@contact/models';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
+import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
 
 @Module({
   imports: [
     SequelizeModule.forFeature(
-      [Agreement, Payments, PaymentToCalc, ScheduleLinks],
+      [Agreement, Payments, PaymentToCalc, ScheduleLinks, ScheduleType],
       'local',
     ),
     SequelizeModule.forFeature([Debt, DebtCalc], 'contact'),

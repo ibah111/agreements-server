@@ -4,12 +4,14 @@ import {
   CreateLiteralAssociation,
 } from '@sql-tools/association-literal';
 import {
+  CreationOptional,
   InferAttributes,
   InferCreationAttributes,
   NonAttribute,
 } from '@sql-tools/sequelize';
 import {
   AllowNull,
+  AutoIncrement,
   BelongsTo,
   Column,
   DataType,
@@ -23,16 +25,17 @@ import { ScheduleType } from './ScheduleType';
 
 @Table({
   tableName: 'ScheduleLinks',
+  timestamps: false,
 })
 export class ScheduleLinks extends Model<
   InferAttributes<ScheduleLinks>,
   InferCreationAttributes<ScheduleLinks>,
   CreateLiteralAssociation<ScheduleLinks>
 > {
-  @AllowNull(false)
+  @AutoIncrement
   @PrimaryKey
   @Column(DataType.INTEGER)
-  id: number;
+  id: CreationOptional<number>;
   @AllowNull(false)
   @PrimaryKey
   @Column(DataType.INTEGER)

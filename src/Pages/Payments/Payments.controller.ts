@@ -12,6 +12,7 @@ import {
 import { PaymentsService } from './Payments.service';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import {
+  CreateScheduleLink,
   DeletePaymentList,
   InputPaymentsUpdate,
   PaymentsInput,
@@ -20,10 +21,10 @@ import {
 import { CanGuard } from '../../Modules/Casl/Can.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
-@UseGuards(CanGuard)
-@UseGuards(AuthGuard)
 @Controller('Payments')
-@ApiBasicAuth()
+// @UseGuards(CanGuard)
+// @UseGuards(AuthGuard)
+// @ApiBasicAuth()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
   @Post()
@@ -70,8 +71,32 @@ export class PaymentsController {
     return this.paymentsService.createCalculationToCalcs(id_agreement);
   }
 
-  @Delete('Payments/deleteList')
+  @Delete('deleteList')
   deleteListPayments(@Body() body: DeletePaymentList) {
     return this.paymentsService.deleteListOfPayments(body.list);
+  }
+
+  @Get('getAllScheduleTypes')
+  getAllScheduleTypes() {
+    return this.paymentsService.getAllScheduleTypes();
+  }
+
+  @Get('getAllSchedulesByAgreement/:id_agreement')
+  getAllSchedulesByAgreement(
+    @Param('id_agreement', ParseIntPipe) id_agreement: number,
+  ) {
+    return this.paymentsService.getAllSchedulesByAgreement(id_agreement);
+  }
+
+  @Get(`getAvailableDebtForSchedule/:id_agreement`)
+  getAvailableDebtForSchedule(
+    @Param('id_agreement', ParseIntPipe) id_agreement: number,
+  ) {
+    return this.paymentsService.getAvailableDebtForSchedule(id_agreement);
+  }
+
+  @Post('createScheduleLink')
+  createScheduleLink(@Body() body: CreateScheduleLink) {
+    return this.paymentsService.createScheduleLink(body);
   }
 }
