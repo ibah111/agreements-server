@@ -11,6 +11,7 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
             type: DataTypes.INTEGER,
             allowNull: false,
             primaryKey: true,
+            autoIncrement: true,
           },
           id_agreement: {
             type: DataTypes.INTEGER,
