@@ -191,4 +191,7 @@ export class Agreement extends Model<
 
   @Column(DataType.INTEGER)
   debt_count: number;
+
+  @Column(DataType.STRING)
+  car: string | null;
 }

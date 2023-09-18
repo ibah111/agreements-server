@@ -7,7 +7,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Attributes, Op, Sequelize } from '@sql-tools/sequelize';
+import { Attributes, Op } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
@@ -139,12 +139,6 @@ export class AgreementsService {
     return singleSync;
   }
 
-  /**
-   *
-   * @param auth
-   * @param data
-   * @returns
-   */
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
     const Agreement = await this.modelAgreement.create({
       ...data,

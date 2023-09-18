@@ -162,8 +162,8 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
 
   @CallbackValidate<CreateAgreementInput, number>(
     (obj) => obj.agreement_type,
-    (val) => val === 3,
-    { message: 'Абоба' },
+    (val) => val === 2,
+    { message: 'Введите название машины' },
   )
   @Expose()
   @IsString()

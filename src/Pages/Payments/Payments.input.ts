@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Column, PrimaryKey } from '@sql-tools/sequelize-typescript';
 import { Expose, Type } from 'class-transformer';
 import {
   IsArray,
@@ -8,6 +9,7 @@ import {
   IsNumber,
   IsOptional,
 } from 'class-validator';
+import { CallbackValidate } from '../../utils/validators/IsAfterValidate';
 
 export class PaymentsInput {
   @ApiProperty()
@@ -77,4 +79,32 @@ export class DeletePaymentList {
   @IsNotEmpty()
   @ApiProperty({ type: [Number] })
   list: number[];
+}
+export class CreateScheduleLink {
+  @ApiProperty()
+  @IsNumber()
+  @Expose()
+  @IsNotEmpty()
+  id: number;
+  @Expose()
+  @IsNumber()
+  @ApiProperty()
+  id_agreement: number;
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  schedule_type: number;
+  @CallbackValidate<CreateScheduleLink, number>(
+    (obj) => obj.schedule_type,
+    (val) => val === 2,
+    {
+      message: 'График индивидуальный, выберите долг',
+    },
+  )
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  id_debt: number;
 }

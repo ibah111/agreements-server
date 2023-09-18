@@ -15,7 +15,6 @@ export class CollectorService {
   ) {}
   async getAllCollectors() {
     return await this.ModelUserContact.findAll({
-      logging: console.log,
       where: {
         /**
          * adding collectors
