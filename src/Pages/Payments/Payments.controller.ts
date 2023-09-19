@@ -95,6 +95,11 @@ export class PaymentsController {
     return this.paymentsService.getAvailableDebtForSchedule(id_agreement);
   }
 
+  @Delete('deleteScheduleLink/:id')
+  deleteScheduleLink(@Param('id', ParseIntPipe) id_schedule: number) {
+    return this.paymentsService.deleteScheduleLinks(id_schedule);
+  }
+
   @Post('createScheduleLink')
   createScheduleLink(@Body() body: CreateScheduleLink) {
     return this.paymentsService.createScheduleLink(body);

@@ -369,4 +369,12 @@ export class PaymentsService {
     });
     return scheduleLink;
   }
+
+  async deleteScheduleLinks(id_schedule: number) {
+    return await this.modelScheduleLinks.destroy({
+      where: {
+        id: id_schedule,
+      },
+    });
+  }
 }
