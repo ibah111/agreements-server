@@ -16,7 +16,7 @@ export class PaymentsInput {
   @IsNotEmpty()
   @IsNumber()
   @Expose()
-  id_agreement: number;
+  id_schedule: number;
 
   @Expose()
   @IsDate()

@@ -32,17 +32,17 @@ export class PaymentsController {
     return this.paymentsService.createPaymentsSchedule(body, body.x);
   }
 
-  @Get(':id')
+  @Get('getSchedule/:id')
   getSchedulePayments(@Param('id', ParseIntPipe) id_agreement: number) {
     return this.paymentsService.getSchedule(id_agreement);
   }
 
-  @Get('Payment/:id')
+  @Get('getPayment/:id')
   getPayment(@Param('id', ParseIntPipe) id: number) {
     return this.paymentsService.getPayment(id);
   }
 
-  @Delete('Payment/:id')
+  @Delete('deletePayment/:id')
   deletePayment(@Param('id', ParseIntPipe) id: number) {
     return this.paymentsService.deletePayment(id);
   }
@@ -67,8 +67,8 @@ export class PaymentsController {
   }
 
   @Post('updatePayments/:id')
-  createCalculationToCalcs(@Param('id', ParseIntPipe) id_agreement: number) {
-    return this.paymentsService.createCalculationToCalcs(id_agreement);
+  createCalculationToCalcs(@Param('id', ParseIntPipe) id_schedule: number) {
+    return this.paymentsService.createCalculationToCalcs(id_schedule);
   }
 
   @Delete('deleteList')
