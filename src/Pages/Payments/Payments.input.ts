@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
 } from 'class-validator';
 import { CreationAttributes } from '@sql-tools/sequelize';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
@@ -95,4 +96,9 @@ export class CreateScheduleLink implements CreationAttributes<ScheduleLinks> {
   @IsOptional()
   @ApiProperty()
   id_debt: number;
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  contract: string;
 }

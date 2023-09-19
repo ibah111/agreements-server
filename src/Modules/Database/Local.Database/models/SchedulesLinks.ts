@@ -46,6 +46,8 @@ export class ScheduleLinks extends Model<
   schedule_type: number;
   @Column(DataType.INTEGER)
   id_debt: number;
+  @Column(DataType.STRING)
+  contract: string | null;
 
   @BelongsTo(() => Agreement)
   Agreement?: NonAttribute<Agreement>;

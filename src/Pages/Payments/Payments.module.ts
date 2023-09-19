@@ -8,11 +8,19 @@ import { Debt, DebtCalc } from '@contact/models';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
+import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 
 @Module({
   imports: [
     SequelizeModule.forFeature(
-      [Agreement, Payments, PaymentToCalc, ScheduleLinks, ScheduleType],
+      [
+        Agreement,
+        AgreementDebtsLink,
+        Payments,
+        PaymentToCalc,
+        ScheduleLinks,
+        ScheduleType,
+      ],
       'local',
     ),
     SequelizeModule.forFeature([Debt, DebtCalc], 'contact'),

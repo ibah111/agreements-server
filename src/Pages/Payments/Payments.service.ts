@@ -14,6 +14,7 @@ import moment from 'moment';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
+import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 
 @Injectable()
 export class PaymentsService {
@@ -22,6 +23,8 @@ export class PaymentsService {
     private readonly modelPayments: typeof Payments,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
+    @InjectModel(AgreementDebtsLink, 'local')
+    private readonly modelAgreementDebtsLink: typeof AgreementDebtsLink,
     @InjectModel(Debt, 'contact')
     private readonly modelDebt: typeof Debt,
     @InjectModel(DebtCalc, 'contact')
@@ -70,7 +73,6 @@ export class PaymentsService {
         const new_date = moment(data.pay_day).add(index, 'months').toDate();
         await this.modelPayments.create({
           ...data,
-          id_schedule: schedule.id,
           pay_day: new_date,
         });
       }
@@ -223,12 +225,26 @@ export class PaymentsService {
       where: {
         id: id_schedule,
       },
+      include: {
+        model: this.modelAgreement,
+      },
     });
     /**
      * Общий, создаем collection
      */
     if (schedule?.schedule_type === 1) {
-      const collection = schedule.Agreement?.DebtLinks?.map((i) => i.id_debt);
+      const collection = await this.modelAgreement.findOne({
+        where: {
+          id: schedule.id_agreement,
+        },
+        include: {
+          model: this.modelAgreementDebtsLink,
+        },
+      });
+
+      console.log(collection?.DebtLinks?.map((i) => i.id_debt));
+      const f_coll = collection?.DebtLinks?.map((i) => i.id_debt);
+      if (!collection) return 'Нет связанных долгов';
       await this.modelPayments.update(
         {
           sum_left: Sequelize.col('sum_owe'),
@@ -249,9 +265,10 @@ export class PaymentsService {
         where: { id_payment: payments.map((item) => item.id) },
       });
       const calcs = await this.modelDebtCalc.findAll({
+        logging: console.log,
         raw: true,
         where: {
-          parent_id: collection,
+          parent_id: f_coll,
           calc_date: {
             [Op.between]: [
               moment(schedule.Agreement?.conclusion_date).toDate(),
