@@ -9,7 +9,6 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) =>
         'id_schedule',
         {
           type: DataTypes.INTEGER,
-          allowNull: false,
         },
         {
           transaction: t,
