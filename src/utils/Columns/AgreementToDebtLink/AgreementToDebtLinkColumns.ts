@@ -1,15 +1,25 @@
-import { GridColDefAddon, generateDefaults } from '../addons';
-const generateLink = generateDefaults('local', 'AgreementToDebtLinks');
-export default function getAgreementToDebtLinksColumns(): GridColDefAddon[] {
-  return [
+import AgreementDebtsLink from '../../../Modules/Database/Local.Database/models/AgreementDebtLink';
+import { GridColDefExtend } from '../Agreements/AgreementColumns';
+/**
+ *
+ * @returns contract, portfolio
+ */
+export default function getAgreementToDebtLinksColumns(): GridColDefExtend<AgreementDebtsLink>[] {
+  const columns: GridColDefExtend<AgreementDebtsLink>[] = [
     {
-      ...generateLink('contract'),
       type: 'string',
-      editable: false,
+      modelName: 'PersonPreview',
+      field: 'contract',
+      filterCol: 'PersonPreview.contract',
+      sortCol: 'PersonPreview.contract',
     },
     {
-      ...generateLink('portfolio'),
       type: 'number',
+      modelName: 'PersonPreview',
+      field: '',
+      filterCol: 'PersonPreview.',
+      sortCol: 'PersonPreview.',
     },
   ];
+  return columns;
 }

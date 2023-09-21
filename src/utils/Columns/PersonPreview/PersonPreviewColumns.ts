@@ -1,30 +1,32 @@
-import { Sequelize } from '@sql-tools/sequelize';
-import { GridColDefAddon, generateDefaults } from '../addons';
-
-const generatePreview = generateDefaults('local', 'PersonPreview');
-export default function getPersonPreviewColumns(): GridColDefAddon[] {
-  return [
+import { GridColDefExtend } from '../Agreements/AgreementColumns';
+import { PersonPreview } from '../../../Modules/Database/Local.Database/models/PersonPreview';
+/**
+ *
+ * @returns person_id, FIO, birth_date
+ */
+export default function getPersonPreviewColumns(): GridColDefExtend<PersonPreview>[] {
+  const columns: GridColDefExtend<PersonPreview>[] = [
     {
-      ...generatePreview('person_id'),
       type: 'number',
+      modelName: 'PersonPreview',
+      field: 'person_id',
+      filterCol: 'PersonPreview.person_id',
+      sortCol: 'PersonPreview.person_id',
     },
     {
-      ...generatePreview('FIO'),
-      type: 'string',
-      editable: false,
-      col: Sequelize.fn(
-        'concat',
-        Sequelize.col('f'),
-        ' ',
-        Sequelize.col('i'),
-        ' ',
-        Sequelize.col('o'),
-      ),
+      type: 'number',
+      modelName: 'PersonPreview',
+      field: 'FIO',
+      filterCol: 'PersonPreview.FIO',
+      sortCol: 'PersonPreview.FIO',
     },
     {
-      ...generatePreview('birth_date'),
-      type: 'date',
-      editable: false,
+      type: 'number',
+      modelName: 'PersonPreview',
+      field: 'birth_date',
+      filterCol: 'PersonPreview.birth_date',
+      sortCol: 'PersonPreview.birth_date',
     },
   ];
+  return columns;
 }

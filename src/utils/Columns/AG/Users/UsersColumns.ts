@@ -1,10 +1,13 @@
-import { GridColDefAddon, generateDefaults } from '../../addons';
-const generateUsers = generateDefaults('local', 'User');
-export default function usersCols(): GridColDefAddon[] {
+import { User } from '../../../../Modules/Database/Local.Database/models/User.model';
+import { GridColDefExtend } from '../../Agreements/AgreementColumns';
+export default function usersCols(): GridColDefExtend<User>[] {
   return [
     {
-      ...generateUsers('login'),
       type: 'string',
+      modelName: 'User',
+      field: 'login',
+      filterCol: 'User.login',
+      sortCol: 'User.login',
     },
   ];
 }

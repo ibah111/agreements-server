@@ -1,35 +1,57 @@
-import { GridColDefAddon, generateDefaults } from '../../addons';
+import { ActionLog } from '../../../../Modules/Database/Local.Database/models/ActionLog';
+import { GridColDefExtend } from '../../Agreements/AgreementColumns';
 
-const generateLogs = generateDefaults('local', 'ActionLog');
-export default function logCols(): GridColDefAddon[] {
-  return [
+export default function logCols(): GridColDefExtend<ActionLog>[] {
+  const columns: GridColDefExtend<ActionLog>[] = [
     {
-      ...generateLogs('id'),
-      type: 'id',
-    },
-    {
-      ...generateLogs('actionType'),
-      type: 'number',
-    },
-    {
-      ...generateLogs('field'),
       type: 'string',
+      modelName: 'User',
+      field: 'id',
+      filterCol: 'User.id',
+      sortCol: 'User.id',
     },
     {
-      ...generateLogs('row_id'),
+      type: 'string',
+      modelName: 'User',
+      field: 'actionType',
+      filterCol: 'User.actionType',
+      sortCol: 'User.actionType',
+    },
+    {
+      type: 'string',
+      modelName: 'User',
+      field: 'field',
+      filterCol: 'User.field',
+      sortCol: 'User.field',
+    },
+    {
       type: 'number',
+      modelName: 'User',
+      field: 'row_id',
+      filterCol: 'User.row_id',
+      sortCol: 'User.row_id',
     },
     {
-      ...generateLogs('user'),
       type: 'number',
+      modelName: 'User',
+      field: 'user',
+      filterCol: 'User.user',
+      sortCol: 'User.user',
     },
     {
-      ...generateLogs('createdAt'),
       type: 'date',
+      modelName: 'User',
+      field: 'createdAt',
+      filterCol: 'User.createdAt',
+      sortCol: 'User.createdAt',
     },
     {
-      ...generateLogs('updatedAt'),
       type: 'date',
+      modelName: 'User',
+      field: 'updatedAt',
+      filterCol: 'User.updatedAt',
+      sortCol: 'User.updatedAt',
     },
   ];
+  return columns;
 }

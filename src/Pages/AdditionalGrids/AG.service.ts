@@ -31,10 +31,10 @@ export class AdditionalGridService {
   async getLogs(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
     const logs_utils = getLogsUtils();
-    const logs_filter = logs_utils.generateFilter(body.filterModel);
-    const logs_sort = logs_utils.generateSort(body.sortModel || []);
+    const logs_filter = logs_utils.getFilter('ActionLog', body.filterModel);
+    const logs_sort = logs_utils.getSort(body.sortModel || []);
     const logs_ids = await this.modelActionLog.findAll({
-      where: logs_filter('ActionLog'),
+      where: logs_filter,
     });
     const logs = await this.modelActionLog.findAndCountAll({
       offset: body.paginationModel.page * size,
@@ -48,7 +48,7 @@ export class AdditionalGridService {
           },
         ],
       },
-      order: logs_sort('local'),
+      order: logs_sort,
     });
     return logs;
   }
@@ -59,12 +59,12 @@ export class AdditionalGridService {
   async getDeleted(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
     const del_utils = getDeletedUtils();
-    const del_filter = del_utils.generateFilter(body.filterModel);
-    const del_sort = del_utils.generateSort(body.sortModel || []);
+    const del_filter = del_utils.getFilter('Agreement', body.filterModel);
+    const del_sort = del_utils.getSort(body.sortModel || []);
 
     const del_ids = await this.modelAgreement.findAll({
       paranoid: false,
-      where: del_filter('local'),
+      where: del_filter,
     });
     const del = await this.modelAgreement.findAndCountAll({
       paranoid: false,
@@ -82,7 +82,7 @@ export class AdditionalGridService {
           },
         ],
       },
-      order: del_sort('local'),
+      order: del_sort,
     });
     return del;
   }
@@ -121,10 +121,10 @@ export class AdditionalGridService {
   async getAllUsers(body: DataGridClass) {
     const size = getSize(body.paginationModel.pageSize);
     const user_utils = getUserUtils();
-    const user_filter = user_utils.generateFilter(body.filterModel);
-    const user_sort = user_utils.generateSort(body.sortModel || []);
+    const user_filter = user_utils.getFilter('User', body.filterModel);
+    const user_sort = user_utils.getSort(body.sortModel || []);
     const users_ids = await this.modelUser.findAll({
-      where: user_filter('local'),
+      where: user_filter,
     });
     const users = await this.modelUser.findAndCountAll({
       limit: size,
@@ -138,7 +138,7 @@ export class AdditionalGridService {
           },
         ],
       },
-      order: user_sort('local'),
+      order: user_sort,
       include: [
         {
           model: this.modelRole,

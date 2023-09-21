@@ -7,7 +7,7 @@ import {
   Actions,
 } from 'src/Modules/Database/Local.Database/models/ActionLog';
 import { AuthResult } from 'src/Modules/Guards/auth.guard';
-import { Attributes, Op } from '@sql-tools/sequelize';
+import { Attributes, Op, Sequelize } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import { AgrGetAllDto } from './Agr.dto';
@@ -20,8 +20,8 @@ import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewG
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
 import { DataGridClass } from '../DataGridClass/DataGridClass';
 import { getAgreementUtils } from '../../utils/Columns/Agreements/utils.Agreements/getUtils.Agreements';
-import { getAgreementToDebtLinksUtils } from '../../utils/Columns/AgreementToDebtLink/utils.AgreementToDebtLink/getUtils.AgreementToDebtLink';
 import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils.PersonPreview/getUtils.PersonPreview';
+import { getAgreementToDebtLinksUtils } from '../../utils/Columns/AgreementToDebtLink/utils.AgreementToDebtLink/getUtils.AgreementToDebtLink';
 
 @Injectable()
 export class AgreementsService {
@@ -55,37 +55,44 @@ export class AgreementsService {
     /**
      * agr
      */
-    const utils_agr = getAgreementUtils();
-    const filter_agr = utils_agr.generateFilter(body.filterModel);
+    const agreementUtils = getAgreementUtils();
+    const agreementFilter = agreementUtils.getFilter(
+      'Agreement',
+      body.filterModel,
+    );
     /**
      * agr-debt
      */
     const utils_agr_debt = getAgreementToDebtLinksUtils();
-    const filter_agr_debt = utils_agr_debt.generateFilter(body.filterModel);
+    const filterAgreementToDebtLinks = utils_agr_debt.getFilter(
+      'AgreementToDebtLinks',
+      body.filterModel,
+    );
     /**
      * pers-prev
      */
-    const utils_pers_prev = getPersonPreviewUtils();
-    const filter_pers_prev = utils_pers_prev.generateFilter(body.filterModel);
+    const personPreviewUtils = getPersonPreviewUtils();
+    const filterPersonPreview =
+      personPreviewUtils.getFilter('body.filterModel');
 
-    const sort = utils_agr.generateSort(body.sortModel || []);
-    const agrDebtFilter = filter_agr_debt('AgreementToDebtLinks');
+    const sort = agreementUtils.getSort(body.sortModel || []);
+    const agrDebtFilter = filterAgreementToDebtLinks;
     const keys = Reflect.ownKeys(agrDebtFilter);
     const agreements_ids = await this.modelAgreement.findAll({
       attributes: ['id', 'person_id'],
       include: [
         {
           association: 'PersonPreview',
-          where: filter_pers_prev('PersonPreview'),
+          where: filterPersonPreview,
         },
         {
           required: keys.length === 0 ? false : true,
           association: 'DebtLinks',
-          where: filter_agr_debt('AgreementToDebtLinks'),
+          where: filterAgreementToDebtLinks,
         },
       ],
       raw: true,
-      where: filter_agr('Agreement'),
+      where: agreementFilter,
     });
 
     const agreements = (await this.modelAgreement.findAndCountAll({
@@ -110,7 +117,17 @@ export class AgreementsService {
           model: this.modelPersonPreview,
         },
       ],
-      order: sort('local'),
+      order: sort,
+      attributes: {
+        include: [
+          [
+            Sequelize.literal(
+              'Agreement.sum - (select sum(sum_payments) from AgreementToDebtLink as ad where ad.id_agreement = Agreement.id)',
+            ),
+            'sum_remains',
+          ],
+        ],
+      },
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
     return agreements;

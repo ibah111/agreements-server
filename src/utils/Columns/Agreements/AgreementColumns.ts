@@ -1,122 +1,172 @@
-import { generateDefaults, GridColDefAddon } from '../addons';
-const generateDefault = generateDefaults('local', 'Agreement');
-const generatePreview = generateDefaults('local', 'PersonPreview');
-export default function getAgreementColumns(): GridColDefAddon[] {
-  return [
+import { Sequelize } from '@sql-tools/sequelize';
+import { Agreement } from '../../../Modules/Database/Local.Database/models/Agreement';
+import { GridColDef, GridValidRowModel } from '@mui/x-data-grid-premium';
+import { Literal } from '@sql-tools/sequelize/types/utils';
+
+interface ColumnFunction {
+  name: string;
+  args: unknown[];
+}
+
+export type GridColDefExtend<T extends GridValidRowModel = any> = {
+  modelName: string;
+  filterCol: string | ColumnFunction | Literal;
+  sortCol: string | ColumnFunction | Literal;
+} & GridColDef<T>;
+
+export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
+  const columns: GridColDefExtend<Agreement>[] = [
     {
-      ...generateDefault('id'),
+      field: 'sum_remains',
       type: 'number',
+      modelName: 'Agreement',
+      filterCol: Sequelize.literal(
+        'select a.id, sum - (SELECT sum(sum_payments) from AgreementToDebtLink where id_agreement = a.id) sum_remains from agreements a',
+      ),
+      sortCol: Sequelize.literal(
+        'select a.id, sum - (SELECT sum(sum_payments) from AgreementToDebtLink where id_agreement = a.id) sum_remains from agreements a',
+      ),
     },
     {
-      ...generateDefault('conclusion_date'),
+      field: 'id',
+      modelName: 'Agreement',
+      type: 'number',
+      filterCol: '',
+      sortCol: '',
+    },
+    {
+      field: 'conclusion_date',
+      modelName: 'Agreement',
       type: 'date',
-      editable: true,
+      filterCol: 'Agreement.conclusion_date',
+      sortCol: 'Agreement.conclusion_date',
     },
     {
-      ...generateDefault('finish_date'),
+      field: 'finish_date',
+      modelName: 'Agreement',
       type: 'date',
-      editable: true,
+      filterCol: 'Agreement',
+      sortCol: 'Agreement',
     },
     {
-      ...generateDefault('agreement_type'),
+      field: 'purpose',
       type: 'number',
-      editable: true,
+      modelName: 'Agreement',
+      filterCol: 'Agreement.purpose',
+      sortCol: 'Agreement.purpose',
     },
     {
-      ...generateDefault('debt_count'),
+      field: 'sum',
       type: 'number',
-      editable: false,
+      modelName: 'Agreement',
+      filterCol: 'Agreement.sum',
+      sortCol: 'Agreement.sum',
     },
     {
-      ...generateDefault('payable_status'),
+      field: 'discount',
+      type: 'number',
+      modelName: 'Agreement',
+      filterCol: 'Agreement.discount',
+      sortCol: 'Agreement.discount',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'full_req',
+      filterCol: 'Agreement.full_req',
+      sortCol: 'Agreement.full_req',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'month_pay_day',
+      filterCol: 'Agreement.month_pay_day',
+      sortCol: 'Agreement.month_pay_day',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'reg_doc',
+      filterCol: 'Agreement.reg_doc',
+      sortCol: 'Agreement.reg_doc',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'registrator',
+      filterCol: 'Agreement.registrator',
+      sortCol: 'Agreement.registrator',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'archive',
+      filterCol: 'Agreement.archive',
+      sortCol: 'Agreement.archive',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'collector_id',
+      filterCol: 'Agreement.collector_id',
+      sortCol: 'Agreement.collector_id',
+    },
+    {
+      type: 'string',
+      modelName: 'Agreement',
+      field: 'task_link',
+      filterCol: 'Agreement.task_link',
+      sortCol: 'Agreement.task_link',
+    },
+    {
+      type: 'string',
+      modelName: 'Agreement',
+      field: 'task_link',
+      filterCol: 'Agreement.task_link',
+      sortCol: 'Agreement.task_link',
+    },
+    {
+      type: 'string',
+      modelName: 'Agreement',
+      field: 'actions_for_get',
+      filterCol: 'Agreement.actions_for_get',
+      sortCol: 'Agreement.actions_for_get',
+    },
+    {
+      type: 'string',
+      modelName: 'Agreement',
+      field: 'receipt_dt',
+      filterCol: 'Agreement.receipt_dt',
+      sortCol: 'Agreement.receipt_dt',
+    },
+    {
+      type: 'string',
+      modelName: 'Agreement',
+      field: 'comment',
+      filterCol: 'Agreement.comment',
+      sortCol: 'Agreement.comment',
+    },
+    {
       type: 'boolean',
+      modelName: 'Agreement',
+      field: 'payable_status',
+      filterCol: 'Agreement.payable_status',
+      sortCol: 'Agreement.payable_status',
     },
     {
-      ...generateDefault('purpose'),
-      editable: true,
       type: 'number',
+      modelName: 'Agreement',
+      field: 'debt_count',
+      filterCol: 'Agreement.debt_count',
+      sortCol: 'Agreement.debt_count',
     },
     {
-      ...generateDefault('statusAgreement'),
-      editable: true,
-      type: 'number',
-    },
-    {
-      ...generateDefault('full_req'),
-      editable: true,
-      type: 'number',
-    },
-    {
-      ...generateDefault('discount'),
-      editable: true,
-      type: 'number',
-    },
-    {
-      ...generateDefault('sum'),
-      type: 'number',
-      filterable: false,
-    },
-    {
-      ...generateDefault('month_pay_day'),
-      type: 'number',
-      filterable: false,
-    },
-    {
-      ...generateDefault('sum_before_agreement'),
-      type: 'number',
-      filterable: false,
-    },
-    {
-      ...generateDefault('first_payment'),
-      type: 'number',
-      filterable: false,
-    },
-    {
-      ...generatePreview('first_payment_date'),
-      type: 'date',
-      filterable: false,
-    },
-    {
-      ...generateDefault('last_payment'),
-      type: 'number',
-      filterable: false,
-    },
-    {
-      ...generateDefault('last_payment_date'),
-      type: 'date',
-      filterable: false,
-    },
-    {
-      ...generateDefault('sum_after_agreement'),
-      type: 'number',
-      filterable: false,
-    },
-    {
-      ...generateDefault('reg_doc'),
-      type: 'number',
-      editable: true,
-    },
-    {
-      ...generateDefault('receipt_dt'),
-      type: 'date',
-      editable: true,
-    },
-    {
-      ...generateDefault('actions_for_get'),
-      editable: true,
-    },
-    {
-      ...generateDefault('collector_id'),
-      type: 'number',
-      editable: true,
-    },
-    {
-      ...generateDefault('task_link'),
-      editable: true,
-    },
-    {
-      ...generateDefault('sum_remains'),
-      editable: true,
+      type: 'string',
+      modelName: 'Agreement',
+      field: 'car',
+      filterCol: 'Agreement.car',
+      sortCol: 'Agreement.car',
     },
   ];
+  return columns;
 }
