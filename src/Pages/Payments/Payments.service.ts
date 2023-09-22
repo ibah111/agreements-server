@@ -265,7 +265,6 @@ export class PaymentsService {
         where: { id_payment: payments.map((item) => item.id) },
       });
       const calcs = await this.modelDebtCalc.findAll({
-        logging: console.log,
         raw: true,
         where: {
           parent_id: f_coll,

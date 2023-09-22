@@ -128,7 +128,6 @@ export class AgreementsService {
           ],
         ],
       },
-      logging: console.log,
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
     return agreements;
