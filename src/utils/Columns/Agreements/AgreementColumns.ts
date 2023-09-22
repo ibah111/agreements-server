@@ -21,10 +21,10 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       type: 'number',
       modelName: 'Agreement',
       filterCol: Sequelize.literal(
-        'select a.id, sum - (SELECT sum(sum_payments) from AgreementToDebtLink where id_agreement = a.id) sum_remains from agreements a',
+        '(SELECT sum - (SELECT SUM(sum_payments) FROM AgreementToDebtLink WHERE id_agreement = Agreement.id) sum_remains FROM Agreements)',
       ),
       sortCol: Sequelize.literal(
-        'select a.id, sum - (SELECT sum(sum_payments) from AgreementToDebtLink where id_agreement = a.id) sum_remains from agreements a',
+        '(SELECT sum - (SELECT SUM(sum_payments) FROM AgreementToDebtLink WHERE id_agreement = Agreement.id) sum_remains FROM Agreements)',
       ),
     },
     {

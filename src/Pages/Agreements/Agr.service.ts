@@ -93,6 +93,7 @@ export class AgreementsService {
       ],
       raw: true,
       where: agreementFilter,
+      logging: console.log,
     });
 
     const agreements = (await this.modelAgreement.findAndCountAll({
