@@ -93,7 +93,6 @@ export class AgreementsService {
       ],
       raw: true,
       where: agreementFilter,
-      logging: console.log,
     });
 
     const agreements = (await this.modelAgreement.findAndCountAll({
@@ -123,12 +122,13 @@ export class AgreementsService {
         include: [
           [
             Sequelize.literal(
-              'Agreement.sum - (select sum(sum_payments) from AgreementToDebtLink as ad where ad.id_agreement = Agreement.id)',
+              '(Agreement.sum - (select sum(sum_payments) from AgreementToDebtLink as ad where ad.id_agreement = Agreement.id))',
             ),
             'sum_remains',
           ],
         ],
       },
+      logging: console.log,
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
 
     return agreements;
