@@ -72,8 +72,10 @@ export class AgreementsService {
      * pers-prev
      */
     const personPreviewUtils = getPersonPreviewUtils();
-    const filterPersonPreview =
-      personPreviewUtils.getFilter('body.filterModel');
+    const filterPersonPreview = personPreviewUtils.getFilter(
+      'PersonPreview',
+      body.filterModel,
+    );
 
     const sort = agreementUtils.getSort(body.sortModel || []);
     const agrDebtFilter = filterAgreementToDebtLinks;
@@ -90,11 +92,15 @@ export class AgreementsService {
           association: 'DebtLinks',
           where: filterAgreementToDebtLinks,
         },
+        {
+          association: 'Comments',
+          where: agreementUtils.getFilter('Comments', body.filterModel),
+        },
       ],
       raw: true,
       where: agreementFilter,
     });
-
+    const start = performance.now();
     const agreements = (await this.modelAgreement.findAndCountAll({
       offset: body.paginationModel?.page * size,
       limit: size,
@@ -129,7 +135,7 @@ export class AgreementsService {
         ],
       },
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
-
+    console.log(performance.now() - start);
     return agreements;
   }
 
@@ -240,7 +246,7 @@ export class AgreementsService {
         rejectOnEmpty: new NotFoundException('Запись не найдена'),
       }),
     ).pipe(
-      mergeMap((agr) => this.addDataContact(agr)),
+      mergeMap((agr) => this.addDataContact(agr), 20),
       mergeMap((agreement) => {
         for (const key of Object.keys(
           data,

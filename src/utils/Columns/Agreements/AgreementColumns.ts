@@ -141,10 +141,10 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
     },
     {
       type: 'string',
-      modelName: 'Agreement',
+      modelName: 'Comments',
       field: 'comment',
-      filterCol: 'Agreement.comment',
-      sortCol: 'Agreement.comment',
+      filterCol: 'Comments.comment',
+      sortCol: 'Comments.comment',
     },
     {
       type: 'boolean',
