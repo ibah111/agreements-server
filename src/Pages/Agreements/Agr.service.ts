@@ -80,8 +80,10 @@ export class AgreementsService {
     const sort = agreementUtils.getSort(body.sortModel || []);
     const agrDebtFilter = filterAgreementToDebtLinks;
     const keys = Reflect.ownKeys(agrDebtFilter);
+    const commentKeys = Reflect.ownKeys(
+      agreementUtils.getFilter('Comments', body.filterModel),
+    );
     const agreements_ids = await this.modelAgreement.findAll({
-      logging: console.log,
       attributes: ['id', 'person_id'],
       include: [
         {
@@ -94,6 +96,7 @@ export class AgreementsService {
           where: filterAgreementToDebtLinks,
         },
         {
+          required: commentKeys.length === 0 ? false : true,
           association: 'Comments',
           where: agreementUtils.getFilter('Comments', body.filterModel),
         },
