@@ -20,6 +20,7 @@ import {
   BelongsTo,
   Column,
   DataType,
+  Default,
   ForeignKey,
   HasMany,
   Model,
@@ -111,13 +112,9 @@ export class Agreement extends Model<
   @Column(DataType.STRING)
   archive: string | null;
   /**
-   * Взыскатель (строка из экселя)
-   */
-  @Column(DataType.STRING)
-  collector: string | null;
-  /**
    * Взыскатель id
    */
+  @Default(0)
   @Column(DataType.INTEGER)
   collector_id: number | null;
   /**

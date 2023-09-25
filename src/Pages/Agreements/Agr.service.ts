@@ -81,6 +81,7 @@ export class AgreementsService {
     const agrDebtFilter = filterAgreementToDebtLinks;
     const keys = Reflect.ownKeys(agrDebtFilter);
     const agreements_ids = await this.modelAgreement.findAll({
+      logging: console.log,
       attributes: ['id', 'person_id'],
       include: [
         {
@@ -100,7 +101,6 @@ export class AgreementsService {
       raw: true,
       where: agreementFilter,
     });
-    const start = performance.now();
     const agreements = (await this.modelAgreement.findAndCountAll({
       offset: body.paginationModel?.page * size,
       limit: size,
@@ -135,7 +135,6 @@ export class AgreementsService {
         ],
       },
     })) as unknown as { count: number; rows: AgrGetAllDto[] };
-    console.log(performance.now() - start);
     return agreements;
   }
 

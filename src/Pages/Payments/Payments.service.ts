@@ -241,8 +241,6 @@ export class PaymentsService {
           model: this.modelAgreementDebtsLink,
         },
       });
-
-      console.log(collection?.DebtLinks?.map((i) => i.id_debt));
       const f_coll = collection?.DebtLinks?.map((i) => i.id_debt);
       if (!collection) return 'Нет связанных долгов';
       await this.modelPayments.update(

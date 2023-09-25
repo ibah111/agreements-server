@@ -131,16 +131,10 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   archive: string | null;
 
   @Expose()
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({ type: String })
-  collector: string | null;
-
-  @Expose()
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({ type: Number })
-  collector_id: number | null;
+  collector_id: number;
 
   @Expose()
   @IsBoolean()
