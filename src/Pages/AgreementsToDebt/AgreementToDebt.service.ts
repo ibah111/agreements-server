@@ -112,8 +112,14 @@ export class AgreementToDebtSerivce {
         include: {
           required: false,
           model: this.modelDebt,
-          where: { id: { [Op.notIn]: linkedDebts } } as WhereOptions<Debt>,
+          where: {
+            id: { [Op.notIn]: linkedDebts },
+            status: {
+              [Op.notIn]: [7],
+            },
+          } as WhereOptions<Debt>,
         },
+
         rejectOnEmpty: new NotFoundException(
           `Не найден человек с Id ${agreement.person_id}`,
         ),
