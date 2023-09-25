@@ -29,10 +29,10 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
     },
     {
       field: 'id',
-      modelName: 'Agreement',
       type: 'number',
-      filterCol: '',
-      sortCol: '',
+      modelName: 'Agreement',
+      filterCol: 'Agreement.id',
+      sortCol: 'Agreement.id',
     },
     {
       field: 'conclusion_date',
