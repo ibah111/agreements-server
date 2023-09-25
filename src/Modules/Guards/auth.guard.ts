@@ -6,6 +6,7 @@ import {
   ExecutionContext,
   ImATeapotException,
   Injectable,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
@@ -43,9 +44,13 @@ export const Auth = createParamDecorator(
   },
 );
 @Injectable()
-export class AuthGuard implements CanActivate {
-  private readonly modelUser = this.getRepository(User);
+export class AuthGuard implements CanActivate, OnModuleInit {
+  private modelUser: typeof User;
   constructor(private moduleRef: ModuleRef) {}
+  onModuleInit() {
+    this.modelUser = this.getRepository(User);
+  }
+
   private getRepository<T extends Model>(model: ClassConstructor<T>) {
     const connection = this.moduleRef.get(getConnectionToken('local'), {
       strict: false,

@@ -6,18 +6,24 @@ import { Agreement } from './models/Agreement';
 import AgreementDebtsLink from './models/AgreementDebtLink';
 import { User } from './models/User.model';
 import { LocalDatabaseSeed } from './seed';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    SequelizeModule.forRoot({
-      dialect: 'mssql',
-      host: 'newct.usb.ru',
-      database: 'agreements',
-      password: 'usN7WYxkhGEmjOAF',
-      username: 'agreements',
+    SequelizeModule.forRootAsync({
+      imports: [ConfigModule],
       name: 'local',
-      logging: false,
-      models,
+      useFactory: (config: ConfigService) => ({
+        dialect: 'mssql',
+        username: config.get<string>('database.username'),
+        password: config.get<string>('database.password'),
+        host: config.get<string>('database.host'),
+        database: config.get<string>('database.database'),
+        port: config.get<number>('database.port'),
+        logging: false,
+        models,
+      }),
+      inject: [ConfigService],
     }),
     SequelizeModule.forFeature([User, Agreement, AgreementDebtsLink], 'local'),
     SequelizeModule.forFeature([LawAct, Debt, DebtCalc], 'contact'),
