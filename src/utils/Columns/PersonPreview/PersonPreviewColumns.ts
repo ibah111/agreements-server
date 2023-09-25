@@ -1,5 +1,6 @@
 import { GridColDefExtend } from '../Agreements/AgreementColumns';
 import { PersonPreview } from '../../../Modules/Database/Local.Database/models/PersonPreview';
+import { Sequelize } from '@sql-tools/sequelize';
 /**
  *
  * @returns person_id, FIO, birth_date
@@ -14,14 +15,27 @@ export default function getPersonPreviewColumns(): GridColDefExtend<PersonPrevie
       sortCol: 'PersonPreview.person_id',
     },
     {
-      type: 'number',
-      modelName: 'PersonPreview',
+      type: 'string',
       field: 'FIO',
-      filterCol: 'PersonPreview.FIO',
-      sortCol: 'PersonPreview.FIO',
+      editable: false,
+      modelName: 'PersonPreview',
+      sortCol: {
+        name: 'concat',
+        args: [Sequelize.col('f'), ' ', Sequelize.col('i'), Sequelize.col('o')],
+      },
+      filterCol: {
+        name: 'concat',
+        args: [
+          Sequelize.col('f'),
+          ' ',
+          Sequelize.col('i'),
+          ' ',
+          Sequelize.col('o'),
+        ],
+      },
     },
     {
-      type: 'number',
+      type: 'date',
       modelName: 'PersonPreview',
       field: 'birth_date',
       filterCol: 'PersonPreview.birth_date',

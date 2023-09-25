@@ -84,6 +84,7 @@ export class AgreementsService {
       agreementUtils.getFilter('Comments', body.filterModel),
     );
     const agreements_ids = await this.modelAgreement.findAll({
+      logging: console.log,
       attributes: ['id', 'person_id'],
       include: [
         {
