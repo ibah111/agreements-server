@@ -84,7 +84,6 @@ export class AgreementsService {
       agreementUtils.getFilter('Comments', body.filterModel),
     );
     const agreements_ids = await this.modelAgreement.findAll({
-      logging: console.log,
       attributes: ['id', 'person_id'],
       include: [
         {
@@ -166,11 +165,17 @@ export class AgreementsService {
   }
 
   async сreateAgreement(auth: AuthResult, data: CreateAgreementInput) {
-    const Agreement = await this.modelAgreement.create({
-      ...data,
-      payable_status: false,
-      debt_count: 0,
-    });
+    const condition = (data: CreateAgreementInput): CreateAgreementInput => {
+      if (!data.sum)
+        return {
+          ...data,
+          payable_status: false,
+          debt_count: 0,
+          sum: data.full_req,
+        };
+      return { ...data, payable_status: false, debt_count: 0 };
+    };
+    const Agreement = await this.modelAgreement.create(condition(data));
 
     await this.previewGenerator.generateAgreementPreview(Agreement.id);
 
