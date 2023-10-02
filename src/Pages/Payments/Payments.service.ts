@@ -272,6 +272,8 @@ export class PaymentsService {
               moment(schedule.Agreement?.finish_date || undefined).toDate(),
             ],
           },
+          is_confirmed: 1,
+          is_cancel: 0,
         },
       });
       return this.createPaymentsToCalc(calcs, payments);
@@ -309,6 +311,8 @@ export class PaymentsService {
               moment(schedule.Agreement?.finish_date || undefined).toDate(),
             ],
           },
+          is_confirmed: 1,
+          is_cancel: 0,
         },
       });
       return this.createPaymentsToCalc(calcs, payments);
