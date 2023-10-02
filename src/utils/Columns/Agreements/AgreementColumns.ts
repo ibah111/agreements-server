@@ -112,6 +112,13 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       sortCol: 'Agreement.collector_id',
     },
     {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'agreement_type',
+      filterCol: 'Agreement.agreement_type',
+      sortCol: 'Agreement.agreement_type',
+    },
+    {
       type: 'string',
       modelName: 'Agreement',
       field: 'task_link',
