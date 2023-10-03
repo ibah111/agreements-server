@@ -174,6 +174,14 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       filterCol: 'Agreement.car',
       sortCol: 'Agreement.car',
     },
+
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'statusAgreement',
+      filterCol: 'Agreement.statusAgreement',
+      sortCol: 'Agreement.statusAgreement',
+    },
   ];
   return columns;
 }
