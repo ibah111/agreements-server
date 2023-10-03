@@ -1,11 +1,10 @@
-import { Person, PersonProperty } from '@contact/models';
+import { Person, PersonProperty, PersonPropertyParam } from '@contact/models';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { ActionLinkPersonPropertyInput } from './PersonProperty.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import AgreementToPersonProperties from '../../Modules/Database/Local.Database/models/AgreementToPersonProperties';
 import { Op, WhereOptions } from '@sql-tools/sequelize';
-import { CaslAbilityFactory } from '../../Modules/Casl/casl-ability.factory';
 
 @Injectable()
 export class PersonPropertyService {
@@ -18,7 +17,8 @@ export class PersonPropertyService {
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(AgreementToPersonProperties, 'local')
     private readonly modelAgreementToPersonProperties: typeof AgreementToPersonProperties,
-    private readonly serviceAbility: CaslAbilityFactory,
+    @InjectModel(PersonPropertyParam, 'contact')
+    private readonly modelPersonPropertyParam: typeof PersonPropertyParam,
   ) {}
   async getLinkedPersonProperties(id_agreement: number) {
     const linkedProps = await this.modelAgreementToPersonProperties.findAll({
@@ -148,7 +148,9 @@ export class PersonPropertyService {
           required: false,
           model: this.modelPersonProperties,
           where: {
-            id: { [Op.in]: linkedProperties } as WhereOptions<PersonProperty>,
+            id: {
+              [Op.notIn]: linkedProperties,
+            } as WhereOptions<PersonProperty>,
           },
         },
         rejectOnEmpty: new NotFoundException(
@@ -159,5 +161,20 @@ export class PersonPropertyService {
     const personProperties =
       personProperty.PersonProperties as PersonProperty[];
     return personProperties;
+  }
+
+  async getPropertyParams(id_person: number) {
+    return await this.modelPersonProperties.findAll({
+      where: {
+        r_person_id: id_person,
+      },
+      attributes: ['id', 'fio', 'r_person_id'],
+      include: [
+        {
+          model: this.modelPersonPropertyParam,
+          attributes: ['id', 'parent_id', 'r_property_typ_params_id', 'value'],
+        },
+      ],
+    });
   }
 }

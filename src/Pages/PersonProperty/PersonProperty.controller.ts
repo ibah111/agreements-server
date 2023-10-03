@@ -14,8 +14,8 @@ import { ActionLinkPersonPropertyInput } from './PersonProperty.input';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 import { CanGuard } from '../../Modules/Casl/Can.guard';
 @ApiTags('PersonProperty')
-// @UseGuards(CanGuard)
-// @UseGuards(AuthGuard)
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
 @Controller('PersonProperty')
 export class PersonPropertyController {
   constructor(private readonly service: PersonPropertyService) {}
@@ -43,5 +43,10 @@ export class PersonPropertyController {
     @Param('id_agreement', ParseIntPipe) id_agreement: number,
   ) {
     return await this.service.getLinkedPersonProperties(id_agreement);
+  }
+
+  @Get('/getPersonPropertyParam/:id_person')
+  async getParams(@Param('id_person', ParseIntPipe) id_person: number) {
+    return await this.service.getPropertyParams(id_person);
   }
 }

@@ -22,9 +22,9 @@ import { CanGuard } from '../../Modules/Casl/Can.guard';
 import { AuthGuard } from '../../Modules/Guards/auth.guard';
 @ApiTags('Payments')
 @Controller('Payments')
-// @UseGuards(CanGuard)
-// @UseGuards(AuthGuard)
-// @ApiBasicAuth()
+@UseGuards(CanGuard)
+@UseGuards(AuthGuard)
+@ApiBasicAuth()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
   @Post()
