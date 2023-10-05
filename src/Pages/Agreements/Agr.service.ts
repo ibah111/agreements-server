@@ -12,7 +12,6 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
 import getSize from 'src/utils/getSize';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
-import { agreementCalculation } from './Agr.functions/agreementCalculations';
 import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
 import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewGenerator.service';
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
@@ -232,8 +231,7 @@ export class AgreementsService {
         const changed = agreement.changed() as
           | (keyof Attributes<Agreement>)[]
           | false;
-        if (!changed)
-          return of(agreement).pipe(map((agr) => agreementCalculation(agr)));
+        if (!changed) return of(agreement);
         if (data['statusAgreement'] === 2) {
           agreement.finish_date = new Date();
         }
@@ -251,7 +249,6 @@ export class AgreementsService {
           combineLatestAll(),
           mergeMap(() => agreement.save()),
           map((agreement) => agreement),
-          map((agr) => agreementCalculation(agr)),
         );
       }),
     );
