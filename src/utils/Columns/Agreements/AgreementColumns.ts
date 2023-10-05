@@ -28,36 +28,43 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       ),
     },
     {
-      field: 'id',
       type: 'number',
       modelName: 'Agreement',
+      field: 'id',
       filterCol: 'Agreement.id',
       sortCol: 'Agreement.id',
     },
     {
-      field: 'conclusion_date',
+      type: 'number',
       modelName: 'Agreement',
+      field: 'person_id',
+      filterCol: 'Agreement.person_id',
+      sortCol: 'Agreement.person_id',
+    },
+    {
       type: 'date',
+      modelName: 'Agreement',
+      field: 'conclusion_date',
       filterCol: 'Agreement.conclusion_date',
       sortCol: 'Agreement.conclusion_date',
     },
     {
-      field: 'finish_date',
       modelName: 'Agreement',
       type: 'date',
-      filterCol: 'Agreement',
-      sortCol: 'Agreement',
+      field: 'finish_date',
+      filterCol: 'Agreement.finish_date',
+      sortCol: 'Agreement.finish_date',
     },
     {
-      field: 'purpose',
       type: 'number',
       modelName: 'Agreement',
+      field: 'purpose',
       filterCol: 'Agreement.purpose',
       sortCol: 'Agreement.purpose',
     },
     {
-      field: 'sum',
       type: 'number',
+      field: 'sum',
       modelName: 'Agreement',
       filterCol: 'Agreement.sum',
       sortCol: 'Agreement.sum',
@@ -147,13 +154,6 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       sortCol: 'Agreement.receipt_dt',
     },
     {
-      type: 'string',
-      modelName: 'Comments',
-      field: 'comment',
-      filterCol: 'Comments.comment',
-      sortCol: 'Comments.comment',
-    },
-    {
       type: 'boolean',
       modelName: 'Agreement',
       field: 'payable_status',
@@ -174,13 +174,74 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       filterCol: 'Agreement.car',
       sortCol: 'Agreement.car',
     },
-
     {
       type: 'number',
       modelName: 'Agreement',
       field: 'statusAgreement',
       filterCol: 'Agreement.statusAgreement',
       sortCol: 'Agreement.statusAgreement',
+    },
+    /**
+     * Отдель комментов
+     */
+    {
+      type: 'string',
+      modelName: 'Comments',
+      field: 'comment',
+      filterCol: 'Comments.comment',
+      sortCol: 'Comments.comment',
+    },
+    /**
+     * debtLinks
+     */
+    {
+      type: 'string',
+      modelName: 'DebtLinks',
+      field: 'contract',
+      filterCol: 'DebtLinks.contract',
+      sortCol: 'DebtLinks.contract',
+    },
+    {
+      type: 'number',
+      modelName: 'DebtLinks',
+      field: 'portfolio',
+      filterCol: 'DebtLinks.portfolio',
+      sortCol: 'DebtLinks.portfolio',
+    },
+    {
+      type: 'number',
+      modelName: 'DebtLinks',
+      field: 'first_payment',
+      filterCol: 'DebtLinks.first_payment',
+      sortCol: 'DebtLinks.first_payment',
+    },
+    {
+      type: 'date',
+      modelName: 'DebtLinks',
+      field: 'first_payment_date',
+      filterCol: 'DebtLinks.first_payment_date',
+      sortCol: 'DebtLinks.first_payment_date',
+    },
+    {
+      type: 'number',
+      modelName: 'DebtLinks',
+      field: 'last_payment',
+      filterCol: 'DebtLinks.last_payment',
+      sortCol: 'DebtLinks.last_payment',
+    },
+    {
+      type: 'date',
+      modelName: 'DebtLinks',
+      field: 'first_payment_date',
+      filterCol: 'DebtLinks.first_payment_date',
+      sortCol: 'DebtLinks.first_payment_date',
+    },
+    {
+      type: 'number',
+      modelName: 'DebtLinks',
+      field: 'first_payment',
+      filterCol: 'DebtLinks.first_payment',
+      sortCol: 'DebtLinks.first_payment',
     },
   ];
   return columns;

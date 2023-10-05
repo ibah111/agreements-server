@@ -21,7 +21,6 @@ import { PersonPreview } from '../../Modules/Database/Local.Database/models/Pers
 import { DataGridClass } from '../DataGridClass/DataGridClass';
 import { getAgreementUtils } from '../../utils/Columns/Agreements/utils.Agreements/getUtils.Agreements';
 import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils.PersonPreview/getUtils.PersonPreview';
-import { getAgreementToDebtLinksUtils } from '../../utils/Columns/AgreementToDebtLink/utils.AgreementToDebtLink/getUtils.AgreementToDebtLink';
 
 @Injectable()
 export class AgreementsService {
@@ -61,14 +60,6 @@ export class AgreementsService {
       body.filterModel,
     );
     /**
-     * agr-debt
-     */
-    const utils_agr_debt = getAgreementToDebtLinksUtils();
-    const filterAgreementToDebtLinks = utils_agr_debt.getFilter(
-      'AgreementToDebtLinks',
-      body.filterModel,
-    );
-    /**
      * pers-prev
      */
     const personPreviewUtils = getPersonPreviewUtils();
@@ -78,8 +69,7 @@ export class AgreementsService {
     );
 
     const sort = agreementUtils.getSort(body.sortModel || []);
-    const agrDebtFilter = filterAgreementToDebtLinks;
-    const keys = Reflect.ownKeys(agrDebtFilter);
+
     const commentKeys = Reflect.ownKeys(
       agreementUtils.getFilter('Comments', body.filterModel),
     );
@@ -91,9 +81,8 @@ export class AgreementsService {
           where: filterPersonPreview,
         },
         {
-          required: keys.length === 0 ? false : true,
           association: 'DebtLinks',
-          where: filterAgreementToDebtLinks,
+          where: agreementUtils.getFilter('DebtLinks', body.filterModel),
         },
         {
           required: commentKeys.length === 0 ? false : true,
@@ -103,6 +92,7 @@ export class AgreementsService {
       ],
       raw: true,
       where: agreementFilter,
+      logging: console.log,
     });
     const agreements = (await this.modelAgreement.findAndCountAll({
       offset: body.paginationModel?.page * size,
