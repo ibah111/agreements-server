@@ -9,8 +9,7 @@ import { AppModule } from './app.module';
 import client from './utils/client';
 import https from './utils/https';
 import { getSwaggerOptions, getSwaggerOptionsCustom } from './utils/swagger';
-
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+import './utils/CustomCA';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
