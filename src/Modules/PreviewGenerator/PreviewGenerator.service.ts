@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { PersonPreview } from '../Database/Local.Database/models/PersonPreview';
 import { Agreement } from '../Database/Local.Database/models/Agreement';
@@ -15,7 +15,7 @@ import * as a from 'colors';
 import { round } from '../../utils/round';
 
 @Injectable()
-export class PreviewGeneratorService {
+export class PreviewGeneratorService implements OnModuleInit {
   constructor(
     @InjectModel(PersonPreview, 'local')
     private readonly modelPersonPreview: typeof PersonPreview,
@@ -193,5 +193,8 @@ export class PreviewGeneratorService {
   syncPreview() {
     const sync = this.syncDebts().pipe(mergeMap(() => this.syncAgreements()));
     return sync;
+  }
+  onModuleInit() {
+    return this.syncPreview();
   }
 }

@@ -1,5 +1,5 @@
 import { Debt, DebtCalc } from '@contact/models';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Op } from '@sql-tools/sequelize';
 import { Sequelize } from '@sql-tools/sequelize-typescript';
@@ -7,7 +7,7 @@ import { join } from 'path';
 import createUmzug from '../umzug';
 import AgreementDebtsLink from './models/AgreementDebtLink';
 @Injectable()
-export class LocalDatabaseSeed {
+export class LocalDatabaseSeed implements OnModuleInit {
   constructor(
     @InjectConnection('local') private readonly sequelize: Sequelize,
     @InjectConnection('contact') private readonly sequelizeContact: Sequelize,
@@ -17,6 +17,9 @@ export class LocalDatabaseSeed {
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelLink: typeof AgreementDebtsLink,
   ) {}
+  onModuleInit() {
+    return this.sync();
+  }
   async sync() {
     const umzug = createUmzug(
       this.sequelize,
