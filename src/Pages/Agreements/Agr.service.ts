@@ -17,8 +17,6 @@ import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewG
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
 import { DataGridClass } from '../DataGridClass/DataGridClass';
 import { getAgreementUtils } from '../../utils/Columns/Agreements/utils.Agreements/getUtils.Agreements';
-import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils.PersonPreview/getUtils.PersonPreview';
-import { getAgreementToDebtLinksUtils } from 'src/utils/Columns/AgreementToDebtLink/utils.AgreementToDebtLink/getUtils.AgreementToDebtLink';
 
 @Injectable()
 export class AgreementsService {
@@ -60,8 +58,7 @@ export class AgreementsService {
     /**
      * pers-prev
      */
-    const personPreviewUtils = getPersonPreviewUtils();
-    const filterPersonPreview = personPreviewUtils.getFilter(
+    const filterPersonPreview = agreementUtils.getFilter(
       'PersonPreview',
       body.filterModel,
     );
@@ -69,8 +66,7 @@ export class AgreementsService {
     const commentKeys = Reflect.ownKeys(
       agreementUtils.getFilter('Comments', body.filterModel),
     );
-    const dlUtils = getAgreementToDebtLinksUtils();
-    const dlFilter = dlUtils.getFilter('DebtLinks', body.filterModel);
+    const dlFilter = agreementUtils.getFilter('DebtLinks', body.filterModel);
     const keys = Reflect.ownKeys(dlFilter);
     return await this.modelAgreement.findAndCountAll({
       include: [
