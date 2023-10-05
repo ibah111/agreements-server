@@ -10,8 +10,6 @@ import { MIS, WhereOptions } from '@sql-tools/sequelize';
 import moment from 'moment';
 import _ from 'lodash';
 import { catchError, from, last, mergeMap, of } from 'rxjs';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as a from 'colors';
 
 @Injectable()
 export class PreviewGeneratorService implements OnModuleInit {
