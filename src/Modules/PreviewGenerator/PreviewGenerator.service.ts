@@ -12,7 +12,6 @@ import _ from 'lodash';
 import { catchError, from, last, mergeMap, of } from 'rxjs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as a from 'colors';
-import { round } from '../../utils/round';
 
 @Injectable()
 export class PreviewGeneratorService implements OnModuleInit {
@@ -129,12 +128,12 @@ export class PreviewGeneratorService implements OnModuleInit {
         const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
         const data: PreviewDebt = {
           contract: debt.contract,
-          before_agreement: round(_.sumBy(calcs_before_agreement, 'sum')), // 1 - переменная, 2 - по которому суммируем
+          before_agreement: _.floor(_.sumBy(calcs_before_agreement, 'sum'), 2), // 1 - переменная, 2 - по которому суммируем
           first_payment: first_payment?.sum || null,
           first_payment_date: first_payment?.calc_date || null,
           last_payment: last_payment?.sum || null,
           last_payment_date: last_payment?.calc_date || null,
-          sum_payments: round(_.sumBy(calculations_in_agreements, 'sum')),
+          sum_payments: _.floor(_.sumBy(calculations_in_agreements, 'sum'), 2),
           payable_status:
             (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
           portfolio: debt.r_portfolio_id,
