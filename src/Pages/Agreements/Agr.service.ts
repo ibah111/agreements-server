@@ -10,17 +10,16 @@ import { AuthResult } from 'src/Modules/Guards/auth.guard';
 import { Attributes, Op, Sequelize } from '@sql-tools/sequelize';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import AgreementDebtsLink from 'src/Modules/Database/Local.Database/models/AgreementDebtLink';
-import { AgrGetAllDto } from './Agr.dto';
 import getSize from 'src/utils/getSize';
 import { combineLatestAll, from, map, mergeMap, of } from 'rxjs';
 import { agreementCalculation } from './Agr.functions/agreementCalculations';
-import _ from 'lodash';
 import { Comment } from '../../Modules/Database/Local.Database/models/Comment';
 import { PreviewGeneratorService } from '../../Modules/PreviewGenerator/PreviewGenerator.service';
 import { PersonPreview } from '../../Modules/Database/Local.Database/models/PersonPreview';
 import { DataGridClass } from '../DataGridClass/DataGridClass';
 import { getAgreementUtils } from '../../utils/Columns/Agreements/utils.Agreements/getUtils.Agreements';
 import { getPersonPreviewUtils } from '../../utils/Columns/PersonPreview/utils.PersonPreview/getUtils.PersonPreview';
+import { getAgreementToDebtLinksUtils } from 'src/utils/Columns/AgreementToDebtLink/utils.AgreementToDebtLink/getUtils.AgreementToDebtLink';
 
 @Injectable()
 export class AgreementsService {
@@ -67,56 +66,33 @@ export class AgreementsService {
       'PersonPreview',
       body.filterModel,
     );
-
     const sort = agreementUtils.getSort(body.sortModel || []);
-
     const commentKeys = Reflect.ownKeys(
       agreementUtils.getFilter('Comments', body.filterModel),
     );
-    const agreements_ids = await this.modelAgreement.findAll({
-      attributes: ['id', 'person_id'],
+    const dlUtils = getAgreementToDebtLinksUtils();
+    const dlFilter = dlUtils.getFilter('DebtLinks', body.filterModel);
+    const keys = Reflect.ownKeys(dlFilter);
+    return await this.modelAgreement.findAndCountAll({
       include: [
         {
           association: 'PersonPreview',
+          required: true,
           where: filterPersonPreview,
         },
         {
+          required: keys.length === 0 ? false : true,
           association: 'DebtLinks',
-          where: agreementUtils.getFilter('DebtLinks', body.filterModel),
+          separate: keys.length === 0 ? true : false,
+          where: dlFilter,
         },
         {
           required: commentKeys.length === 0 ? false : true,
+          separate: commentKeys.length === 0 ? true : false,
           association: 'Comments',
           where: agreementUtils.getFilter('Comments', body.filterModel),
         },
       ],
-      raw: true,
-      where: agreementFilter,
-      logging: console.log,
-    });
-    const agreements = (await this.modelAgreement.findAndCountAll({
-      offset: body.paginationModel?.page * size,
-      limit: size,
-      where: {
-        [Op.and]: [
-          {
-            id: {
-              [Op.in]: _.uniq(agreements_ids.map((agreement) => agreement.id)),
-            },
-          },
-        ],
-      },
-      include: [
-        {
-          model: this.modelAgreementDebtsLink,
-          separate: true,
-        },
-        { model: this.modelComment, separate: true },
-        {
-          model: this.modelPersonPreview,
-        },
-      ],
-      order: sort,
       attributes: {
         include: [
           [
@@ -127,8 +103,10 @@ export class AgreementsService {
           ],
         ],
       },
-    })) as unknown as { count: number; rows: AgrGetAllDto[] };
-    return agreements;
+      where: agreementFilter,
+      order: sort,
+      limit: size,
+    });
   }
 
   async getAgreement(id: number) {
