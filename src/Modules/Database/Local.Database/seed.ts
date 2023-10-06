@@ -42,7 +42,7 @@ export class LocalDatabaseSeed implements OnModuleInit {
       foreignKey: 'parent_id',
       as: 'LastCalcs',
       scope: {
-        dt: {
+        calc_date: {
           [Op.gte]: Sequelize.fn(
             'DATEADD',
             Sequelize.literal('day'),
@@ -54,6 +54,7 @@ export class LocalDatabaseSeed implements OnModuleInit {
         is_cancel: 0,
         purpose: {
           [Op.notIn]: [7],
+          [Op.or]: [1, 2, 3, 4, 5, 8, 9, 10, null],
         },
       },
     });
