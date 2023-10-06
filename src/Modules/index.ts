@@ -4,6 +4,7 @@ import DatabaseModule from './Database/Database.module';
 import { SocketModule } from './Socket/Socket.module';
 import { PreviewGeneratorModule } from './PreviewGenerator/PreviewGenerator.module';
 import { CronModule } from './CRON/Cron.module';
+import { MathModule } from './Math/Math.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CronModule } from './CRON/Cron.module';
     SocketModule,
     PreviewGeneratorModule,
     CronModule,
+    MathModule,
   ],
 })
 export class ModuleOfModules {}

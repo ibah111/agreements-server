@@ -53,13 +53,21 @@ export class PreviewGeneratorService implements OnModuleInit {
     return await personPreview.update(ContactPerson);
   }
 
+  async updateCurrentAgreement(id_agreement: number) {
+    return await this.modelAgreement.findOne({
+      where: {
+        id: id_agreement,
+      },
+    });
+  }
   /**
+   * @deprecated
    * Обновление согласа целиком
    * @param id_agreement соглас
    * @param link_debts связанные долги
    * @returns апдейт обновленных данных
    */
-  async updateCurrentAgreement(id_agreement: number) {
+  async deprecatedUpdateCurrentAgreement(id_agreement: number) {
     const agreement = await Agreement.findOne({
       where: {
         id: id_agreement,
@@ -94,6 +102,7 @@ export class PreviewGeneratorService implements OnModuleInit {
     if (link_debts)
       for (const link of link_debts) {
         const debt = await link?.getDebt({
+          logging: console.log,
           include: [
             { association: 'LastCalcs' },
             {
@@ -106,6 +115,7 @@ export class PreviewGeneratorService implements OnModuleInit {
             },
           ],
         });
+        console.log('lastCalcs: ', debt.LastCalcs);
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const calculations_in_agreements = debt.DebtCalcs!.filter(
           (item) =>
@@ -132,8 +142,7 @@ export class PreviewGeneratorService implements OnModuleInit {
           last_payment: last_payment?.sum || null,
           last_payment_date: last_payment?.calc_date || null,
           sum_payments: _.floor(_.sumBy(calculations_in_agreements, 'sum'), 2),
-          payable_status:
-            (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
+          payable_status: false,
           portfolio: debt.r_portfolio_id,
           status: debt.status,
           name: debt.name,

@@ -45,7 +45,7 @@ export class ScheduleLinks extends Model<
   @ForeignKey(() => ScheduleType)
   schedule_type: number;
   @Column(DataType.INTEGER)
-  id_debt: number;
+  id_debt: number | null;
   @Column(DataType.STRING)
   contract: string | null;
 

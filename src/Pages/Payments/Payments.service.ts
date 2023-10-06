@@ -9,12 +9,14 @@ import {
 } from './Payments.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
 import { Debt, DebtCalc } from '@contact/models';
-import { MIS, Op, Sequelize } from '@sql-tools/sequelize';
+import { Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
 import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
+import _ from 'lodash';
+import MathService from 'src/Modules/Math/Math.service';
 
 @Injectable()
 export class PaymentsService {
@@ -35,6 +37,7 @@ export class PaymentsService {
     private readonly modelScheduleLinks: typeof ScheduleLinks,
     @InjectModel(ScheduleType, 'local')
     private readonly modelScheduleType: typeof ScheduleType,
+    private readonly mathService: MathService,
   ) {}
 
   /**
@@ -87,6 +90,7 @@ export class PaymentsService {
   }
 
   /**
+   * @deprecated
    * Метод по изменению статуса в зависимости от внесенных платежей
    * @param body accepting id_payment and id_agreement
    * changing status depending exciting payments from DebtCalcs
@@ -163,59 +167,6 @@ export class PaymentsService {
   }
 
   /**
-   * Нетрогай, должно работать))))
-   * @param calcs
-   * @param payments
-   */
-  async createPaymentsToCalc(calcs: DebtCalc[], payments: MIS<Payments>[]) {
-    let current_calc = 0;
-    let current_pay = 0;
-    const last_calc = calcs.length - 1;
-    const last_pay = payments.length - 1;
-    let wallet = 0;
-    while (true) {
-      wallet += calcs[current_calc].sum;
-      while (true) {
-        if (wallet === 0) break;
-        const pay = payments[current_pay];
-        if (!pay) break;
-        const sum_left = pay.sum_left - wallet;
-
-        if (sum_left < 0) {
-          wallet -= pay.sum_left;
-          pay.sum_left = 0;
-        } else {
-          pay.sum_left = sum_left;
-          wallet = 0;
-        }
-        await pay.createCalc({ id_debt_calc: calcs[current_calc].id });
-        /**
-         * Надо написать связь многое ко многим
-         * <----  Здесь
-         * pay.calcs.push(calcs[current_calc].id);
-         * <----  Здесь
-         */
-        if (pay.sum_left === 0) {
-          pay.status = true;
-          await pay.save();
-          current_pay++;
-        }
-        if (wallet === 0 || (pay.sum_left > 0 && last_pay === current_pay))
-          break;
-      }
-      if (
-        last_calc === current_calc ||
-        (wallet > 0 && last_pay === current_pay)
-      ) {
-        if (payments[current_pay]) await payments[current_pay].save();
-        break;
-      }
-      current_calc++;
-    }
-    return wallet;
-  }
-
-  /**
    * Реализует л
    * @param id_agreement
    * @returns
@@ -229,11 +180,8 @@ export class PaymentsService {
         model: this.modelAgreement,
       },
     });
-    /**
-     * Общий, создаем collection
-     */
-    if (schedule?.schedule_type === 1) {
-      const collection = await this.modelAgreement.findOne({
+    if (schedule) {
+      const agreement = await this.modelAgreement.findOne({
         where: {
           id: schedule.id_agreement,
         },
@@ -241,8 +189,11 @@ export class PaymentsService {
           model: this.modelAgreementDebtsLink,
         },
       });
-      const f_coll = collection?.DebtLinks?.map((i) => i.id_debt);
-      if (!collection) return 'Нет связанных долгов';
+      const debt_ids =
+        schedule.schedule_type === 2
+          ? [schedule.id_debt as number]
+          : agreement?.DebtLinks?.map((i) => i.id_debt) || [];
+      if (!agreement) return 0;
       await this.modelPayments.update(
         {
           sum_left: Sequelize.col('sum_owe'),
@@ -265,7 +216,7 @@ export class PaymentsService {
       const calcs = await this.modelDebtCalc.findAll({
         raw: true,
         where: {
-          parent_id: f_coll,
+          parent_id: debt_ids,
           calc_date: {
             [Op.between]: [
               moment(schedule.Agreement?.conclusion_date).toDate(),
@@ -276,47 +227,25 @@ export class PaymentsService {
           is_cancel: 0,
         },
       });
-      return this.createPaymentsToCalc(calcs, payments);
-    } else if (schedule?.schedule_type === 2) {
-      /**
-       * Индивидуальный, по конкретному долгу
-       */
-      const single_debt = schedule.id_debt;
-      await this.modelPayments.update(
-        {
-          sum_left: Sequelize.col('sum_owe'),
-          status: false,
-        },
-        {
-          where: {
-            id_schedule,
-          },
-        },
-      );
-      const payments = await this.modelPayments.findAll({
-        where: {
-          id_schedule,
-        },
-      });
-      await this.modelPaymentToCalc.destroy({
-        where: { id_payment: payments.map((item) => item.id) },
-      });
-      const calcs = await this.modelDebtCalc.findAll({
-        raw: true,
-        where: {
-          parent_id: single_debt,
-          calc_date: {
-            [Op.between]: [
-              moment(schedule.Agreement?.conclusion_date).toDate(),
-              moment(schedule.Agreement?.finish_date || undefined).toDate(),
-            ],
-          },
-          is_confirmed: 1,
-          is_cancel: 0,
-        },
-      });
-      return this.createPaymentsToCalc(calcs, payments);
+      if (payments.length === 0) return this.checkDebts(agreement, calcs);
+      return this.mathService.createPaymentsToCalc(calcs, payments);
+    } else {
+      return 0;
     }
+  }
+
+  async checkDebts(agreement: Agreement, debts: DebtCalc[]) {
+    if (
+      _(debts)
+        .filter(
+          (debt) =>
+            debt.purpose !== 7 &&
+            moment(debt.calc_date).isAfter(moment().add(-1, 'month')),
+        )
+        .value().length
+    )
+      agreement.payable_status = true;
+    return agreement.save();
   }
 
   async updateAllPayments() {
@@ -359,7 +288,10 @@ export class PaymentsService {
       },
     });
     if (agreement) {
-      const linked_ids = agreement.ScheduleLinks?.map((i) => i.id_debt) || [];
+      const linked_ids =
+        agreement.ScheduleLinks?.filter((i) => i.id_debt !== null).map(
+          (i) => i.id_debt as number,
+        ) || [];
       const find_debts = await this.modelDebt.findAll({
         where: {
           parent_id: agreement?.person_id,

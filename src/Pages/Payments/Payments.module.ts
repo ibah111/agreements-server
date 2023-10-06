@@ -9,9 +9,11 @@ import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/Paym
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
 import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
+import { MathModule } from 'src/Modules/Math/Math.module';
 
 @Module({
   imports: [
+    MathModule,
     SequelizeModule.forFeature(
       [
         Agreement,
