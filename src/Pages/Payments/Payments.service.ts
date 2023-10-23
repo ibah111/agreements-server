@@ -17,6 +17,7 @@ import { ScheduleType } from '../../Modules/Database/Local.Database/models/Sched
 import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 import _ from 'lodash';
 import MathService from 'src/Modules/Math/Math.service';
+import { PreviewGeneratorService } from 'src/Modules/PreviewGenerator/PreviewGenerator.service';
 
 @Injectable()
 export class PaymentsService {
@@ -38,6 +39,7 @@ export class PaymentsService {
     @InjectModel(ScheduleType, 'local')
     private readonly modelScheduleType: typeof ScheduleType,
     private readonly mathService: MathService,
+    private readonly previewGenerator: PreviewGeneratorService,
   ) {}
 
   /**
@@ -90,7 +92,6 @@ export class PaymentsService {
   }
 
   /**
-   * @deprecated
    * Метод по изменению статуса в зависимости от внесенных платежей
    * @param body accepting id_payment and id_agreement
    * changing status depending exciting payments from DebtCalcs
@@ -228,7 +229,9 @@ export class PaymentsService {
         },
       });
       if (payments.length === 0) return this.checkDebts(agreement, calcs);
-      return this.mathService.createPaymentsToCalc(calcs, payments);
+      return this.mathService.createPaymentsToCalc(calcs, payments).then(() => {
+        return this.previewGenerator.checkPayableStatus(schedule.id_agreement);
+      });
     } else {
       return 0;
     }

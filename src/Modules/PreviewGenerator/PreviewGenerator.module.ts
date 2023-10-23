@@ -6,12 +6,13 @@ import { PersonPreview } from '../Database/Local.Database/models/PersonPreview';
 import { Agreement } from '../Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../Database/Local.Database/models/AgreementDebtLink';
 import { Payments } from '../Database/Local.Database/models/Payments';
+import { ScheduleLinks } from '../Database/Local.Database/models/SchedulesLinks';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Person, Debt], 'contact'),
     SequelizeModule.forFeature(
-      [PersonPreview, Agreement, AgreementDebtsLink, Payments],
+      [PersonPreview, Agreement, AgreementDebtsLink, Payments, ScheduleLinks],
       'local',
     ),
   ],

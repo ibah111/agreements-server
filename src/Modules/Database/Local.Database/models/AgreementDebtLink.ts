@@ -24,8 +24,16 @@ export interface PreviewDebt {
   contract: string | null;
   payable_status: boolean | null;
   before_agreement: number | null;
+  /**
+   * убран с клиента
+   * @deprecated
+   */
   first_payment: number | null;
   last_payment: number | null;
+  /**
+   * убран с клиента
+   * @deprecated
+   */
   first_payment_date: Date | null;
   last_payment_date: Date | null;
   sum_payments: number | null;

@@ -10,6 +10,7 @@ import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/Sche
 import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
 import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 import { MathModule } from 'src/Modules/Math/Math.module';
+import { PreviewGeneratorModule } from 'src/Modules/PreviewGenerator/PreviewGenerator.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MathModule } from 'src/Modules/Math/Math.module';
       ],
       'local',
     ),
+    PreviewGeneratorModule,
     SequelizeModule.forFeature([Debt, DebtCalc], 'contact'),
   ],
   controllers: [PaymentsController],
