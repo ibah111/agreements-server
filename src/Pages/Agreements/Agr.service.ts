@@ -100,7 +100,10 @@ export class AgreementsService {
       },
       where: agreementFilter,
       order: sort,
+      offset: body.paginationModel.page * size,
       limit: size,
+
+      logging: true,
     });
   }
 
