@@ -234,9 +234,9 @@ export class PaymentsService {
     }
   }
 
-  async checkDebts(agreement: Agreement, debts: DebtCalc[]) {
+  async checkDebts(agreement: Agreement, calcs: DebtCalc[]) {
     if (
-      _(debts)
+      _(calcs)
         .filter(
           (debt) =>
             debt.purpose !== 7 &&
@@ -251,11 +251,7 @@ export class PaymentsService {
   async updateAllPayments() {
     const agreements = await this.modelAgreement.findAll();
     for (const agreement of agreements) {
-      this.createCalculationToCalcs(agreement.id).then(() => {
-        console.log(
-          `Agreement ${agreement.id} and it's payments must be updated`.green,
-        );
-      });
+      this.createCalculationToCalcs(agreement.id);
     }
   }
 

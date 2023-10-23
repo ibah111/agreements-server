@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { PersonPreview } from '../Database/Local.Database/models/PersonPreview';
 import { Agreement } from '../Database/Local.Database/models/Agreement';
-import { DebtCalc, Person } from '@contact/models';
+import { Debt, DebtCalc, Person } from '@contact/models';
 import AgreementDebtsLink, {
   PreviewDebt,
 } from '../Database/Local.Database/models/AgreementDebtLink';
@@ -21,12 +21,14 @@ export class PreviewGeneratorService implements OnModuleInit {
     @InjectModel(AgreementDebtsLink, 'local')
     private readonly modelAgreementDebtLink: typeof AgreementDebtsLink,
     @InjectModel(Person, 'contact') private readonly modelPerson: typeof Person,
+    @InjectModel(Debt, 'contact') private readonly modelDebt: typeof Debt,
   ) {}
   /**
    *
    * @param agreement_id
    * @returns
    */
+
   async generateAgreementPreview(agreement_id: number | MIS<Agreement>) {
     const agreement =
       agreement_id instanceof Agreement
@@ -52,22 +54,13 @@ export class PreviewGeneratorService implements OnModuleInit {
     if (created) return personPreview;
     return await personPreview.update(ContactPerson);
   }
-
-  async updateCurrentAgreement(id_agreement: number) {
-    return await this.modelAgreement.findOne({
-      where: {
-        id: id_agreement,
-      },
-    });
-  }
   /**
-   * @deprecated
    * Обновление согласа целиком
    * @param id_agreement соглас
    * @param link_debts связанные долги
    * @returns апдейт обновленных данных
    */
-  async deprecatedUpdateCurrentAgreement(id_agreement: number) {
+  async updateCurrentAgreement(id_agreement: number) {
     const agreement = await Agreement.findOne({
       where: {
         id: id_agreement,
@@ -102,7 +95,6 @@ export class PreviewGeneratorService implements OnModuleInit {
     if (link_debts)
       for (const link of link_debts) {
         const debt = await link?.getDebt({
-          logging: console.log,
           include: [
             { association: 'LastCalcs' },
             {
@@ -115,7 +107,6 @@ export class PreviewGeneratorService implements OnModuleInit {
             },
           ],
         });
-        console.log('lastCalcs: ', debt.LastCalcs);
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const calculations_in_agreements = debt.DebtCalcs!.filter(
           (item) =>
