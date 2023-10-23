@@ -26,7 +26,7 @@ export class CronService {
   ) {}
   private readonly logger = new Logger(CronService.name);
 
-  @Cron(CronExpression.EVERY_DAY_AT_11AM, { name: 'midnight_update' })
+  @Cron(CronExpression.EVERY_DAY_AT_11PM, { name: 'midnight_update' })
   async syncronize() {
     await lastValueFrom(this.sync.syncPreview())
       .then(() => {
