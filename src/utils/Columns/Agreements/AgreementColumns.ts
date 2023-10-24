@@ -98,14 +98,14 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       sortCol: 'reg_doc',
     },
     {
-      type: 'number',
+      type: 'string',
       modelName: 'Agreement',
       field: 'registrator',
       filterCol: 'registrator',
       sortCol: 'registrator',
     },
     {
-      type: 'number',
+      type: 'string',
       modelName: 'Agreement',
       field: 'archive',
       filterCol: 'archive',
