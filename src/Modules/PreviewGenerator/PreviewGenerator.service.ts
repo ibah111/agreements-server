@@ -61,53 +61,6 @@ export class PreviewGeneratorService implements OnModuleInit {
   }
 
   /**
-   * Проверяет платежесность дожлника
-   * проверяет/меняет статус у СОГЛАШЕНИЯ
-   * @TODO сделать смену статус по долгу
-   */
-  async checkPayableStatus(id: number) {
-    const agr = await this.modelAgreement.findOne({
-      where: {
-        id,
-      },
-    });
-    /**
-     * массив id'шников
-     */
-    if (!agr) return 'Такое вряд-ли возможно';
-    const schedules = await this.modelScheduleLinks.findAll({
-      where: {
-        id_agreement: agr.id,
-      },
-    });
-    console.log(schedules.map((i) => i.id));
-    for (const schedule of schedules) {
-      const payments = await this.modelPayments.findAll({
-        where: {
-          id_schedule: schedule.id,
-        },
-      });
-
-      const lastEl = payments[payments.length - 1];
-      /**
-       * Этот блок кода выдает ошибку при отсутсвии
-       * связанного долга
-       */
-      const AgrDebtLink = await this.modelAgreementDebtLink.findOne({
-        where: { id_debt: schedule.id },
-      });
-      if (!AgrDebtLink)
-        throw Error('Привязка долга не существует, свяжите долг');
-
-      if (lastEl.status === false) {
-      } else {
-        AgrDebtLink?.payable_status === true;
-        AgrDebtLink.save;
-      }
-    }
-  }
-
-  /**
    * Обновление согласа целиком
    * @param id_agreement соглас
    * @param link_debts связанные долги
@@ -118,6 +71,11 @@ export class PreviewGeneratorService implements OnModuleInit {
       where: {
         id: id_agreement,
       },
+      include: [
+        {
+          model: this.modelScheduleLinks,
+        },
+      ],
     });
     if (!agreement) return;
     const ContactPerson = await this.modelPerson.findOne({
@@ -181,6 +139,26 @@ export class PreviewGeneratorService implements OnModuleInit {
         );
         const first_payment = _.minBy(calculations_in_agreements, 'calc_date');
         const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
+
+        const oldMethod: boolean =
+          (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false;
+
+        const newMethod = agreement.ScheduleLinks?.length;
+
+        console.log(newMethod);
+
+        const links = agreement.ScheduleLinks || [];
+        for (const link of links) {
+          const payments = await this.modelPayments.findAll({
+            where: {
+              id_schedule: link.id,
+            },
+          });
+          console.log(payments);
+        }
+        /**
+         * data update
+         */
         const data: PreviewDebt = {
           contract: debt.contract,
           before_agreement: _.floor(_.sumBy(calcs_before_agreement, 'sum'), 2), // 1 - переменная, 2 - по которому суммируем
@@ -191,8 +169,12 @@ export class PreviewGeneratorService implements OnModuleInit {
           sum_payments: _.floor(_.sumBy(calculations_in_agreements, 'sum'), 2),
           /**
            * @todo
+           * @old
+           * (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false,
+           * @new
+           * this.checkPayable
            */
-          payable_status: false,
+          payable_status: oldMethod,
           portfolio: debt.r_portfolio_id,
           status: debt.status,
           name: debt.name,

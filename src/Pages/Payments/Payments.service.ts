@@ -229,9 +229,7 @@ export class PaymentsService {
         },
       });
       if (payments.length === 0) return this.checkDebts(agreement, calcs);
-      return this.mathService.createPaymentsToCalc(calcs, payments).then(() => {
-        return this.previewGenerator.checkPayableStatus(schedule.id_agreement);
-      });
+      return this.mathService.createPaymentsToCalc(calcs, payments);
     } else {
       return 0;
     }
@@ -278,7 +276,7 @@ export class PaymentsService {
   /**
    * @advice Use NOT.IN operator
    * @param id_agreement
-   * @returns
+   * @TODO переделать на проверку
    */
   async getAvailableDebtForSchedule(id_agreement: number) {
     const agreement = await this.modelAgreement.findOne({
@@ -286,6 +284,18 @@ export class PaymentsService {
         id: id_agreement,
       },
     });
+    const debt_links = await this.modelAgreementDebtsLink.findAll({
+      where: {
+        id_agreement,
+      },
+    });
+    /**
+     *
+     */
+    if (debt_links.length === 0)
+      throw new Error(
+        'Нет связанных долгов. Сначала свяжите долг с соглашением, после создавайте график.',
+      );
     if (agreement) {
       const linked_ids =
         agreement.ScheduleLinks?.filter((i) => i.id_debt !== null).map(
