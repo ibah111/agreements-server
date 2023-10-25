@@ -268,7 +268,15 @@ export class PaymentsService {
   /**
    * @returns типы графика
    */
-  async getAllScheduleTypes() {
+  async getAllScheduleTypes(id_agreement: number) {
+    console.log(id_agreement);
+    const debt_links = await this.modelAgreementDebtsLink.findAll({
+      where: {
+        id_agreement: id_agreement,
+      },
+    });
+    if (debt_links.length === 0) throw new Error('Связанных долгов нет');
+
     return this.modelScheduleType.findAll({
       attributes: ['id', 'title'],
     });
@@ -305,6 +313,7 @@ export class PaymentsService {
         where: {
           parent_id: agreement?.person_id,
           id: {
+            [Op.in]: debt_links.map((i) => i.id_debt),
             [Op.notIn]: linked_ids,
           },
         },

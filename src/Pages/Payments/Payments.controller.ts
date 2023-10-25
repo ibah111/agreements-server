@@ -75,10 +75,14 @@ export class PaymentsController {
   deleteListPayments(@Body() body: DeletePaymentList) {
     return this.paymentsService.deleteListOfPayments(body.list);
   }
-
-  @Get('getAllScheduleTypes')
-  getAllScheduleTypes() {
-    return this.paymentsService.getAllScheduleTypes();
+  /**
+   * @returns типа графиков
+   */
+  @Get('getAllScheduleTypes/:id_agreement')
+  getAllScheduleTypes(
+    @Param('id_agreement', ParseIntPipe) id_agreement: number,
+  ) {
+    return this.paymentsService.getAllScheduleTypes(id_agreement);
   }
 
   @Get('getAllSchedulesByAgreement/:id_agreement')
