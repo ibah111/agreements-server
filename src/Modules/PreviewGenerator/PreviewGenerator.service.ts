@@ -140,22 +140,68 @@ export class PreviewGeneratorService implements OnModuleInit {
         const first_payment = _.minBy(calculations_in_agreements, 'calc_date');
         const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
 
-        const oldMethod: boolean =
-          (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false;
+        /**
+         * @return Платежная ответсвенность
+         * Если метод ЧЕК упирается в то, что нет привязанных графиков
+         * то всегда должен возвращать старый метод
+         */
+        const check = async (): Promise<boolean> => {
+          const oldMethod: boolean =
+            (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false;
+          console.log('Boolean by old method: '.cyan, oldMethod);
 
-        const newMethod = agreement.ScheduleLinks?.length;
+          const newMethod = agreement.ScheduleLinks?.length;
 
-        console.log(newMethod);
+          console.log('Count of linked schedules: ', newMethod);
 
-        const links = agreement.ScheduleLinks || [];
-        for (const link of links) {
-          const payments = await this.modelPayments.findAll({
-            where: {
-              id_schedule: link.id,
-            },
-          });
-          console.log(payments);
-        }
+          const links = agreement.ScheduleLinks || [];
+          if (links.length === 0) console.log('Графиков нет');
+          console.log('links => ', links);
+          /**
+           * Скачем по графикам
+           */
+          for (const link of links) {
+            const payments = await this.modelPayments.findAll({
+              where: {
+                id_schedule: link.id,
+              },
+            });
+            console.log(payments);
+            if (payments.length === 0) {
+              /**
+               * Если график ЕСТЬ, но нет ПЛАТЕЖЕЙ, все равно возвращает старый метод
+               */
+              console.log(
+                'У графика нету платежей, оттакливаюсь от старого метода',
+              );
+              return oldMethod;
+            } else if (payments.length > 0) {
+              /**
+               * если платежи есть (длина массива длиннее )
+               */
+              console.log('Платежи есть, смотрю на последний платёж');
+              if (payments[payments.length - 1].status === true) {
+                console.log(
+                  'Статус последнего платежа TRUE, меняю статус на TRUE',
+                );
+                agreement.update({
+                  payable_status: true,
+                });
+              } else if (payments[payments.length - 1].status === false) {
+                console.log(
+                  'Статус последнего платежа FALSE, меняю статус на FALSE',
+                );
+                agreement.update({
+                  payable_status: false,
+                });
+              }
+            }
+          }
+
+          return oldMethod;
+        };
+        const resultCheck = await check();
+        console.log('Res check:'.green, resultCheck);
         /**
          * data update
          */
@@ -174,7 +220,7 @@ export class PreviewGeneratorService implements OnModuleInit {
            * @new
            * this.checkPayable
            */
-          payable_status: oldMethod,
+          payable_status: resultCheck,
           portfolio: debt.r_portfolio_id,
           status: debt.status,
           name: debt.name,
@@ -184,11 +230,6 @@ export class PreviewGeneratorService implements OnModuleInit {
           await agreement.update({
             debt_count: link_debts.length,
           });
-          if (link_debts.some((item) => item.payable_status === true)) {
-            await agreement.update({ payable_status: true });
-          } else {
-            await agreement.update({ payable_status: false });
-          }
         } catch (error) {
           console.log(`Error: ${error}`.red);
           throw error;
