@@ -154,16 +154,16 @@ export class PreviewGeneratorService implements OnModuleInit {
 
           console.log('Count of linked schedules: ', newMethod);
 
-          const links = agreement.ScheduleLinks || [];
-          if (links.length === 0) console.log('Графиков нет');
-          console.log('links => ', links);
+          const schedule_links = agreement.ScheduleLinks || [];
+          if (schedule_links.length === 0) console.log('Графиков нет');
+          console.log('links => ', schedule_links);
           /**
            * Скачем по графикам
            */
-          for (const link of links) {
+          for (const schedule_link of schedule_links) {
             const payments = await this.modelPayments.findAll({
               where: {
-                id_schedule: link.id,
+                id_schedule: schedule_link.id,
               },
             });
             console.log(payments);
@@ -230,6 +230,18 @@ export class PreviewGeneratorService implements OnModuleInit {
           await agreement.update({
             debt_count: link_debts.length,
           });
+          /**
+           * обновление статуса: ЕСЛИ ГРАФИК ЕСТЬ,
+           *                                    НО В НЁМ __НЕТ__ ПЛАТЕЖЕЙ,
+           *                                                                ТО РАСЧИТЫВАЕТ ПЛАТЕЖНЫЙ СТАТУС ИЗ СВЯЗАННЫХ ДОЛГОВ И ПЛАТЕЖЕЙ КОНТАКТА
+           */
+          if (agreement.ScheduleLinks?.length === 0) {
+            if (link_debts.some((item) => item.payable_status === true)) {
+              await agreement.update({ payable_status: true });
+            } else {
+              await agreement.update({ payable_status: false });
+            }
+          }
         } catch (error) {
           console.log(`Error: ${error}`.red);
           throw error;
