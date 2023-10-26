@@ -139,7 +139,6 @@ export class PreviewGeneratorService implements OnModuleInit {
         );
         const first_payment = _.minBy(calculations_in_agreements, 'calc_date');
         const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
-
         /**
          * @return Платежная ответсвенность
          * Если метод ЧЕК упирается в то, что нет привязанных графиков
@@ -148,15 +147,8 @@ export class PreviewGeneratorService implements OnModuleInit {
         const check = async (): Promise<boolean> => {
           const oldMethod: boolean =
             (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false;
-          console.log('Boolean by old method: '.cyan, oldMethod);
-
-          const newMethod = agreement.ScheduleLinks?.length;
-
-          console.log('Count of linked schedules: ', newMethod);
-
           const schedule_links = agreement.ScheduleLinks || [];
           if (schedule_links.length === 0) console.log('Графиков нет');
-          console.log('links => ', schedule_links);
           /**
            * Скачем по графикам
            */
@@ -166,7 +158,6 @@ export class PreviewGeneratorService implements OnModuleInit {
                 id_schedule: schedule_link.id,
               },
             });
-            console.log(payments);
             if (payments.length === 0) {
               /**
                * Если график ЕСТЬ, но нет ПЛАТЕЖЕЙ, все равно возвращает старый метод
@@ -177,31 +168,33 @@ export class PreviewGeneratorService implements OnModuleInit {
               return oldMethod;
             } else if (payments.length > 0) {
               /**
-               * если платежи есть (длина массива длиннее )
+               * если платежи есть (длина массива больше нуля)
                */
-              console.log('Платежи есть, смотрю на последний платёж');
-              if (payments[payments.length - 1].status === true) {
-                console.log(
-                  'Статус последнего платежа TRUE, меняю статус на TRUE',
-                );
-                agreement.update({
-                  payable_status: true,
-                });
-              } else if (payments[payments.length - 1].status === false) {
-                console.log(
-                  'Статус последнего платежа FALSE, меняю статус на FALSE',
-                );
-                agreement.update({
-                  payable_status: false,
-                });
+              const iterationCount = payments.filter(
+                (i) => i.status === true,
+              ).length;
+              let iteration = 0;
+              while (iteration !== iterationCount) {
+                console.log('iteration: '.red, iteration);
+                const firstElement = payments[0];
+                if (firstElement.status === true) {
+                  console.log('Убираю первый true элемент'.red);
+                  payments.shift();
+                  console.log('iteration count: ', iteration);
+                  iteration++;
+                }
               }
+              const payable_status_moment = moment(payments[0].pay_day).isAfter(
+                moment().add(-1, 'month'),
+              );
+              agreement.update({
+                payable_status: payable_status_moment,
+              });
             }
           }
-
           return oldMethod;
         };
         const resultCheck = await check();
-        console.log('Res check:'.green, resultCheck);
         /**
          * data update
          */
@@ -233,7 +226,7 @@ export class PreviewGeneratorService implements OnModuleInit {
           /**
            * обновление статуса: ЕСЛИ ГРАФИК ЕСТЬ,
            *                                    НО В НЁМ __НЕТ__ ПЛАТЕЖЕЙ,
-           *                                                                ТО РАСЧИТЫВАЕТ ПЛАТЕЖНЫЙ СТАТУС ИЗ СВЯЗАННЫХ ДОЛГОВ И ПЛАТЕЖЕЙ КОНТАКТА
+           *                                                              ТО РАСЧИТЫВАЕТ ПЛАТЕЖНЫЙ СТАТУС ИЗ СВЯЗАННЫХ ДОЛГОВ И ПЛАТЕЖЕЙ КОНТАКТА
            */
           if (agreement.ScheduleLinks?.length === 0) {
             if (link_debts.some((item) => item.payable_status === true)) {
