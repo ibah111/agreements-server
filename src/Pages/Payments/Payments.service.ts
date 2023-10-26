@@ -8,7 +8,7 @@ import {
   updateStatusInput,
 } from './Payments.input';
 import { Agreement } from '../../Modules/Database/Local.Database/models/Agreement';
-import { Debt, DebtCalc } from '@contact/models';
+import { Debt, DebtCalc, LawAct, LawExec } from '@contact/models';
 import { Op, Sequelize } from '@sql-tools/sequelize';
 import moment from 'moment';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
@@ -17,7 +17,6 @@ import { ScheduleType } from '../../Modules/Database/Local.Database/models/Sched
 import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 import _ from 'lodash';
 import MathService from 'src/Modules/Math/Math.service';
-import { PreviewGeneratorService } from 'src/Modules/PreviewGenerator/PreviewGenerator.service';
 
 @Injectable()
 export class PaymentsService {
@@ -38,8 +37,12 @@ export class PaymentsService {
     private readonly modelScheduleLinks: typeof ScheduleLinks,
     @InjectModel(ScheduleType, 'local')
     private readonly modelScheduleType: typeof ScheduleType,
+    @InjectModel(LawAct, 'contact')
+    private readonly modelLawAct: typeof LawAct,
+    @InjectModel(LawExec, 'contact')
+    private readonly modelLawExec: typeof LawExec,
+
     private readonly mathService: MathService,
-    private readonly previewGenerator: PreviewGeneratorService,
   ) {}
 
   /**
@@ -331,6 +334,14 @@ export class PaymentsService {
     });
   }
 
+  async deleteScheduleLinks(id_schedule: number) {
+    return await this.modelScheduleLinks.destroy({
+      where: {
+        id: id_schedule,
+      },
+    });
+  }
+
   async createScheduleLink(body: CreateScheduleLink) {
     const scheduleLink = await this.modelScheduleLinks.create({
       ...body,
@@ -338,11 +349,34 @@ export class PaymentsService {
     return scheduleLink;
   }
 
-  async deleteScheduleLinks(id_schedule: number) {
-    return await this.modelScheduleLinks.destroy({
+  /**
+   *
+   * @param id_debt === 22220
+   */
+  async getCourtDocs(id_debt: number) {
+    /**
+     * @returns
+     * "court_doc_num": "ФС № 009374356"
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const law_exec_variant = await this.modelLawExec.findAll({
       where: {
-        id: id_schedule,
+        r_debt_id: id_debt,
       },
+      attributes: ['court_doc_num'],
     });
+
+    /**
+     * @returns
+     * "exec_number": "2-2557/2014"
+     */
+    const law_act_variant = await this.modelLawAct.findAll({
+      where: {
+        r_debt_id: id_debt,
+      },
+      attributes: ['exec_number'],
+    });
+
+    return law_act_variant;
   }
 }

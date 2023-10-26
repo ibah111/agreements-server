@@ -108,4 +108,9 @@ export class PaymentsController {
   createScheduleLink(@Body() body: CreateScheduleLink) {
     return this.paymentsService.createScheduleLink(body);
   }
+
+  @Get('getCourtDocs/:id_debt')
+  getCourtDocs(@Param('id_debt', ParseIntPipe) id_debt: number) {
+    return this.paymentsService.getCourtDocs(id_debt);
+  }
 }

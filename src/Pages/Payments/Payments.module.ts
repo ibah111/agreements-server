@@ -4,13 +4,12 @@ import { Agreement } from '../../Modules/Database/Local.Database/models/Agreemen
 import { PaymentsController } from './Payments.controller';
 import { PaymentsService } from './Payments.service';
 import { Payments } from '../../Modules/Database/Local.Database/models/Payments';
-import { Debt, DebtCalc } from '@contact/models';
+import { Debt, DebtCalc, LawAct, LawExec } from '@contact/models';
 import { PaymentToCalc } from '../../Modules/Database/Local.Database/models/PaymentToCalc';
 import { ScheduleLinks } from '../../Modules/Database/Local.Database/models/SchedulesLinks';
 import { ScheduleType } from '../../Modules/Database/Local.Database/models/ScheduleType';
 import AgreementDebtsLink from '../../Modules/Database/Local.Database/models/AgreementDebtLink';
 import { MathModule } from 'src/Modules/Math/Math.module';
-import { PreviewGeneratorModule } from 'src/Modules/PreviewGenerator/PreviewGenerator.module';
 
 @Module({
   imports: [
@@ -26,8 +25,7 @@ import { PreviewGeneratorModule } from 'src/Modules/PreviewGenerator/PreviewGene
       ],
       'local',
     ),
-    PreviewGeneratorModule,
-    SequelizeModule.forFeature([Debt, DebtCalc], 'contact'),
+    SequelizeModule.forFeature([Debt, DebtCalc, LawAct, LawExec], 'contact'),
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService],

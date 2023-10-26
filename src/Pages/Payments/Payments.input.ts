@@ -101,4 +101,14 @@ export class CreateScheduleLink implements CreationAttributes<ScheduleLinks> {
   @IsOptional()
   @ApiProperty()
   contract: string;
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  name: string;
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  document_number: string;
 }
