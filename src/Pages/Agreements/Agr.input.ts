@@ -164,6 +164,18 @@ export class CreateAgreementInput implements CreationAttributes<Agreement> {
   @IsOptional()
   @ApiPropertyOptional({ type: String })
   car: string | null;
+
+  @Expose()
+  @IsDate()
+  @ApiProperty()
+  @Type(() => Date)
+  @IsOptional()
+  preview_last_payment_date: Date;
+  @Expose()
+  @IsNumber()
+  @ApiProperty()
+  @IsOptional()
+  preview_last_payment_sum: number;
 }
 
 export class DeleteSelectedAgreements {

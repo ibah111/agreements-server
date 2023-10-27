@@ -191,4 +191,10 @@ export class Agreement extends Model<
 
   @Column(DataType.STRING)
   car: string | null;
+
+  @Column(DataType.DATE)
+  preview_last_payment_date: Date | null;
+
+  @Column(DataType.DECIMAL(19, 4))
+  preview_last_payment_sum: number;
 }
