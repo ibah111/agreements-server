@@ -102,7 +102,6 @@ export class PreviewGeneratorService implements OnModuleInit {
         attributes: ['conclusion_date', 'finish_date'],
       },
     });
-
     if (link_debts)
       for (const link of link_debts) {
         const debt = await link?.getDebt({
@@ -148,7 +147,11 @@ export class PreviewGeneratorService implements OnModuleInit {
           const oldMethod: boolean =
             (debt.LastCalcs?.length && debt.LastCalcs?.length > 0) || false;
           const schedule_links = agreement.ScheduleLinks || [];
-          if (schedule_links.length === 0) console.log('Графиков нет');
+          if (schedule_links.length === 0) {
+            console.log('Графиков нет');
+            return oldMethod;
+          }
+
           /**
            * Скачем по графикам
            */
@@ -218,10 +221,37 @@ export class PreviewGeneratorService implements OnModuleInit {
           status: debt.status,
           name: debt.name,
         };
+        class Parameters {
+          id_debt: number;
+          last_payment?: number | null;
+          last_payment_date?: Date | null;
+        }
+        const parameters: Parameters[] = link_debts.map((i) => {
+          const obj: Parameters = {
+            id_debt: i.id_debt,
+            last_payment: i.last_payment || null || undefined,
+            last_payment_date: i.last_payment_date || null || undefined,
+          };
+          return obj;
+        });
+
+        const date_collection = parameters.map((i) => i.last_payment_date);
+        /**
+         * достает последнюю дату
+         */
+        const latest_date = date_collection.reduce((a, b) => (a! > b! ? a : b));
+        console.log('latest_date'.red, latest_date);
+        const latest_parameters = parameters.find(
+          (i) => i.last_payment_date === latest_date,
+        );
+        console.log('lps =>', latest_parameters);
+
         try {
           await link.update(data);
           await agreement.update({
             debt_count: link_debts.length,
+            preview_last_payment_date: latest_date,
+            preview_last_payment_sum: latest_parameters?.last_payment || 0,
           });
           /**
            * обновление статуса: ЕСЛИ ГРАФИК ЕСТЬ,
@@ -230,7 +260,9 @@ export class PreviewGeneratorService implements OnModuleInit {
            */
           if (agreement.ScheduleLinks?.length === 0) {
             if (link_debts.some((item) => item.payable_status === true)) {
-              await agreement.update({ payable_status: true });
+              await agreement.update({
+                payable_status: true,
+              });
             } else {
               await agreement.update({ payable_status: false });
             }
