@@ -181,6 +181,20 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       filterCol: 'statusAgreement',
       sortCol: 'statusAgreement',
     },
+    {
+      type: 'date',
+      modelName: 'Agreement',
+      field: 'preview_last_payment_date',
+      filterCol: 'preview_last_payment_date',
+      sortCol: 'preview_last_payment_date',
+    },
+    {
+      type: 'number',
+      modelName: 'Agreement',
+      field: 'preview_last_payment_sum',
+      filterCol: 'preview_last_payment_sum',
+      sortCol: 'preview_last_payment_sum',
+    },
     /**
      * Отдель комментов
      */
