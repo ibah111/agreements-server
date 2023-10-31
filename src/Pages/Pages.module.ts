@@ -17,6 +17,7 @@ import { PersonPropertiesModule } from './PersonProperty/PersonProperty.module';
 import { CommentModule } from './Comments/Comment.module';
 import { PaymentsModule } from './Payments/Payments.module';
 import { AdditionalGridModule } from './AdditionalGrids/AG.module';
+import { ContactLogModule } from './ContactLog/ContactLog.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AdditionalGridModule } from './AdditionalGrids/AG.module';
     CommentModule,
     PaymentsModule,
     AdditionalGridModule,
+    ContactLogModule,
   ],
 })
 export class PagesModule {}
