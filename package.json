@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@casl/ability": "^6.5.0",
-    "@contact/models": "^0.3.74",
+    "@contact/models": "^0.3.78",
     "@fastify/static": "^6.11.2",
     "@mui/x-data-grid-premium": "^6.15.0",
     "@nestjs/axios": "^3.0.0",
