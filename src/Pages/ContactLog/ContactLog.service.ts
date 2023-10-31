@@ -1,4 +1,4 @@
-import { Person, ContactLog } from '@contact/models';
+import { Person, ContactLog, Phone, DebtGuarantor } from '@contact/models';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Op } from '@sql-tools/sequelize';
@@ -10,8 +10,12 @@ export class ContactLogService {
   constructor(
     @InjectModel(Person, 'contact')
     private readonly modelPerson: typeof Person,
+    @InjectModel(DebtGuarantor, 'contact')
+    private readonly modelDebtGuarantor: typeof DebtGuarantor,
     @InjectModel(ContactLog, 'contact')
     private readonly modelContactLog: typeof ContactLog,
+    @InjectModel(Phone, 'contact')
+    private readonly modelPhone: typeof Phone,
     @InjectModel(Agreement, 'local')
     private readonly modelAgreement: typeof Agreement,
     @InjectModel(AgreementDebtsLink, 'local')
@@ -32,6 +36,23 @@ export class ContactLogService {
     const debt_collection = agreement.DebtLinks?.map((i) => i.id_debt);
 
     return await this.modelContactLog.findAll({
+      include: [
+        {
+          model: this.modelPhone,
+          attributes: [
+            'id',
+            'parent_id',
+            'number',
+            'number2',
+            'status',
+            'contact_face',
+          ],
+        },
+        {
+          model: this.modelDebtGuarantor,
+          attributes: ['id', 'parent_id', 'fio', 'birth_date', 'typ', 'dsc'],
+        },
+      ],
       where: {
         parent_id: agreement.person_id,
         r_debt_id: {
@@ -39,6 +60,7 @@ export class ContactLogService {
         },
       },
       attributes: [
+        'id',
         'parent_id',
         'r_debt_id',
         'r_phone_id',
