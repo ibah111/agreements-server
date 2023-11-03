@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { catchError, from, last, mergeMap, of } from 'rxjs';
 import { Payments } from '../Database/Local.Database/models/Payments';
 import { ScheduleLinks } from '../Database/Local.Database/models/SchedulesLinks';
+import { PaymentsService } from 'src/Pages/Payments/Payments.service';
 
 @Injectable()
 export class PreviewGeneratorService implements OnModuleInit {
@@ -27,6 +28,7 @@ export class PreviewGeneratorService implements OnModuleInit {
     private readonly modelScheduleLinks: typeof ScheduleLinks,
     @InjectModel(Payments, 'local')
     private readonly modelPayments: typeof Payments,
+    private readonly paymentsService: PaymentsService,
   ) {}
   /**
    *
@@ -253,11 +255,12 @@ export class PreviewGeneratorService implements OnModuleInit {
             preview_last_payment_date: latest_date,
             preview_last_payment_sum: latest_parameters?.last_payment || 0,
           });
-          /**
-           * обновление статуса: ЕСЛИ ГРАФИК ЕСТЬ,
-           *                                    НО В НЁМ __НЕТ__ ПЛАТЕЖЕЙ,
-           *                                                              ТО РАСЧИТЫВАЕТ ПЛАТЕЖНЫЙ СТАТУС ИЗ СВЯЗАННЫХ ДОЛГОВ И ПЛАТЕЖЕЙ КОНТАКТА
-           */
+          const schedule_ids = agreement.ScheduleLinks?.map((i) => i.id);
+          if (!schedule_ids) return 'Графиков нет';
+          for (const schedule_id of schedule_ids) {
+            await this.paymentsService.updatePayments(schedule_id);
+          }
+
           if (agreement.ScheduleLinks?.length === 0) {
             if (link_debts.some((item) => item.payable_status === true)) {
               await agreement.update({

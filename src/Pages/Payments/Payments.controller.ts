@@ -67,8 +67,8 @@ export class PaymentsController {
   }
 
   @Post('updatePayments/:id')
-  createCalculationToCalcs(@Param('id', ParseIntPipe) id_schedule: number) {
-    return this.paymentsService.createCalculationToCalcs(id_schedule);
+  updatePayments(@Param('id', ParseIntPipe) id_schedule: number) {
+    return this.paymentsService.updatePayments(id_schedule);
   }
 
   @Delete('deleteList')

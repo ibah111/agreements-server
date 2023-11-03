@@ -175,7 +175,7 @@ export class PaymentsService {
    * @param id_agreement
    * @returns
    */
-  async createCalculationToCalcs(id_schedule: number) {
+  async updatePayments(id_schedule: number) {
     const schedule = await this.modelScheduleLinks.findOne({
       where: {
         id: id_schedule,
@@ -255,7 +255,11 @@ export class PaymentsService {
   async updateAllPayments() {
     const agreements = await this.modelAgreement.findAll();
     for (const agreement of agreements) {
-      this.createCalculationToCalcs(agreement.id);
+      const ids = agreement.ScheduleLinks?.map((i) => i.id);
+      if (!ids) return;
+      for (const iterator of ids) {
+        this.updatePayments(iterator);
+      }
     }
   }
 
