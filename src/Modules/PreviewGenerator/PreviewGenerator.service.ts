@@ -78,8 +78,9 @@ export class PreviewGeneratorService implements OnModuleInit {
           model: this.modelScheduleLinks,
         },
       ],
+      rejectOnEmpty: new NotFoundException(),
     });
-    if (!agreement) return;
+    agreement.getAgreementType();
     const ContactPerson = await this.modelPerson.findOne({
       raw: true,
       attributes: ['birth_date', 'f', 'i', 'o'],
@@ -122,24 +123,54 @@ export class PreviewGeneratorService implements OnModuleInit {
 
         const cd_date = link.Agreement!.conclusion_date;
         const fd_date = link.Agreement?.finish_date || undefined;
+        /**
+         * Действующее / исполненное
+         */
+        const conditionLastPayments = (
+          agreement: Agreement,
+          calcs: DebtCalc[],
+        ): DebtCalc[] => {
+          switch (agreement.statusAgreement) {
+            case 1: {
+              const calcs_in_agreement = calcs.filter((item) =>
+                moment(cd_date).startOf('day').isBefore(moment(item.calc_date)),
+              );
+              return calcs_in_agreement;
+            }
+            case 2 || 3: {
+              const calcs_in_agreement = calcs.filter(
+                (item) =>
+                  moment(cd_date)
+                    .startOf('day')
+                    .isBefore(moment(item.calc_date)) &&
+                  moment(fd_date).endOf('day').isAfter(moment(item.calc_date)),
+              );
+              return calcs_in_agreement;
+            }
+            default: {
+              return [];
+            }
+          }
+        };
+        const calcs_in_agr = debt.DebtCalcs || [];
+        conditionLastPayments(agreement, calcs_in_agr);
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const calculations_in_agreements = debt.DebtCalcs!.filter(
-          (item) =>
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            moment(cd_date).startOf('day').isBefore(moment(item.calc_date)) &&
-            moment(fd_date).endOf('day').isAfter(moment(item.calc_date)),
+        const calcs_before_agreement = conditionLastPayments(
+          agreement,
+          calcs_in_agr,
+        ).filter((item) =>
+          moment(link.Agreement!.conclusion_date).isAfter(
+            moment(item.calc_date),
+          ),
         );
-
-        const calcs_before_agreement = calculations_in_agreements.filter(
-          (item) =>
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            moment(link.Agreement!.conclusion_date).isAfter(
-              moment(item.calc_date),
-            ),
+        const first_payment = _.minBy(
+          conditionLastPayments(agreement, calcs_in_agr),
+          'calc_date',
         );
-        const first_payment = _.minBy(calculations_in_agreements, 'calc_date');
-        const last_payment = _.maxBy(calculations_in_agreements, 'calc_date');
+        const last_payment = _.maxBy(
+          conditionLastPayments(agreement, calcs_in_agr),
+          'calc_date',
+        );
         /**
          * @return Платежная ответсвенность
          * Если метод ЧЕК упирается в то, что нет привязанных графиков
@@ -210,7 +241,10 @@ export class PreviewGeneratorService implements OnModuleInit {
           first_payment_date: first_payment?.calc_date || null,
           last_payment: last_payment?.sum || null,
           last_payment_date: last_payment?.calc_date || null,
-          sum_payments: _.floor(_.sumBy(calculations_in_agreements, 'sum'), 2),
+          sum_payments: _.floor(
+            _.sumBy(conditionLastPayments(agreement, calcs_in_agr), 'sum'),
+            2,
+          ),
           /**
            * @todo
            * @old
@@ -247,7 +281,6 @@ export class PreviewGeneratorService implements OnModuleInit {
           (i) => i.last_payment_date === latest_date,
         );
         console.log('lps =>', latest_parameters);
-
         try {
           await link.update(data);
           await agreement.update({

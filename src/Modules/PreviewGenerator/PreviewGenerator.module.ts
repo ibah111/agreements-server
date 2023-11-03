@@ -7,6 +7,7 @@ import { Agreement } from '../Database/Local.Database/models/Agreement';
 import AgreementDebtsLink from '../Database/Local.Database/models/AgreementDebtLink';
 import { Payments } from '../Database/Local.Database/models/Payments';
 import { ScheduleLinks } from '../Database/Local.Database/models/SchedulesLinks';
+import { PaymentsModule } from 'src/Pages/Payments/Payments.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ScheduleLinks } from '../Database/Local.Database/models/SchedulesLinks'
       [PersonPreview, Agreement, AgreementDebtsLink, Payments, ScheduleLinks],
       'local',
     ),
+    PaymentsModule,
   ],
   providers: [PreviewGeneratorService],
   exports: [PreviewGeneratorService],
