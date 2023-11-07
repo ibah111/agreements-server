@@ -23,6 +23,19 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
           department_name: {
             type: DataTypes.STRING,
           },
+          createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+          },
+          updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+          },
+          deleteAt: {
+            type: DataTypes.DATE,
+          },
         },
         { transaction: t },
       ),
