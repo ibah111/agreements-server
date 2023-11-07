@@ -1,7 +1,7 @@
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Injectable } from '@nestjs/common';
-import { User as UserContact } from '@contact/models';
-import { Op } from '@sql-tools/sequelize';
+import { Department, User as UserContact } from '@contact/models';
+import { Op, Sequelize } from '@sql-tools/sequelize';
 @Injectable()
 /**
  * Взыскатели
@@ -11,10 +11,12 @@ import { Op } from '@sql-tools/sequelize';
 export class CollectorService {
   constructor(
     @InjectModel(UserContact, 'contact')
-    private ModelUserContact: typeof UserContact,
+    private modelUserContact: typeof UserContact,
+    @InjectModel(Department, 'contact')
+    private modelDepartment: typeof Department,
   ) {}
   async getAllCollectors() {
-    return await this.ModelUserContact.findAll({
+    return await this.modelUserContact.findAll({
       where: {
         /**
          * adding collectors
@@ -23,6 +25,46 @@ export class CollectorService {
         block_flag: 0,
       },
       attributes: ['id', 'login', 'f', 'i', 'o', 'block_flag'],
+      include: [
+        {
+          model: this.modelDepartment,
+          attributes: ['id', 'dep', 'name', 'r_dep'],
+        },
+      ],
     });
+  }
+
+  async searchUser(fio: string) {
+    try {
+      console.log(fio);
+      return await this.modelUserContact.findAll({
+        where: fio
+          ? Sequelize.where(
+              Sequelize.fn(
+                'concat',
+                Sequelize.col('f'),
+                ' ',
+                Sequelize.col('i'),
+                ' ',
+                Sequelize.col('o'),
+              ),
+              {
+                [Op.like]: `%${fio}%`,
+              },
+            )
+          : undefined,
+        attributes: ['id', 'f', 'i', 'o'],
+        limit: 25,
+        include: [
+          {
+            model: this.modelDepartment,
+            attributes: ['id', 'dep', 'name', 'r_dep'],
+          },
+        ],
+      });
+    } catch (error) {
+      console.log(error);
+      throw Error();
+    }
   }
 }
