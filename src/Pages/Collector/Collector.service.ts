@@ -38,6 +38,10 @@ export class CollectorService {
     });
   }
 
+  async getAllAddedColletors() {
+    return await this.modelCollector.findAll();
+  }
+
   async searchUser(fio: string) {
     try {
       console.log(fio);

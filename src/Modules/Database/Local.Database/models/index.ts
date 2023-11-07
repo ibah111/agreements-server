@@ -3,6 +3,7 @@ import { Agreement } from './Agreement';
 import AgreementDebtsLink from './AgreementDebtLink';
 import AgreementToPersonProperties from './AgreementToPersonProperties';
 import { TypeAgreement } from './AgreementType';
+import { Collectors } from './Collectors';
 import { Comment } from './Comment';
 import { PaymentToCalc } from './PaymentToCalc';
 import { Payments } from './Payments';
@@ -34,4 +35,5 @@ export const models = [
   PaymentToCalc,
   ScheduleLinks,
   ScheduleType,
+  Collectors,
 ];
