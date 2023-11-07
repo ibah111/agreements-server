@@ -20,26 +20,7 @@ export class CollectorService {
     private modelCollector: typeof Collectors,
   ) {}
   async getAllCollectors() {
-    return await this.modelUserContact.findAll({
-      where: {
-        /**
-         * adding collectors
-         */
-        [Op.or]: [{ r_department_id: [2, 50] }, { id: [8109, 581] }],
-        block_flag: 0,
-      },
-      attributes: ['id', 'login', 'f', 'i', 'o', 'block_flag'],
-      include: [
-        {
-          model: this.modelDepartment,
-          attributes: ['id', 'dep', 'name', 'r_dep'],
-        },
-      ],
-    });
-  }
-
-  async getAllAddedColletors() {
-    return await this.modelCollector.findAll();
+    return await this.modelCollector.findAll({});
   }
 
   async searchUser(fio: string) {

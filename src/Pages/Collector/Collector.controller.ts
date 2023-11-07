@@ -13,10 +13,6 @@ export class CollectorController {
     return await this.collertorService.getAllCollectors();
   }
 
-  @Get('/getAllAddedCollectors')
-  async getAllAdded() {
-    return await this.collertorService.getAllAddedColletors();
-  }
   @Post('/searchUser')
   async searchUser(@Body() body: SearchUserInput) {
     return await this.collertorService.searchUser(body.fio);
