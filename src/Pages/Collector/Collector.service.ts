@@ -2,6 +2,8 @@ import { InjectModel } from '@sql-tools/nestjs-sequelize';
 import { Injectable } from '@nestjs/common';
 import { Department, User as UserContact } from '@contact/models';
 import { Op, Sequelize } from '@sql-tools/sequelize';
+import { Collectors } from 'src/Modules/Database/Local.Database/models/Collectors';
+import { CreateCollectorInput } from './Collector.input';
 @Injectable()
 /**
  * Взыскатели
@@ -14,6 +16,8 @@ export class CollectorService {
     private modelUserContact: typeof UserContact,
     @InjectModel(Department, 'contact')
     private modelDepartment: typeof Department,
+    @InjectModel(Collectors, 'local')
+    private modelCollector: typeof Collectors,
   ) {}
   async getAllCollectors() {
     return await this.modelUserContact.findAll({
@@ -66,5 +70,9 @@ export class CollectorService {
       console.log(error);
       throw Error();
     }
+  }
+
+  async addCollector(body: CreateCollectorInput) {
+    return await this.modelCollector.create(body);
   }
 }
