@@ -530,15 +530,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@contact/models@npm:^0.3.78":
-  version: 0.3.78
-  resolution: "@contact/models@npm:0.3.78::__archiveUrl=https%3A%2F%2Fgit.usb.ru%2Fapi%2Fv4%2Fprojects%2F69%2Fpackages%2Fnpm%2F%40contact%2Fmodels%2F-%2F%40contact%2Fmodels-0.3.78.tgz"
-  dependencies:
-    reflect-metadata: ^0.1.13
+"@contact/models@npm:^0.3.80":
+  version: 0.3.80
+  resolution: "@contact/models@npm:0.3.80::__archiveUrl=https%3A%2F%2Fgit.usb.ru%2Fapi%2Fv4%2Fprojects%2F69%2Fpackages%2Fnpm%2F%40contact%2Fmodels%2F-%2F%40contact%2Fmodels-0.3.80.tgz"
   peerDependencies:
     "@sql-tools/sequelize": ^6.27.8
     "@sql-tools/sequelize-typescript": ^2.1.5
-  checksum: 0bcf43bd252c064d20f0c5dc1aaf1b40cc76257baeaf069e1704c99eb0a519c6ab8cc549693f315bbd9df879333d86a8af02f638fdfb9b74b2f2a9698f567849
+    reflect-metadata: ^0.1.13
+  checksum: a7da31ae3587b8c3f8307eef6f99fab8735ed0c39f65a6a9165e15cfd5eae1ed5e52417104e214e376a679697ae1988da643a7efb0b043d87af52390922794e0
   languageName: node
   linkType: hard
 
@@ -2196,7 +2195,7 @@ __metadata:
     "@casl/ability": ^6.5.0
     "@commitlint/cli": ^17.7.1
     "@commitlint/config-conventional": ^17.7.0
-    "@contact/models": ^0.3.78
+    "@contact/models": ^0.3.80
     "@fastify/static": ^6.11.2
     "@mui/x-data-grid-premium": ^6.15.0
     "@nestjs/axios": ^3.0.0
