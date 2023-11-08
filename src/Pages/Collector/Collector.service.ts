@@ -24,37 +24,31 @@ export class CollectorService {
   }
 
   async searchUser(fio: string) {
-    try {
-      console.log(fio);
-      return await this.modelUserContact.findAll({
-        where: fio
-          ? Sequelize.where(
-              Sequelize.fn(
-                'concat',
-                Sequelize.col('f'),
-                ' ',
-                Sequelize.col('i'),
-                ' ',
-                Sequelize.col('o'),
-              ),
-              {
-                [Op.like]: `%${fio}%`,
-              },
-            )
-          : undefined,
-        attributes: ['id', 'f', 'i', 'o'],
-        limit: 25,
-        include: [
-          {
-            model: this.modelDepartment,
-            attributes: ['id', 'dep', 'name', 'r_dep'],
-          },
-        ],
-      });
-    } catch (error) {
-      console.log(error);
-      throw Error();
-    }
+    return await this.modelUserContact.findAll({
+      where: fio
+        ? Sequelize.where(
+            Sequelize.fn(
+              'concat',
+              Sequelize.col('f'),
+              ' ',
+              Sequelize.col('i'),
+              ' ',
+              Sequelize.col('o'),
+            ),
+            {
+              [Op.like]: `%${fio}%`,
+            },
+          )
+        : undefined,
+      attributes: ['id', 'f', 'i', 'o'],
+      limit: 25,
+      include: [
+        {
+          model: this.modelDepartment,
+          attributes: ['id', 'dep', 'name', 'r_dep'],
+        },
+      ],
+    });
   }
 
   async addCollector(body: CreateCollectorInput) {
@@ -65,5 +59,13 @@ export class CollectorService {
     });
     if (checkExist) throw Error('Коллектор существует в списке');
     else if (!checkExist) return await this.modelCollector.create(body);
+  }
+
+  async deleteCollector(id: number) {
+    return await this.modelCollector.destroy({
+      where: {
+        id,
+      },
+    });
   }
 }

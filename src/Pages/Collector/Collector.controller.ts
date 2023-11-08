@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CollectorService } from './Collector.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateCollectorInput, SearchUserInput } from './Collector.input';
@@ -21,5 +29,10 @@ export class CollectorController {
   @Post('/createCollector')
   async createCollector(@Body() body: CreateCollectorInput) {
     return await this.collertorService.addCollector(body);
+  }
+
+  @Delete('/deleteCollector/:id')
+  async deleteCollector(@Param('id') id: number) {
+    return this.collertorService.deleteCollector(id);
   }
 }
