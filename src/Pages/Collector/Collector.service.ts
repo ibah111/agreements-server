@@ -58,6 +58,12 @@ export class CollectorService {
   }
 
   async addCollector(body: CreateCollectorInput) {
-    return await this.modelCollector.create(body);
+    const checkExist = await this.modelCollector.findOne({
+      where: {
+        id_contact: body.id_contact,
+      },
+    });
+    if (checkExist) throw Error('Коллектор существует в списке');
+    else if (!checkExist) return await this.modelCollector.create(body);
   }
 }
