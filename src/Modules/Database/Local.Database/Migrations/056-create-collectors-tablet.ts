@@ -33,7 +33,7 @@ export const up: MigrationFn<QueryInterface> = async ({ context }) => {
             allowNull: false,
             defaultValue: DataTypes.NOW,
           },
-          deleteAt: {
+          deletedAt: {
             type: DataTypes.DATE,
           },
         },
