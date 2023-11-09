@@ -204,27 +204,25 @@ export class PreviewGeneratorService implements OnModuleInit {
               return oldMethod;
             } else if (payments.length > 0) {
               /**
-               * если платежи есть (длина массива больше нуля)
+               * если платежи в графике есть (длина массива больше нуля)
                */
               const iterationCount = payments.filter(
                 (i) => i.status === true,
               ).length;
               let iteration = 0;
+
+              const firstElement = payments[0];
               while (iteration !== iterationCount) {
                 console.log('iteration: '.red, iteration);
-                const firstElement = payments[0];
                 if (firstElement.status === true) {
-                  console.log('Убираю первый true элемент'.red);
                   payments.shift();
-                  console.log('iteration count: ', iteration);
                   iteration++;
                 }
               }
-              const payable_status_moment = moment(payments[0].pay_day).isAfter(
-                moment().add(-1, 'month'),
-              );
               agreement.update({
-                payable_status: payable_status_moment,
+                payable_status: moment(firstElement.pay_day).isAfter(
+                  moment().add(-1, 'month'),
+                ),
               });
             }
           }
@@ -276,11 +274,9 @@ export class PreviewGeneratorService implements OnModuleInit {
          * достает последнюю дату
          */
         const latest_date = date_collection.reduce((a, b) => (a! > b! ? a : b));
-        console.log('latest_date'.red, latest_date);
         const latest_parameters = parameters.find(
           (i) => i.last_payment_date === latest_date,
         );
-        console.log('lps =>', latest_parameters);
         try {
           await link.update(data);
           await agreement.update({

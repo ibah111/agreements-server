@@ -232,6 +232,7 @@ export class PaymentsService {
         },
       });
       if (payments.length === 0) return this.checkDebts(agreement, calcs);
+      if (!payments) return 'Должник не вносил платежи';
       return this.mathService.createPaymentsToCalc(calcs, payments);
     } else {
       return 0;
