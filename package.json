@@ -8,6 +8,8 @@
   "scripts": {
     "migrate:excel": "ts-node scripts/ImportFromExcel.ts",
     "migrate:excel:debug": "nodemon --inspect scripts/ImportFromExcel.ts",
+    "migrate:collectors": "ts-node script_collector/index.ts",
+    "migrate:collectors:debug": "nodemon --inspect script_collector/index.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_ENV=dev nest start",
