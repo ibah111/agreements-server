@@ -2,6 +2,7 @@ import { Sequelize } from '@sql-tools/sequelize-typescript';
 import { models } from '../src/Modules/Database/Local.Database/models';
 import { Agreement } from '../src/Modules/Database/Local.Database/models/Agreement';
 import Models, { User } from '@contact/models';
+// import { Collectors } from '../src/Modules/Database/Local.Database/models/Collectors';
 
 export const sql1 = new Sequelize({
   dialect: 'mssql',
@@ -34,10 +35,11 @@ export const i_collect = new Sequelize({
 });
 
 // const AgreementReal = sql1.getRepository(Agreement);
-const AgreementLocal = sql2.getRepository(Agreement);
+const AgreementReal = sql1.getRepository(Agreement);
 const UsersReal = i_collect.getRepository(User);
+// const CollectorReal = sql1.getRepository(Collectors);
 async function main() {
-  const collectors = await AgreementLocal.findAll({
+  const collectors = await AgreementReal.findAll({
     attributes: [[Sequelize.literal('DISTINCT collector_id'), 'collector_id']],
     order: [['collector_id', 'asc']],
   });
@@ -56,7 +58,7 @@ async function main() {
       },
     });
     console.log(user);
-    // const collectorCreate = await CollectorLocal.create({
+    // const collectorCreate = await CollectorReal.create({
     //   id_contact: user!.id,
     //   department_name: user?.Department?.name || '',
     //   fio: [user?.f, user?.i, user?.o].join(' '),
