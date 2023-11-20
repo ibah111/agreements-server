@@ -268,22 +268,17 @@ export class PreviewGeneratorService implements OnModuleInit {
           };
           return obj;
         });
-
         const date_collection = parameters.map((i) => i.last_payment_date);
         /**
          * достает последнюю дату
          */
-        // console.log(
-        //   date_collection.filter((i) => {
-        //     return i !== undefined;
-        //   }),
-        // );
+
         const latest_date = date_collection
           .filter((i) => {
             return i !== undefined;
           })
-          .reduce((a, b) => (a! > b! ? a : b));
-        // console.log(latest_date);
+          .reduce((a, b) => (a! > b! ? a : b), data.last_payment_date);
+        // console.log('latest_date: ', latest_date);
         const latest_parameters = parameters.find(
           (i) => i.last_payment_date === latest_date,
         );
