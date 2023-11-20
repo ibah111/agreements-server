@@ -273,12 +273,27 @@ export class PreviewGeneratorService implements OnModuleInit {
         /**
          * достает последнюю дату
          */
-        const latest_date = date_collection.reduce((a, b) => (a! > b! ? a : b));
+        // console.log(
+        //   date_collection.filter((i) => {
+        //     return i !== undefined;
+        //   }),
+        // );
+        const latest_date = date_collection
+          .filter((i) => {
+            return i !== undefined;
+          })
+          .reduce((a, b) => (a! > b! ? a : b));
+        // console.log(latest_date);
         const latest_parameters = parameters.find(
           (i) => i.last_payment_date === latest_date,
         );
         try {
           await link.update(data);
+          // console.log('latest_date', latest_date);
+          // console.log(
+          //   'latest_parameters?.last_payment',
+          //   latest_parameters?.last_payment,
+          // );
           await agreement.update({
             debt_count: link_debts.length,
             preview_last_payment_date: latest_date,
