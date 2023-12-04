@@ -210,19 +210,22 @@ export class PreviewGeneratorService implements OnModuleInit {
                 (i) => i.status === true,
               ).length;
               let iteration = 0;
-
-              const firstElement = payments[0];
+              /**
+               * Текущий платеж
+               */
+              const currentPayment = payments[0];
               while (iteration !== iterationCount) {
                 console.log('iteration: '.red, iteration);
-                if (firstElement.status === true) {
+                if (currentPayment.status === true) {
                   payments.shift();
                   iteration++;
                 }
               }
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const edgeDay = moment().add(-1, 'month');
+
               agreement.update({
-                payable_status: moment(firstElement.pay_day).isAfter(
-                  moment().add(-1, 'month'),
-                ),
+                payable_status: currentPayment.status,
               });
             }
           }
