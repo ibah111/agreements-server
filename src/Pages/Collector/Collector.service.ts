@@ -1,5 +1,5 @@
 import { InjectModel } from '@sql-tools/nestjs-sequelize';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Department, User as UserContact } from '@contact/models';
 import { Op, Sequelize } from '@sql-tools/sequelize';
 import { Collectors } from 'src/Modules/Database/Local.Database/models/Collectors';
@@ -55,7 +55,14 @@ export class CollectorService {
         id_contact: body.id_contact,
       },
     });
-    if (checkExist) throw Error('Коллектор существует в списке');
+    if (checkExist)
+      throw new HttpException(
+        {
+          error: `Коллектор ${body.fio} уже добавлен в список коллекторов.`,
+          status: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     else if (!checkExist) return await this.modelCollector.create(body);
   }
 
