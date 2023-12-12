@@ -5,11 +5,6 @@ import { Op, Sequelize } from '@sql-tools/sequelize';
 import { Collectors } from 'src/Modules/Database/Local.Database/models/Collectors';
 import { CreateCollectorInput } from './Collector.input';
 @Injectable()
-/**
- * Взыскатели
- * select * from users where r_department_id = 2 and block_flag = 0
- * select * from users where r_department_id = 50 and block_flag = 0
- */
 export class CollectorService {
   constructor(
     @InjectModel(UserContact, 'contact')
@@ -24,22 +19,25 @@ export class CollectorService {
   }
 
   async searchUser(fio: string) {
+    const searchParameter = Sequelize.where(
+      Sequelize.fn(
+        'concat',
+        Sequelize.col('f'),
+        ' ',
+        Sequelize.col('i'),
+        ' ',
+        Sequelize.col('o'),
+      ),
+      {
+        [Op.like]: `%${fio}%`,
+      },
+    ) as unknown as string;
+    console.log(searchParameter);
     return await this.modelUserContact.findAll({
-      where: fio
-        ? Sequelize.where(
-            Sequelize.fn(
-              'concat',
-              Sequelize.col('f'),
-              ' ',
-              Sequelize.col('i'),
-              ' ',
-              Sequelize.col('o'),
-            ),
-            {
-              [Op.like]: `%${fio}%`,
-            },
-          )
-        : undefined,
+      where: {
+        block_flag: 0,
+        fio: searchParameter,
+      },
       attributes: ['id', 'f', 'i', 'o'],
       limit: 25,
       include: [
