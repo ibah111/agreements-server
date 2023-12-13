@@ -1,6 +1,7 @@
 import { DebtCalc } from '@contact/models';
 import { MIS } from '@sql-tools/sequelize';
 import { Payments } from '../Database/Local.Database/models/Payments';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export default class MathService {
   constructor() {}
@@ -10,6 +11,16 @@ export default class MathService {
    * @param payments
    */
   async createPaymentsToCalc(calcs: DebtCalc[], payments: MIS<Payments>[]) {
+    if (calcs.length === 0) {
+      throw new HttpException(
+        {
+          error: 'Нет платежей для расчёта',
+          message: 'Нет платежей для расчёта',
+          status: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     let current_calc = 0;
     let current_pay = 0;
     const last_calc = calcs.length - 1;
