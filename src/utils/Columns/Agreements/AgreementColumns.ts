@@ -267,7 +267,13 @@ export default function getAgreementColumns(): GridColDefExtend<Agreement>[] {
       modelName: 'PersonPreview',
       sortCol: {
         name: 'concat',
-        args: [Sequelize.col('f'), ' ', Sequelize.col('i'), Sequelize.col('o')],
+        args: [
+          Sequelize.col('f'),
+          ' ',
+          Sequelize.col('i'),
+          ' ',
+          Sequelize.col('o'),
+        ],
       },
       filterCol: {
         name: 'concat',
